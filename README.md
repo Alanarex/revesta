@@ -1,136 +1,76 @@
-## **📜 Revesta Installation & Setup Guide**
+# Revesta - Laravel ERP Developer Setup Guide
 
-# Revesta - Laravel ERP Installation & Server Setup
-
-## 📌 Requirements
-Before proceeding with the installation, ensure your system meets the following requirements:
-
-- **OS:** Ubuntu (WSL or Native Linux)
-- **Web Server:** Nginx
-- **Database:** MySQL 8.0+
-- **PHP Version:** PHP 8.4
-- **PHP Extensions:**
-  - `php8.4-mysql`
-  - `php8.4-xml`
-  - `php8.4-mbstring`
-  - `php8.4-curl`
-  - `php8.4-bcmath`
-  - `php8.4-zip`
-  - `php8.4-tokenizer`
-- **Other Dependencies:**
-  - Composer
-  - Node.js & npm (for frontend assets, if applicable)
+This guide helps new developers set up the existing Revesta application locally. It covers macOS, Linux (with Nginx), and Windows (with WAMP/XAMPP). Laravel is already hosted in a Git repository and should be cloned.
 
 ---
 
-## 📌 Step 1: Update System
-Ensure your system is up to date:
+## Requirements
 
-```sh
-sudo apt update && sudo apt upgrade -y
+- PHP 8.3
+- Composer (latest)
+- MariaDB (10.5+ or compatible MySQL)
+- Nginx (for Linux/macOS) or Apache (for WAMP/XAMPP)
+- Node.js & npm (optional, not required for now)
+
+---
+
+## 1. Clone the Repository
+
+```bash
+git clone <repository-url> revesta
+cd revesta
 ```
 
 ---
 
-## 📌 Step 2: Install Required Packages
+## 2. Set File Permissions (Linux/macOS only)
 
-### **🔹 Install PHP & Extensions**
-```sh
-sudo apt install -y php8.4 php8.4-cli php8.4-fpm php8.4-mysql php8.4-xml php8.4-mbstring php8.4-curl php8.4-bcmath php8.4-zip php8.4-tokenizer unzip
+```bash
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
 ```
 
-### **🔹 Install Nginx**
-```sh
-sudo apt install -y nginx
-sudo systemctl enable nginx
-sudo systemctl start nginx
+On macOS (if using Valet or similar):
+```bash
+chmod -R 775 storage bootstrap/cache
 ```
 
-### **🔹 Install MySQL**
-```sh
-sudo apt install -y mysql-server
-sudo systemctl enable mysql
-sudo systemctl start mysql
+On Windows (WAMP/XAMPP), make sure `storage` and `bootstrap/cache` folders are writable.
+
+---
+
+## 3. Add `revesta.local` to the Hosts File
+
+### Linux/macOS:
+```bash
+sudo nano /etc/hosts
+```
+Add:
+```
+127.0.0.1 revesta.local
 ```
 
-#### **Configure MySQL for Laravel**
-```sh
-sudo mysql -u root
+### Windows:
+Open Notepad as Administrator and edit:
 ```
-Then, run:
-```sql
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
-FLUSH PRIVILEGES;
-CREATE DATABASE revesta_db;
-EXIT;
+C:\Windows\System32\drivers\etc\hosts
+```
+Add this line:
+```
+127.0.0.1 revesta.local
 ```
 
 ---
 
-## 📌 Step 3: Install Composer & Laravel
+## 4. Nginx Configuration (Linux/macOS)
 
-### **🔹 Install Composer**
-```sh
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-```
-
-### **🔹 Install Laravel (Inside `/var/www/revesta/`)**
-```sh
-cd /var/www
-sudo mkdir revesta && cd revesta
-sudo chown -R $USER:$USER /var/www/revesta
-composer create-project --prefer-dist laravel/laravel .
-```
-
----
-
-## 📌 Step 4: Configure Laravel
-
-### **🔹 Set Environment Variables**
-```sh
-cp .env.example .env
-nano .env
-```
-Modify the `.env` file to match MySQL credentials:
-```ini
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=revesta_db
-DB_USERNAME=root
-DB_PASSWORD=
-```
-Then, generate the application key:
-```sh
-php artisan key:generate
-```
-
----
-
-## 📌 Step 5: Set Permissions
-
-```sh
-sudo chown -R www-data:www-data /var/www/revesta/storage /var/www/revesta/bootstrap/cache
-sudo chmod -R 775 /var/www/revesta/storage /var/www/revesta/bootstrap/cache
-```
-
----
-
-## 📌 Step 6: Configure Nginx
-
-Create a new Nginx configuration file:
-```sh
-sudo nano /etc/nginx/sites-available/revesta
-```
-
-Add the following content:
+Create a site config file:
 ```nginx
 server {
     listen 80;
     server_name revesta.local;
-    root /var/www/revesta/public;
-    index index.php index.html index.htm;
+    root /path/to/revesta/public;
+    index index.php index.html;
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -138,7 +78,7 @@ server {
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php8.4-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
     }
@@ -148,95 +88,87 @@ server {
     }
 }
 ```
-Save and exit.
 
-Enable the site and restart Nginx:
-```sh
+Enable the site and reload:
+```bash
 sudo ln -s /etc/nginx/sites-available/revesta /etc/nginx/sites-enabled/
-sudo systemctl restart nginx
+sudo nginx -t && sudo systemctl restart nginx
 ```
 
 ---
 
-## 📌 Step 7: Configure `/etc/hosts` (Local Access)
+## 5. Apache (Windows with WAMP/XAMPP)
 
-Edit the hosts file:
-```sh
-sudo nano /etc/hosts
+Make sure Apache virtual hosts are enabled, and configure like:
+
+```apache
+<VirtualHost *:80>
+    DocumentRoot "C:/wamp64/www/revesta/public"
+    ServerName revesta.local
+
+    <Directory "C:/wamp64/www/revesta/public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
 ```
-Add this line:
-```
-127.0.0.1 revesta.local
-```
-Save and exit.
+
+Restart Apache from the WAMP/XAMPP control panel.
 
 ---
 
-## 📌 Step 8: Migrate Database
-```sh
+## 6. Create Database
+
+Create an empty database called:
+```
+revesta_db
+```
+
+No other configuration is needed.
+
+---
+
+## 7. Configure Environment File
+
+Copy the default environment file:
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` and modify the database section:
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=revesta_db
+DB_USERNAME=root
+DB_PASSWORD=root
+```
+
+---
+
+## 8. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## 9. Run Migrations
+
+```bash
 php artisan migrate
 ```
 
 ---
 
-## 📌 Step 9: Restart Services
+## 10. Access the Application
 
-```sh
-sudo systemctl restart mysql
-sudo systemctl restart php8.4-fpm
-sudo systemctl restart nginx
-```
-
----
-
-## 📌 Step 10: Test Laravel
 Visit:
-
 ```
 http://revesta.local
 ```
 
-If it works, the setup is successful! 🎉
+Laravel and the ERP app should now be working locally.
 
----
-
-## **💡 Troubleshooting**
-| Issue | Solution |
-|--------|----------|
-| **Site not loading?** | Check Nginx logs: `sudo tail -f /var/log/nginx/error.log` |
-| **MySQL errors?** | Run `sudo mysql_secure_installation` and ensure credentials in `.env` are correct |
-| **Permissions issues?** | Run: `sudo chown -R www-data:www-data /var/www/revesta/storage /var/www/revesta/bootstrap/cache` |
-| **PHP-FPM errors?** | Restart PHP-FPM: `sudo systemctl restart php8.4-fpm` |
-| **DNS error (revesta.local not found)?** | Ensure `127.0.0.1 revesta.local` is in `/etc/hosts`, and run `ipconfig /flushdns` (on Windows) |
-
----
-
-## **🚀 Additional Setup**
-### **🔹 Installing Node.js & npm (Optional, for Frontend)**
-```sh
-sudo apt install -y nodejs npm
-```
-Install dependencies:
-```sh
-npm install
-```
-Compile assets:
-```sh
-npm run dev
-```
-
----
-
-### **📝 Next Steps**
-1. **Copy this file to your project**:
-   ```sh
-   nano /var/www/revesta/README.md
-   ```
-   Paste the content and save.
-
-2. **Commit to Git (if using Git)**
-   ```sh
-   git add README.md
-   git commit -m "Added installation and setup guide"
-   git push origin main
-   ```
