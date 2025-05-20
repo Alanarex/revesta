@@ -5,26 +5,22 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('aids', function (Blueprint $table) {
+        Schema::create('fiscal_income_ranges', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('provider');
+            $table->decimal('min', 12, 2)->unsigned()->nullable();
+            $table->decimal('max', 12, 2)->unsigned()->nullable();
+            $table->year('year')->nullable();
             $table->text('description')->nullable();
-            $table->string('type')->nullable(); 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('aids');
+        Schema::dropIfExists('fiscal_income_ranges');
     }
 };
