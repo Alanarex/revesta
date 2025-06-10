@@ -10,7 +10,6 @@ return new class extends Migration {
         Schema::create('simulations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('aid_id')->constrained('aids')->cascadeOnDelete();
             $table->date('date')->nullable();
             $table->timestamps();
             $table->softDeletes();

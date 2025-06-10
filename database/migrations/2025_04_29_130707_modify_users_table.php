@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('civil_status')->nullable()->after('address_id');
             $table->string('family_status')->nullable()->after('civil_status');
             $table->boolean('cookies_accepted')->default(false)->after('family_status');
+            $table->softDeletes();
         });
     }
 
@@ -31,6 +32,7 @@ return new class extends Migration {
                 'family_status',
                 'cookies_accepted',
             ]);
+            $table->dropSoftDeletes();
         });
     }
 };
