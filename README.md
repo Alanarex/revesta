@@ -1,29 +1,33 @@
 # Revesta - Laravel ERP Developer Setup Guide
 
-This guide helps new developers set up the existing Revesta application locally. It covers macOS, Linux (with Nginx), and Windows (with WAMP/XAMPP). Laravel is already hosted in a Git repository and should be cloned.
+This guide helps new developers set up the existing Revesta application locally. It covers macOS, Linux (with Nginx), and Windows (with WAMP/XAMPP).
+
+Revesta is a Laravel-based ERP and dashboard tool designed to help users simulate and manage renovation and housing aid requests. It includes an API and is intended to work in combination with a browser extension. The application is responsive and supports desktop and mobile use. It also includes Progressive Web App (PWA) support.
 
 ---
 
 ## Requirements
 
-- PHP 8.3
-- Composer (latest)
-- MariaDB (10.5+ or compatible MySQL)
-- Nginx (for Linux/macOS) or Apache (for WAMP/XAMPP)
-- Node.js & npm (optional, not required for now)
+* PHP 8.3
+* Composer (latest)
+* MariaDB (10.5+) or compatible MySQL
+* Nginx (Linux/macOS) or Apache (WAMP/XAMPP)
+* Node.js & npm (required for front-end assets)
+* Git
+* Laravel CLI
 
 ---
 
-## 1. Clone the Repository
+## Installation
+
+### 1. Clone the Repository
 
 ```bash
-git clone <repository-url> revesta
+git clone https://github.com/Alanarex/revesta.git revesta
 cd revesta
 ```
 
----
-
-## 2. Set File Permissions (Linux/macOS only)
+### 2. Set File Permissions (Linux/macOS only)
 
 ```bash
 sudo chown -R www-data:www-data storage bootstrap/cache
@@ -31,40 +35,42 @@ sudo chmod -R 775 storage bootstrap/cache
 ```
 
 On macOS (if using Valet or similar):
+
 ```bash
 chmod -R 775 storage bootstrap/cache
 ```
 
 On Windows (WAMP/XAMPP), make sure `storage` and `bootstrap/cache` folders are writable.
 
----
+### 3. Add `revesta.local` to the Hosts File
 
-## 3. Add `revesta.local` to the Hosts File
+**Linux/macOS:**
 
-### Linux/macOS:
 ```bash
 sudo nano /etc/hosts
 ```
+
 Add:
-```
+
+```plaintext
 127.0.0.1 revesta.local
 ```
 
-### Windows:
-Open Notepad as Administrator and edit:
-```
+**Windows:**
+Edit:
+
+```plaintext
 C:\Windows\System32\drivers\etc\hosts
 ```
-Add this line:
-```
+
+Add:
+
+```plaintext
 127.0.0.1 revesta.local
 ```
 
----
+### 4. Nginx Configuration (Linux/macOS)
 
-## 4. Nginx Configuration (Linux/macOS)
-
-Create a site config file:
 ```nginx
 server {
     listen 80;
@@ -89,17 +95,14 @@ server {
 }
 ```
 
-Enable the site and reload:
+Enable the site and restart Nginx:
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/revesta /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl restart nginx
 ```
 
----
-
-## 5. Apache (Windows with WAMP/XAMPP)
-
-Make sure Apache virtual hosts are enabled, and configure like:
+### 5. Apache (Windows with WAMP/XAMPP)
 
 ```apache
 <VirtualHost *:80>
@@ -113,29 +116,24 @@ Make sure Apache virtual hosts are enabled, and configure like:
 </VirtualHost>
 ```
 
-Restart Apache from the WAMP/XAMPP control panel.
+Restart Apache via WAMP/XAMPP control panel.
 
----
+### 6. Create Database
 
-## 6. Create Database
+Create a database named:
 
-Create an empty database called:
-```
+```plaintext
 revesta_db
 ```
 
-No other configuration is needed.
+### 7. Configure Environment File
 
----
-
-## 7. Configure Environment File
-
-Copy the default environment file:
 ```bash
 cp .env.example .env
 ```
 
-Edit the `.env` and modify the database section:
+Update database credentials in `.env`:
+
 ```dotenv
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -145,30 +143,47 @@ DB_USERNAME=root
 DB_PASSWORD=root
 ```
 
----
-
-## 8. Generate Application Key
+### 8. Generate Application Key
 
 ```bash
 php artisan key:generate
 ```
 
----
-
-## 9. Run Migrations
+### 9. Run Migrations and Seeders
 
 ```bash
 php artisan migrate
+php artisan db:seed
+```
+
+### 10. Access the Application
+
+Open your browser and go to:
+
+```plaintext
+http://revesta.local
 ```
 
 ---
 
-## 10. Access the Application
+## Author
 
-Visit:
-```
-http://revesta.local
-```
+**Alaa Khalil**
+Full Stack Developer – MBA MyDigitalSchool 2024–2026
+Email: [alaa.khalil.dev@gmail.com](mailto:alaa.khalil.dev@gmail.com)
+GitHub: [Alanarex/revesta](https://github.com/Alanarex/revesta)
 
-Laravel and the ERP app should now be working locally.
+---
 
+## License
+
+This project was originally developed as part of the academic program "My Digital Start-up" at MyDigitalSchool. While it is primarily intended for educational and non-commercial purposes, the authors reserve the right to use it for commercial purposes within their own team.
+**All rights reserved © 2025**
+
+---
+
+## Last Updated
+
+**June 18, 2025**
+
+> **Note:** This README will be continuously updated as the project evolves.
