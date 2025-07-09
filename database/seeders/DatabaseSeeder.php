@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             HousingSeeder::class,
             AdSeeder::class,
             ConditionSeeder::class,
+            RoleSeeder::class,
             UserSeeder::class,
             SimulationSeeder::class,
             AidSimulationSeeder::class,

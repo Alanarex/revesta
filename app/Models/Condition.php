@@ -14,7 +14,6 @@ class Condition extends Model
         'aid_id',
         'model',
         'attribute',
-        'condition_type',
         'operator',
         'value',
         'fiscal_income_range_id',
@@ -25,8 +24,8 @@ class Condition extends Model
         return $this->belongsTo(Aid::class);
     }
 
-    public function fiscalIncomeRange()
-    {
-        return $this->belongsTo(FiscalIncomeRange::class);
-    }
+    // public function fiscalIncomeRange()
+    // {
+    //     return $this->belongsTo(FiscalIncomeRange::class);
+    // }
 }

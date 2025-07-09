@@ -6,12 +6,27 @@
             'icon' => 'fa-home',
             'active' => request()->routeIs('dashboard'),
         ],
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+        [
+            'title' => 'Conditions',
+            'route' => route('conditions.index'),
+            'icon' => 'fa-home',
+            'active' => request()->routeIs('conditions.index'),
+        ],
+>>>>>>> Stashed changes
         // [
         //     'title' => 'Statistiques',
         //     'route' => route('statistics'),
         //     'icon' => 'fa-chart-bar',
         //     'active' => request()->routeIs('statistics'),
         // ],
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     ];
 @endphp
 

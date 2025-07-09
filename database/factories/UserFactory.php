@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Address;
@@ -30,6 +31,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
             'remember_token' => null,
+            'role_id' => Role::inRandomOrder()->first()?->id, // safe fallback with null if no roles exist
+
         ];
     }
 }

@@ -1,0 +1,16 @@
+table td,
+table tr,
+table th {
+    border: none !important;
+}
+
+.remove-row {
+    outline: none;
+    box-shadow: none;
+}
+
+.remove-row i:hover,
+.plus-icon:hover {
+    transform: scale(1.3);
+    transition: transform 0.2s;
+}

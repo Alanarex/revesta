@@ -56,4 +56,34 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Address::class);
     }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public static function getFilterableAttributes(): array
+    {
+        return [
+            'first_name' => 'Prénom',
+            'last_name' => 'Nom',
+            'email' => 'Email',
+            'phone' => 'Téléphone',
+            'civil_status' => 'Situation civile',
+            'family_status' => 'Situation familiale',
+        ];
+    }
+
+    public static function getFilterableAttributeTypes(): array
+    {
+        return [
+            'first_name' => 'text',
+            'last_name' => 'text',
+            'email' => 'text',
+            'phone' => 'text',
+            'civil_status' => 'text',
+            'family_status' => 'text',
+        ];
+    }
+
 }
