@@ -1,4 +1,9 @@
+@import './colors.scss';
+@import './fonts.scss';
+
 @import "bootstrap/scss/bootstrap";
+
+@import './partials/sidebar';
 
 body {
     padding-top: 56px;
@@ -9,3 +14,4 @@ body {
     transition: margin-left 0.3s ease;
     margin-left: 250px;
 }
+

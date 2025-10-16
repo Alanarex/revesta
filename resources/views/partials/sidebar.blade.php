@@ -5,13 +5,50 @@
             'route' => route('dashboard'),
             'icon' => 'fa-home',
             'active' => request()->routeIs('dashboard'),
+            'enabled' => true,
         ],
-        // [
-        //     'title' => 'Statistiques',
-        //     'route' => route('statistics'),
-        //     'icon' => 'fa-chart-bar',
-        //     'active' => request()->routeIs('statistics'),
-        // ],
+        [
+            'title' => 'Simulations',
+            'route' => route('dashboard'), //à changer
+            'icon' => 'fa-sliders-h',
+            'active' => request()->routeIs('simulations.*'),
+            'enabled' => true,
+        ],
+        [
+            'title' => 'Support',
+            'route' => route('dashboard'), //à changer
+            'icon' => 'fa-life-ring',
+            'active' => request()->routeIs('support.*'),
+            'enabled' => true,
+        ],
+        [
+            'title' => 'Utilisateurs',
+            'route' => route('dashboard'), //à changer
+            'icon' => 'fa-users',
+            'active' => request()->routeIs('users.*'),
+            'enabled' => true,
+        ],
+        [
+            'title' => 'Adresses',
+            'route' => route('dashboard'), //à changer
+            'icon' => 'fa-map-marker-alt',
+            'active' => request()->routeIs('addresses.*'),
+            'enabled' => true,
+        ],
+        [
+            'title' => 'Annonces',
+            'route' => route('dashboard'), //à changer
+            'icon' => 'fa-bullhorn',
+            'active' => request()->routeIs('ads.*'),
+            'enabled' => true,
+        ],
+        [
+            'title' => 'Tranches fiscales',
+            'route' => route('dashboard'), //à changer
+            'icon' => 'fa-coins',
+            'active' => request()->routeIs('fiscal.*'),
+            'enabled' => true,
+        ],
     ];
 @endphp
 
@@ -22,12 +59,15 @@
     </a>
     <ul class="nav nav-pills flex-column mt-5">
         @foreach ($sidebarItems as $item)
-            <li class="nav-item">
-                <a href="{{ $item['route'] }}"
-                    class="nav-link text-dark {{ !empty($item['active']) && $item['active'] ? 'active' : '' }}">
-                    <i class="fa {{ $item['icon'] }} me-2"></i>{{ $item['title'] }}
-                </a>
-            </li>
+            @if ($item['enabled'])
+                <li class="nav-item">
+                    <a href="{{ $item['route'] }}"
+                        class="nav-link text-dark {{ !empty($item['active']) && $item['active'] ? 'active' : '' }}"
+                        @if (!empty($item['active']) && $item['active']) style="background-color: #9CC41B;" @endif>
+                        <i class="fa {{ $item['icon'] }} me-2"></i>{{ $item['title'] }}
+                    </a>
+                </li>
+            @endif
         @endforeach
     </ul>
 </div>
