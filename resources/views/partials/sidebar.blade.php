@@ -5,50 +5,28 @@
             'route' => route('dashboard'),
             'icon' => 'fa-home',
             'active' => request()->routeIs('dashboard'),
-            'enabled' => true,
         ],
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
         [
-            'title' => 'Simulations',
-            'route' => route('dashboard'), //à changer
-            'icon' => 'fa-sliders-h',
-            'active' => request()->routeIs('simulations.*'),
-            'enabled' => true,
+            'title' => 'Conditions',
+            'route' => route('conditions.index'),
+            'icon' => 'fa-home',
+            'active' => request()->routeIs('conditions.index'),
         ],
-        [
-            'title' => 'Support',
-            'route' => route('dashboard'), //à changer
-            'icon' => 'fa-life-ring',
-            'active' => request()->routeIs('support.*'),
-            'enabled' => true,
-        ],
-        [
-            'title' => 'Utilisateurs',
-            'route' => route('dashboard'), //à changer
-            'icon' => 'fa-users',
-            'active' => request()->routeIs('users.*'),
-            'enabled' => true,
-        ],
-        [
-            'title' => 'Adresses',
-            'route' => route('dashboard'), //à changer
-            'icon' => 'fa-map-marker-alt',
-            'active' => request()->routeIs('addresses.*'),
-            'enabled' => true,
-        ],
-        [
-            'title' => 'Annonces',
-            'route' => route('dashboard'), //à changer
-            'icon' => 'fa-bullhorn',
-            'active' => request()->routeIs('ads.*'),
-            'enabled' => true,
-        ],
-        [
-            'title' => 'Tranches fiscales',
-            'route' => route('dashboard'), //à changer
-            'icon' => 'fa-coins',
-            'active' => request()->routeIs('fiscal.*'),
-            'enabled' => true,
-        ],
+>>>>>>> Stashed changes
+        // [
+        //     'title' => 'Statistiques',
+        //     'route' => route('statistics'),
+        //     'icon' => 'fa-chart-bar',
+        //     'active' => request()->routeIs('statistics'),
+        // ],
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     ];
 @endphp
 

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -26,6 +27,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => null,
+            'role_id' => Role::where('name', 'admin')->first()?->id, // Assigning admin role
         ]);
     }
 }

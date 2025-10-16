@@ -8,7 +8,7 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ Vite::asset('resources/images/logo.svg') }}">
 
-    <title>@yield('title', config('app.name'))</title>
+    <title>{{ $title ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
 
     @include('partials.styles')
 

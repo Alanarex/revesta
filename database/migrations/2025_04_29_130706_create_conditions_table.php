@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('aid_id')->constrained('aids')->cascadeOnDelete();
             $table->string('model');
             $table->string('attribute');
-            $table->string('condition_type'); // e.g. "string", "numeric", "range"
+            // $table->string('condition_type'); // e.g. "string", "numeric", "range"
             $table->string('operator'); // e.g. "=", "<", "in", etc.
             $table->string('value')->nullable(); // raw or serialized value
 

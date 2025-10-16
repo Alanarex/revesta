@@ -19,4 +19,29 @@ class Address extends Model
         'city',
         'departement',
     ];
+
+    public static function getFilterableAttributes(): array
+    {
+        return [
+            'postal_code' => 'Code postal',
+            'street' => 'Rue',
+            'number' => 'Numéro',
+            'complement' => 'Complément',
+            'city' => 'Ville',
+            'departement' => 'Département',
+        ];
+    }
+
+    public static function getFilterableAttributeTypes(): array
+    {
+        return [
+            'postal_code' => 'text',
+            'street' => 'text',
+            'number' => 'text',
+            'complement' => 'text',
+            'city' => 'text',
+            'departement' => 'text',
+        ];
+    }
+
 }

@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', $title . ' - ' . config('app.name'))
-
 @section('content')
     <!-- Main Content -->
     <div class="main-content">
