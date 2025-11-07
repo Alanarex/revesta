@@ -1,5 +1,9 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="margin-left: 250px;">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
+        <button id="sidebarToggle" class="btn btn-outline-secondary me-3" type="button">
+            <i class="fa fa-bars"></i>
+        </button>
+        
         {{-- <a class="navbar-brand text-dark" href="#">Panneau d'administration</a> --}}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>

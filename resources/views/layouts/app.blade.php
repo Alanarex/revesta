@@ -14,7 +14,7 @@
 
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 sidebar-collapsed">
     <div class="d-flex" id="layout-wrapper">
         @include('partials.sidebar')
 
