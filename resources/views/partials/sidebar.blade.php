@@ -7,6 +7,13 @@
             'active' => request()->routeIs('dashboard'),
             'enabled' => true,
         ],
+        [
+            'title' => 'Conditions',
+            'route' => route('conditions.index'),
+            'icon' => 'fa-home',
+            'active' => request()->routeIs('conditions.index'),
+            'enabled' => true,
+        ],
         // [
         //     'title' => 'Statistiques',
         //     'route' => route('statistics'),
