@@ -5,6 +5,7 @@
             'route' => route('dashboard'),
             'icon' => 'fa-home',
             'active' => request()->routeIs('dashboard'),
+            'enabled' => true,
         ],
         // [
         //     'title' => 'Statistiques',
