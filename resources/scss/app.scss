@@ -5,13 +5,32 @@
 
 @import './partials/sidebar';
 
+/*
+ * Global layout variables and base styles
+ * - --navbar-height controls both the fixed navbar and the sidebar logo
+ *   container to keep visual alignment.
+ */
+:root {
+    --navbar-height: 70px;
+}
+
 body {
-    padding-top: 56px;
+    padding-top: var(--navbar-height);
     font-family: Arial, sans-serif;
 }
 
-#main-content-wrapper {
+#layout-wrapper {
     transition: margin-left 0.3s ease;
     margin-left: 250px;
 }
 
+#main-content-wrapper {
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+/* Navbar responsive positioning */
+.navbar.fixed-top {
+    height: var(--navbar-height);
+    transition: margin-left 0.3s ease;
+}
