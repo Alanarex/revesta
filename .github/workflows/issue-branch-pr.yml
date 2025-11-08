@@ -1,0 +1,48 @@
+name: Issue Branch & PR Automation
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-branch-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Create branch from issue
+        id: branch
+        uses: peter-evans/create-branch@v6
+        with:
+          branch: |
+            release/v1.0.0/feature/${{ github.event.issue.title }}
+          base: main
+          commit-message: "Start work on issue #${{ github.event.issue.number }}"
+
+      - name: Format branch name (kebab-case)
+        run: |
+          ISSUE_TITLE="${GITHUB_EVENT_ISSUE_TITLE}"
+          BRANCH_NAME="release/v1.0.0/feature/$(echo $ISSUE_TITLE | tr '[:upper:]' '[:lower:]' | tr ' ' '-')"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Push new branch
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.branch.outputs.branch_name }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "resolve ${{ github.event.issue.title }}"
+          body: |
+            ### Related Issue
+            Closes #${{ github.event.issue.number }}
+
+            ### Description
+            Describe the work done for this issue here.
+          base: main
+          head: ${{ steps.branch.outputs.branch_name }}
+          draft: true
