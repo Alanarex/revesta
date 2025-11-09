@@ -44,5 +44,5 @@ jobs:
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         issue_number: issue.number,
-                        body: `Suggested branch name: \`${branchName}\``
+                        body: 'Suggested branch name: `' + branchName + '`'
                       });
