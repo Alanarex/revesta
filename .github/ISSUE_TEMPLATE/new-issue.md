@@ -1,7 +1,3 @@
-**Short name / slug for the issue**  
-*(Required)*  
-`add-login-system`
-
 **Issue type** *(Required)*  
 - [ ] feature  
 - [ ] bug  
