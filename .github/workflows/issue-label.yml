@@ -35,14 +35,14 @@ jobs:
                       });
 
                       // Suggest branch name in comment
-                      # const slug = issue.title.toLowerCase()
-                      #   .replace(/[^\w\s-]/g, '')
-                      #   .replace(/\s+/g, '-');
-                      # const branchName = `release/${version}/${type}/${slug}`;
+                      const slug = issue.title.toLowerCase()
+                        .replace(/[^\w\s-]/g, '')
+                        .replace(/\s+/g, '-');
+                      const branchName = `release/${version}/${type}/${slug}`;
 
-                      # await github.rest.issues.createComment({
-                      #   owner: context.repo.owner,
-                      #   repo: context.repo.repo,
-                      #   issue_number: issue.number,
-                      #   body: `Suggested branch name: \`${branchName}\``
-                      # });
+                      await github.rest.issues.createComment({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: issue.number,
+                        body: `Suggested branch name: \`${branchName}\``
+                      });
