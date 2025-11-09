@@ -1,10 +1,3 @@
----
-name: New Issue
-about: Create a new issue with version and type labels
-title: "[ISSUE] "
-labels: triage
----
-
 **Short name / slug for the issue**  
 *(Required)*  
 `add-login-system`
@@ -27,9 +20,7 @@ Format: `vX.Y.Z`
 **Description** *(Required)*  
 Describe the problem or feature here:
 
-```
-<!-- Add your detailed description here -->
-```
+`description`
 
 **Create branch now?**  
 Check if you want the branch to be created immediately:  
