@@ -1,0 +1,46 @@
+name: Rename PRs from issues
+on:
+    pull_request:
+        types: [opened]
+
+permissions:
+    issues: write
+    pull-requests: write
+
+jobs:
+    rename-pr:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Rename PR based on linked issue
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const pr = context.payload.pull_request;
+
+                      // Try to find linked issue number from branch name (release/vX.Y.Z/type/slug)
+                      const branchParts = pr.head.ref.split('/');
+                      let issueNumber = null;
+
+                      // Optional: if branch contains issue number like issue-123, we could extract it
+                      const match = pr.body?.match(/#(\d+)/);
+                      if (match) issueNumber = match[1];
+
+                      // Set PR title
+                      const newTitle = `resolve ${pr.title}`;
+
+                      // Set PR body
+                      let newBody = pr.body || '';
+                      if (issueNumber) {
+                        newBody = `related to #${issueNumber}\n\n` + newBody;
+                      } else {
+                        // fallback: just keep existing body
+                        newBody = newBody || '';
+                      }
+
+                      await github.rest.pulls.update({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: pr.number,
+                        title: newTitle,
+                        body: newBody
+                      });

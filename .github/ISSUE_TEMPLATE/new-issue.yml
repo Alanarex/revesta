@@ -1,0 +1,49 @@
+name: New Issue
+description: Create a new issue with version and type labels
+title: "[ISSUE] " # User can fill in after the prefix
+labels: triage
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Short name / slug for the issue
+      placeholder: add-login-system
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Issue type
+      options:
+        - feature
+        - bug
+        - chore
+        - docs
+        - enhancement
+        - refactor
+        - test
+        - perf
+        - security
+      required: true
+      default: feature
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "Format vX.Y.Z"
+      placeholder: v1.0.0
+      required: true
+      default: v1.0.0
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Detailed description of the issue
+      placeholder: Describe the problem or feature here
+      required: true
+  - type: checkboxes
+    id: create_branch
+    attributes:
+      label: Create branch now?
+      description: "Check if you want the branch to be created immediately"
+      options:
+        - Create branch automatically

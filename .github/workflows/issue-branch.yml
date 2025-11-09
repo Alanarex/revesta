@@ -1,0 +1,60 @@
+name: Create branch from issue
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version/type and check for branch request
+        id: extract
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+
+            // Parse version
+            const versionMatch = issue.body.match(/version:\s*(v[0-9]+\.[0-9]+\.[0-9]+)/i);
+            const version = versionMatch ? versionMatch[1].trim() : 'v1.0.0';
+
+            // Parse type
+            const typeMatch = issue.body.match(/type:\s*([a-z]+)/i);
+            const type = typeMatch ? typeMatch[1].trim() : 'feature';
+
+            // Check if checkbox was selected
+            const branchRequested = /Create branch automatically/i.test(issue.body);
+
+            // Slugify title
+            const slug = issue.title.toLowerCase()
+              .replace(/[^\w\s-]/g, '')
+              .replace(/\s+/g, '-');
+
+            const branchName = `release/${version}/${type}/${slug}`;
+
+            return { branchRequested, branchName };
+
+      - name: Checkout repository
+        if: ${{ fromJson(steps.extract.outputs.result).branchRequested == true }}
+        uses: actions/checkout@v4
+
+      - name: Create branch if requested
+        if: ${{ fromJson(steps.extract.outputs.result).branchRequested == true }}
+        run: |
+          BRANCH=${{ fromJson(steps.extract.outputs.result).branchName }}
+          # fetch remote refs
+          git fetch origin
+          # if branch already exists on remote, exit successfully
+          if git ls-remote --exit-code --heads origin "$BRANCH"; then
+            echo "Branch $BRANCH already exists on remote."
+            exit 0
+          fi
+          # create local branch and push to origin
+          git checkout -b "$BRANCH"
+          git push --set-upstream origin "$BRANCH"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
