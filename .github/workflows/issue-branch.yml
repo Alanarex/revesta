@@ -1,60 +1,119 @@
-name: Create branch from issue
+name: Issue Branch
 on:
   issues:
     types: [opened]
 
 permissions:
   contents: write
-  issues: read
+  issues: write
 
 jobs:
   create-branch:
     runs-on: ubuntu-latest
     steps:
-      - name: Extract version/type and check for branch request
-        id: extract
+      - name: Check if branch creation is requested
+        id: check
         uses: actions/github-script@v6
         with:
           script: |
             const issue = context.payload.issue;
+            const body = issue.body || '';
+
+            // Check if this is from the issue template
+            if (!body.includes('### Branch Creation') && !body.includes('### Assignment')) {
+              console.log('Not from the issue template, skipping');
+              return { skip: true, createBranch: false };
+            }
+
+            // Check if "Create branch automatically" checkbox is checked
+            const createBranch = /- \[x\]\s*Create branch automatically/i.test(body);
+            
+            if (!createBranch) {
+              console.log('Branch creation not requested');
+              return { skip: true, createBranch: false };
+            }
+
+            // Parse issue type: look for a known type keyword in the body (more robust than relying on heading formatting)
+            const allowedTypes = ['feature','bug','chore','docs','enhancement','refactor','test','perf','security'];
+            let issueType = 'feature';
+            const typeRegex = new RegExp('\\b(' + allowedTypes.join('|') + ')\\b', 'i');
+            const typeMatch = body.match(typeRegex);
+            if (typeMatch) {
+              issueType = typeMatch[1].toLowerCase();
+            }
+
+            // If parsed value isn't one of the allowed types, ignore it and fall back to default
+            if (!allowedTypes.includes(issueType)) {
+              console.log(`Parsed issueType \"${issueType}\" is not a known type; falling back to 'feature'`);
+              issueType = 'feature';
+            }
 
             // Parse version
-            const versionMatch = issue.body.match(/version:\s*(v[0-9]+\.[0-9]+\.[0-9]+)/i);
-            const version = versionMatch ? versionMatch[1].trim() : 'v1.0.0';
+            let version = 'v1.0.0';
+            const versionPatterns = [
+              /### Target Version\s*\n.*?\n\n(v\d+\.\d+\.\d+)/i,
+              /`(v\d+\.\d+\.\d+)`/i,
+              /\b(v\d+\.\d+\.\d+)\b/i
+            ];
+            for (const pattern of versionPatterns) {
+              const match = body.match(pattern);
+              if (match) {
+                version = match[1];
+                break;
+              }
+            }
 
-            // Parse type
-            const typeMatch = issue.body.match(/type:\s*([a-z]+)/i);
-            const type = typeMatch ? typeMatch[1].trim() : 'feature';
+            // Parse issue title
+            let issueTitle = issue.title.replace(/^\[.*?\]\s*/, '').trim();
+            const titleMatch = body.match(/### Issue Title\s*\n.*?\n\n(.+)/s);
+            if (titleMatch) {
+              const extracted = titleMatch[1].trim().split('\n')[0];
+              if (extracted) issueTitle = extracted;
+            }
 
-            // Check if checkbox was selected
-            const branchRequested = /Create branch automatically/i.test(issue.body);
-
-            // Slugify title
-            const slug = issue.title.toLowerCase()
+            // Sanitize issueType and title into URL-safe slugs
+            issueType = issueType.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').substring(0, 50);
+            const slug = issueTitle.toLowerCase()
               .replace(/[^\w\s-]/g, '')
-              .replace(/\s+/g, '-');
+              .replace(/\s+/g, '-')
+              .substring(0, 50);
+            const branchName = `release/${version}/${issueType}/${slug}`;
 
-            const branchName = `release/${version}/${type}/${slug}`;
-
-            return { branchRequested, branchName };
+            return { 
+              skip: false,
+              createBranch: true,
+              branchName
+            };
 
       - name: Checkout repository
-        if: ${{ fromJson(steps.extract.outputs.result).branchRequested == true }}
+        if: ${{ fromJson(steps.check.outputs.result).createBranch == true }}
         uses: actions/checkout@v4
 
-      - name: Create branch if requested
-        if: ${{ fromJson(steps.extract.outputs.result).branchRequested == true }}
+      - name: Create branch
+        if: ${{ fromJson(steps.check.outputs.result).createBranch == true }}
         run: |
-          BRANCH=${{ fromJson(steps.extract.outputs.result).branchName }}
-          # fetch remote refs
+          BRANCH="${{ fromJson(steps.check.outputs.result).branchName }}"
           git fetch origin
-          # if branch already exists on remote, exit successfully
           if git ls-remote --exit-code --heads origin "$BRANCH"; then
-            echo "Branch $BRANCH already exists on remote."
+            echo "⚠️ Branch $BRANCH already exists on remote."
             exit 0
           fi
-          # create local branch and push to origin
           git checkout -b "$BRANCH"
           git push --set-upstream origin "$BRANCH"
+          echo "✅ Branch $BRANCH created successfully"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment with branch info
+        if: ${{ fromJson(steps.check.outputs.result).createBranch == true }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const branchName = ${{ toJson(fromJson(steps.check.outputs.result).branchName) }};
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: `✅ Branch \`${branchName}\` has been created automatically.\n\nYou can start working on this issue by checking out the branch:\n\`\`\`bash\ngit fetch origin\ngit checkout ${branchName}\n\`\`\``
+            });
+            console.log(`✅ Added comment with branch info`);

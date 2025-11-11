@@ -1,0 +1,74 @@
+name: Issue
+description: Create a work item or task for any type of work (updated description)
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Issue Template
+        Use this template to create a work item or task. The branch name will be automatically generated based on your selections.
+        
+        Choose an issue type and provide enough detail so maintainers can pick it up.
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: Select the type of issue you want to create
+      options:
+        - feature
+        - bug
+        - chore
+        - docs
+        - enhancement
+        - refactor
+        - test
+        - perf
+        - security
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Target Version
+      description: "Version for this issue (format: v1.0.0)"
+      placeholder: "v1.0.0"
+      value: "v1.0.0"
+    validations:
+      required: true
+      pattern: "^v\\d+\\.\\d+\\.\\d+$"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a detailed description of the issue
+      placeholder: "Describe what needs to be done, the problem to solve, or the feature to implement..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: create-branch
+    attributes:
+      label: Branch Creation
+      options:
+        - label: "Create branch automatically"
+
+  - type: checkboxes
+    id: assign-me
+    attributes:
+      label: Assignment
+      options:
+        - label: "Assign to me directly"
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria (Optional)
+      description: What needs to be done for this issue to be considered complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
