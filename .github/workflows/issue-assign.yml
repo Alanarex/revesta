@@ -1,7 +1,7 @@
 name: Issue Assignment
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 permissions:
   issues: write
@@ -25,18 +25,29 @@ jobs:
 
             // Check if "Assign to me directly" checkbox is checked
             const assignToAuthor = /- \[x\]\s*Assign to me directly/i.test(body);
-            
-            if (!assignToAuthor) {
-              console.log('Assignment not requested');
-              return;
-            }
-
             const username = issue.user.login;
-            await github.rest.issues.addAssignees({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue.number,
-              assignees: [username]
-            });
-            
-            console.log(`✅ Assigned issue to @${username}`);
+
+            if (assignToAuthor) {
+              // Add the issue author as an assignee (idempotent)
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                assignees: [username]
+              });
+              console.log(`✅ Assigned issue to @${username}`);
+            } else {
+              // Checkbox not checked: if the issue author is currently an assignee, remove them.
+              const currentAssignees = (issue.assignees || []).map(a => a.login);
+              if (currentAssignees.includes(username)) {
+                await github.rest.issues.removeAssignees({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  assignees: [username]
+                });
+                console.log(`✅ Removed @${username} from assignees`);
+              } else {
+                console.log('Author is not an assignee; nothing to do');
+              }
+            }
