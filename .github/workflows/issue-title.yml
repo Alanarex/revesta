@@ -1,0 +1,61 @@
+name: Issue Title
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  update-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update issue title with type prefix
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+
+            // Check if this is from the issue template
+            if (!body.includes('### Branch Creation') && !body.includes('### Assignment')) {
+              console.log('Not from the issue template, skipping');
+              return;
+            }
+
+            // Parse issue type: detect a known keyword in the body
+            const allowedTypes = ['feature','bug','chore','docs','enhancement','refactor','test','perf','security'];
+            let issueType = 'feature';
+            const typeRegex = new RegExp('\\b(' + allowedTypes.join('|') + ')\\b', 'i');
+            const typeMatch = body.match(typeRegex);
+            if (typeMatch) {
+              issueType = typeMatch[1].toLowerCase();
+            }
+
+            // If parsed value isn't one of the allowed types, ignore it and fall back to default
+            if (!allowedTypes.includes(issueType)) {
+              console.log(`Parsed issueType \"${issueType}\" is not a known type; falling back to 'feature'`);
+              issueType = 'feature';
+            }
+
+            // Parse issue title: prefer the GitHub title; fall back to an 'Issue Title' body section if present
+            let issueTitle = issue.title.replace(/^\[.*?\]\s*/, '').trim();
+            const titleMatch = body.match(/### Issue Title\s*\n.*?\n\n(.+)/s);
+            if (titleMatch) {
+              const extracted = titleMatch[1].trim().split('\n')[0];
+              if (extracted) issueTitle = extracted;
+            }
+
+            // Update issue title with type prefix in UPPERCASE if not already there
+            const expectedPrefix = `[${issueType.toUpperCase()}]`;
+            if (!issue.title.toLowerCase().startsWith(`[${issueType.toLowerCase()}]`)) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                title: `${expectedPrefix} ${issueTitle}`
+              });
+              console.log(`✅ Updated title to: ${expectedPrefix} ${issueTitle}`);
+            } else {
+              console.log('Title already has correct prefix');
+            }

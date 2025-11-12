@@ -1,0 +1,42 @@
+name: Issue Assignment
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  assign-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign issue to author if requested
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+
+            // Check if this is from the issue template
+            if (!body.includes('### Branch Creation') && !body.includes('### Assignment')) {
+              console.log('Not from the issue template, skipping');
+              return;
+            }
+
+            // Check if "Assign to me directly" checkbox is checked
+            const assignToAuthor = /- \[x\]\s*Assign to me directly/i.test(body);
+            
+            if (!assignToAuthor) {
+              console.log('Assignment not requested');
+              return;
+            }
+
+            const username = issue.user.login;
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              assignees: [username]
+            });
+            
+            console.log(`✅ Assigned issue to @${username}`);

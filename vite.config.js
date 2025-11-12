@@ -5,6 +5,7 @@ import fg from 'fast-glob';
 
 const scssEntries = fg.sync('resources/scss/**/*.scss');
 const jsEntries = fg.sync('resources/js/**/*.js');
+const imageEntries = fg.sync('resources/images/**/*.{svg,png,jpg,jpeg,gif,webp}');
 
 export default defineConfig(({ mode }) => {
     // Load env file based on `mode` in the current working directory.
@@ -19,6 +20,7 @@ export default defineConfig(({ mode }) => {
                 input: [
                     ...scssEntries,
                     ...jsEntries,
+                    ...imageEntries,
                 ],
                 refresh: true,
             }),
