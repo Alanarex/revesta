@@ -1,7 +1,7 @@
 name: Issue Labels
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 permissions:
   issues: write
@@ -95,12 +95,14 @@ jobs:
 
             // Sanitize issueType into a label
             const sanitizedType = issueType.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').substring(0, 50);
-            // Apply labels to issue
-            await github.rest.issues.addLabels({
+
+            // Replace all labels on the issue with exactly the managed labels (sanitizedType and version)
+            // This will remove any other labels and set only the type and version labels as requested.
+            await github.rest.issues.setLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
               labels: [sanitizedType, version]
             });
 
-            console.log(`✅ Applied labels: ${issueType}, ${version}`);
+            console.log(`✅ Replaced labels with: ${sanitizedType}, ${version}`);

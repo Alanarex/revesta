@@ -1,7 +1,7 @@
 name: Issue Title
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 permissions:
   issues: write
@@ -39,23 +39,27 @@ jobs:
             }
 
             // Parse issue title: prefer the GitHub title; fall back to an 'Issue Title' body section if present
-            let issueTitle = issue.title.replace(/^\[.*?\]\s*/, '').trim();
+            // Remove any existing leading [.*] prefix to get the raw title
+            let rawTitle = issue.title.replace(/^\[.*?\]\s*/, '').trim();
             const titleMatch = body.match(/### Issue Title\s*\n.*?\n\n(.+)/s);
             if (titleMatch) {
               const extracted = titleMatch[1].trim().split('\n')[0];
-              if (extracted) issueTitle = extracted;
+              if (extracted) rawTitle = extracted;
             }
 
-            // Update issue title with type prefix in UPPERCASE if not already there
+            // Construct expected title with type prefix in UPPERCASE
             const expectedPrefix = `[${issueType.toUpperCase()}]`;
-            if (!issue.title.toLowerCase().startsWith(`[${issueType.toLowerCase()}]`)) {
+            const newTitle = `${expectedPrefix} ${rawTitle}`.trim();
+
+            // Update the issue title if it differs from the current title (this will replace any existing [TYPE] prefix)
+            if (issue.title !== newTitle) {
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                title: `${expectedPrefix} ${issueTitle}`
+                title: newTitle
               });
-              console.log(`✅ Updated title to: ${expectedPrefix} ${issueTitle}`);
+              console.log(`✅ Updated title to: ${newTitle}`);
             } else {
-              console.log('Title already has correct prefix');
+              console.log('Title already has correct prefix and content');
             }
