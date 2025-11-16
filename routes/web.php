@@ -3,6 +3,7 @@
 use App\Http\Controllers\ConditionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\IsAdmin;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -12,6 +13,17 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Profile routes
+    Route::controller(ProfileController::class)
+        ->prefix('profile')
+        ->name('profile.')
+        ->group(function () {
+            Route::get('/', 'edit')->name('edit');
+            Route::patch('/', 'update')->name('update');
+            Route::put('/password', 'updatePassword')->name('password.update');
+            Route::delete('/', 'destroy')->name('destroy');
+        });
 
     Route::middleware(IsAdmin::class)->group(function () {
         route::group(['prefix' => 'conditions', 'as' => 'conditions.'], function () {
