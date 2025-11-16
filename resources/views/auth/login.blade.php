@@ -16,6 +16,13 @@
                 </div>
             @endif
 
+            @if (session('status') === 'account-deleted')
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="fa-solid fa-circle-info me-2"></i>{{ __('Your account has been successfully deleted.') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
