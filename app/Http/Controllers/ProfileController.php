@@ -72,11 +72,11 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
+        $this->profile->deleteAccount($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')->with('status', 'account-deleted');
     }
 }
