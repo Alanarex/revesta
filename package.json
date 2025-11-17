@@ -18,6 +18,10 @@
         "vite": "^6.3.5"
     },
     "dependencies": {
-        "bootstrap": "^5.3.6"
+        "@fortawesome/fontawesome-free": "^7.1.0",
+        "bootstrap": "^5.3.6",
+        "jquery": "^3.7.1",
+        "jquery-validation": "^1.21.0",
+        "sweetalert2": "^11.26.3"
     }
 }

@@ -32,7 +32,16 @@ class UserFactory extends Factory
             'password' => bcrypt('password'),
             'remember_token' => null,
             'role_id' => Role::inRandomOrder()->first()?->id, // safe fallback with null if no roles exist
-
         ];
+    }
+
+    /**
+     * Indicate that the user's email address should be unverified.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn () => [
+            'email_verified_at' => null,
+        ]);
     }
 }
