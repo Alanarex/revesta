@@ -24,6 +24,7 @@ class UserFactory extends Factory
             'last_name' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
             'phone' => $this->faker->phoneNumber,
+            'bio' => $this->faker->sentence(),
             'address_id' => Address::factory(),
             'civil_status' => $this->faker->randomElement(['single', 'married', 'divorced']),
             'family_status' => $this->faker->randomElement(['with_children', 'without_children']),

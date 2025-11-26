@@ -24,6 +24,35 @@ class Blog extends Model
         'published_at' => 'datetime',
     ];
 
+    // Status constants
+    public const DRAFT = 'draft';
+    public const PENDING = 'pending';
+    public const PUBLISHED = 'published';
+    public const REJECTED = 'rejected';
+
+    /**
+     * Helpers for status checks
+     */
+    public function isDraft(): bool
+    {
+        return $this->status === self::DRAFT;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === self::PENDING;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === self::PUBLISHED;
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === self::REJECTED;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

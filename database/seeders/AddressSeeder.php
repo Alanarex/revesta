@@ -9,6 +9,11 @@ class AddressSeeder extends Seeder
 {
     public function run()
     {
-        Address::factory()->count(10)->create();
+        $this->command->info('Creating addresses...');
+        
+        $count = 10;
+        Address::factory()->count($count)->create();
+        
+        $this->command->info('✅ Created ' . $count . ' addresses.');
     }
 }

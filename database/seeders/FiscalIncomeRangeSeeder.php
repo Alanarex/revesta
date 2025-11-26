@@ -9,6 +9,11 @@ class FiscalIncomeRangeSeeder extends Seeder
 {
     public function run()
     {
-        FiscalIncomeRange::factory()->count(5)->create();
+        $this->command->info('Creating fiscal income ranges...');
+        
+        $count = 5;
+        FiscalIncomeRange::factory()->count($count)->create();
+        
+        $this->command->info('✅ Created ' . $count . ' fiscal income ranges.');
     }
 }

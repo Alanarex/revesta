@@ -111,4 +111,25 @@ class User extends Authenticatable
         $lastInitial = $this->last_name ? mb_substr($this->last_name, 0, 1) : '';
         return mb_strtoupper($firstInitial . $lastInitial);
     }
+
+    /**
+     * Convenience helper to check whether the user is an administrator.
+     * Relies on the `role` relation and the `roles.name` value.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role && isset($this->role->name) && strcasecmp($this->role->name, 'admin') === 0;
+    }
+
+    /**
+     * Get the blog bookmarks for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function blogBookmarks()
+    {
+        return $this->hasMany(BlogBookmark::class);
+    }
 }

@@ -9,6 +9,11 @@ class AidSeeder extends Seeder
 {
     public function run()
     {
-        Aid::factory()->count(8)->create();
+        $this->command->info('Creating aids...');
+        
+        $count = 8;
+        Aid::factory()->count($count)->create();
+        
+        $this->command->info('✅ Created ' . $count . ' aids.');
     }
 }
