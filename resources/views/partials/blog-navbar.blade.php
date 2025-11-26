@@ -75,6 +75,6 @@
 
 @auth
     @push('scripts')
-        @vite('resources/js/blogs/navbar.js')
+        @vite('resources/js/blogs/navbar.fixed.js')
     @endpush
 @endauth

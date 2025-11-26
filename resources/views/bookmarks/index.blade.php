@@ -46,5 +46,5 @@
 @endsection
 
 @push('scripts')
-@vite('resources/js/blogs/bookmarks.js')
+@vite('resources/js/blogs/bookmarks.fixed.js')
 @endpush
