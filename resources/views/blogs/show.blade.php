@@ -5,6 +5,8 @@
         ->count();
     // Count only direct comments (exclude replies)
     $directCommentsCount = $blog->comments->count();
+    // Disable interactions (likes/comments/bookmarks/copy) when not published
+    $interactionsDisabled = ! $blog->isPublished();
 @endphp
 
 @extends('blogs.layout')
@@ -42,16 +44,16 @@
                             @auth
                                 @php $blogLiked = ($blog->liked_by_auth ?? 0) > 0; @endphp
                                 <button class="btn btn-outline-primary like-btn" data-likeable-id="{{ $blog->id }}"
-                                    data-likeable-type="App\Models\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}">
+                                    data-likeable-type="App\Models\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}" @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Interactions désactivées pour ce statut" @endif>
                                     <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart"></i>
                                     <span class="likes-count">{{ $blogLikesCount }}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary scroll-to-comments">
+                                <button class="btn btn-outline-secondary scroll-to-comments" @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Interactions désactivées pour ce statut" @endif>
                                     <i class="fa fa-comment"></i>
                                     <span>{{ $directCommentsCount }}</span>
                                 </button>
                             @else
-                                <button class="btn btn-outline-primary" data-auth-required>
+                                <button class="btn btn-outline-primary" data-auth-required @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Interactions désactivées pour ce statut" @endif>
                                     <i class="far fa-heart"></i>
                                     <span>{{ $blogLikesCount }}</span>
                                 </button>
@@ -65,18 +67,16 @@
                         <div class="d-flex gap-2">
                             @auth
                                 @php $bookmarked = ($blog->bookmarked_by_auth ?? 0) > 0; @endphp
-                                <button class="btn btn-outline-secondary bookmark-btn" 
+                                <button class="btn btn-outline-secondary bookmark-btn"
                                     type="button"
                                     data-blog-id="{{ $blog->id }}"
-                                    data-bookmarked="{{ $bookmarked ? 'true' : 'false' }}"
-                                    title="Ajouter aux signets">
+                                    data-bookmarked="{{ $bookmarked ? 'true' : 'false' }}" @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Actions désactivées pour ce statut" @endif>
                                     <i class="{{ $bookmarked ? 'fas' : 'far' }} fa-bookmark"></i>
                                 </button>
                             @else
-                                <button class="btn btn-outline-secondary" 
+                                <button class="btn btn-outline-secondary"
                                     type="button"
-                                    data-auth-required
-                                    title="Ajouter aux signets">
+                                    data-auth-required @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Actions désactivées pour ce statut" @endif>
                                     <i class="far fa-bookmark"></i>
                                 </button>
                             @endauth
@@ -87,8 +87,8 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item copy-link" href="#"
-                                            data-url="{{ route('blogs.show', $blog) }}">
+                                        <a class="dropdown-item copy-link @if($interactionsDisabled) disabled @endif" href="#"
+                                            data-url="{{ route('blogs.show', $blog) }}" @if($interactionsDisabled) aria-disabled="true" data-disabled="true" title="Copie désactivée pour ce statut" @endif>
                                             <i class="fa fa-copy"></i> Copier le lien
                                         </a>
                                     </li>
@@ -125,20 +125,20 @@
                             @auth
                                 @php $blogLiked = ($blog->liked_by_auth ?? 0) > 0; @endphp
                                 <button class="btn btn-outline-primary like-btn" data-likeable-id="{{ $blog->id }}"
-                                    data-likeable-type="App\Models\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}">
+                                    data-likeable-type="App\\Models\\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}" @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Interactions désactivées pour ce statut" @endif>
                                     <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart"></i>
                                     <span class="likes-count">{{ $blogLikesCount }}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary scroll-to-comments">
+                                <button class="btn btn-outline-secondary scroll-to-comments" @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Interactions désactivées pour ce statut" @endif>
                                     <i class="fa fa-comment"></i>
                                     <span>{{ $directCommentsCount }}</span>
                                 </button>
                             @else
-                                <button class="btn btn-outline-primary" data-auth-required>
+                                <button class="btn btn-outline-primary" data-auth-required @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Interactions désactivées pour ce statut" @endif>
                                     <i class="far fa-heart"></i>
                                     <span>{{ $blogLikesCount }}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary scroll-to-comments">
+                                <button class="btn btn-outline-secondary scroll-to-comments" @if($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Interactions désactivées pour ce statut" @endif>
                                     <i class="fa fa-comment"></i>
                                     <span>{{ $directCommentsCount }}</span>
                                 </button>
@@ -162,8 +162,8 @@
                                 <form class="comment-form" data-blog-id="{{ $blog->id }}" data-parent-id="">
                                     <div class="input-group">
                                         <input type="text" class="form-control comment-input"
-                                            placeholder="Ajouter un commentaire..." required>
-                                        <button type="submit" class="btn btn-primary">
+                                            placeholder="Ajouter un commentaire..." required @if($interactionsDisabled) disabled aria-disabled="true" title="Commentaires désactivés pour ce statut" @endif>
+                                        <button type="submit" class="btn btn-primary" @if($interactionsDisabled) disabled aria-disabled="true" title="Commentaires désactivés pour ce statut" @endif>
                                             <i class="fa fa-paper-plane"></i>
                                         </button>
                                     </div>
