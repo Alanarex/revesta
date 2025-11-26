@@ -8,6 +8,8 @@
         $showDelete = $showDelete ?? true;
         // Control whether to show author info (hide on profile pages since it's redundant)
         $showAuthor = $showAuthor ?? true;
+        // Disable interactive actions (like/comment/bookmark/share) for non-published statuses
+        $interactionsDisabled = $blog->isDraft() || $blog->isPending() || $blog->isRejected();
     @endphp
     <a href="{{ route('blogs.show', $blog) }}" class="text-decoration-none" style="color: inherit;">
         <div class="card-body">
@@ -58,11 +60,13 @@
                         @auth
                             @php $bookmarked = ($blog->bookmarked_by_auth ?? 0) > 0; @endphp
                             <button class="btn btn-outline-secondary bookmark-btn" type="button"
-                                data-blog-id="{{ $blog->id }}" data-bookmarked="{{ $bookmarked ? 'true' : 'false' }}">
+                                data-blog-id="{{ $blog->id }}" data-bookmarked="{{ $bookmarked ? 'true' : 'false' }}"
+                                @if ($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Actions désactivées pour ce statut" @endif>
                                 <i class="{{ $bookmarked ? 'fas' : 'far' }} fa-bookmark"></i>
                             </button>
                         @else
-                            <button class="btn btn-outline-secondary" type="button" data-auth-required>
+                            <button class="btn btn-outline-secondary" type="button" data-auth-required
+                                @if ($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Actions désactivées pour ce statut" @endif>
                                 <i class="far fa-bookmark"></i>
                             </button>
                         @endauth
@@ -70,13 +74,15 @@
 
                     @if ($showShare)
                         <div class="dropdown">
-                            <button class="btn btn-outline-secondary" data-bs-toggle="dropdown">
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown"
+                                @if ($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Partage désactivé pour ce statut" @endif>
                                 <i class="fa fa-share-alt"></i>
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item copy-link" href="#"
-                                        data-url="{{ route('blogs.show', $blog) }}">
+                                    <a class="dropdown-item copy-link @if ($interactionsDisabled) disabled @endif"
+                                        href="#" data-url="{{ route('blogs.show', $blog) }}"
+                                        @if ($interactionsDisabled) aria-disabled="true" data-disabled="true" title="Copie désactivée pour ce statut" @endif>
                                         <i class="fa fa-copy"></i> Copier le lien
                                     </a>
                                 </li>
@@ -95,8 +101,7 @@
 
                                 @if ($showDelete)
                                     <button class="btn btn-outline-danger delete-blog-btn"
-                                        data-blog-id="{{ $blog->id }}"
-                                        onclick="event.preventDefault(); event.stopPropagation();">
+                                        data-blog-id="{{ $blog->id }}">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 @endif
