@@ -21,12 +21,27 @@ class BlogPolicy
     public function view(?User $user, Blog $blog): bool
     {
         // Published blogs are public
-        if ($blog->status === 'published') {
+        if ($blog->status === Blog::PUBLISHED) {
             return true;
         }
 
-        // Drafts/pending can be viewed by author or admin
-        return $user && ($user->id === $blog->user_id || $user->isAdmin());
+        // Drafts: only the author can view
+        if ($blog->status === Blog::DRAFT) {
+            return $user !== null && $user->id === $blog->user_id;
+        }
+
+        // Rejected: only the author can view (admin may manage via admin panel)
+        if ($blog->status === Blog::REJECTED) {
+            return $user !== null && $user->id === $blog->user_id;
+        }
+
+        // Pending: author or admin can view
+        if ($blog->status === Blog::PENDING) {
+            return $user !== null && ($user->id === $blog->user_id || $user->isAdmin());
+        }
+
+        // Fallback deny
+        return false;
     }
 
     /**
