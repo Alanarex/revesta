@@ -27,6 +27,10 @@ class ProfileController extends Controller
 
         $isViewingOwnProfile = auth()->check() && auth()->id() === $user->id;
 
+        if ($isViewingOwnProfile) {
+            return redirect('/profile');
+        }
+
         // Published blogs for display to any viewer
         $publishedBlogs = \App\Models\Blog::where('user_id', $user->id)
             ->published()
