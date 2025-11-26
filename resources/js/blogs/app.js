@@ -3,7 +3,6 @@ import Swal from 'sweetalert2';
 // Auth Alert - Guest users trying to perform actions
 $(document).on('click', '[data-auth-required]', function (e) {
     e.preventDefault();
-    e.stopPropagation();
 
     Swal.fire({
         title: 'Connexion requise',
@@ -24,9 +23,11 @@ $(document).on('click', '[data-auth-required]', function (e) {
 // Bookmark Toggle - Only for authenticated users
 $(document).on('click', '.bookmark-btn:not([data-auth-required])', function (e) {
     e.preventDefault();
-    e.stopPropagation();
 
     const btn = $(this);
+
+    // Respect UI-disabled state (added by Blade when blog is not published)
+    if (isElementDisabled(btn)) return;
     const blogId = btn.data('blog-id');
     const currentState = btn.data('bookmarked') === 'true' || btn.data('bookmarked') === true;
     const icon = btn.find('i');
@@ -73,9 +74,6 @@ $(document).on('click', '.bookmark-btn:not([data-auth-required])', function (e) 
 
 // Helper function to show tooltip message near button
 function showTooltipMessage(btn, message, isError = false) {
-    // Remove any existing tooltips first
-    $('.bookmark-tooltip').remove();
-    
     const tooltip = $('<div class="bookmark-tooltip">').text(message).css({
         position: 'absolute',
         padding: '8px 12px',
@@ -118,9 +116,24 @@ function showTooltipMessage(btn, message, isError = false) {
     }, 1500);
 }
 
+// Helper to determine whether an element should be treated as disabled.
+function isElementDisabled(jqEl) {
+    if (!jqEl || jqEl.length === 0) return false;
+
+    // jQuery .attr('disabled') returns undefined when not present.
+    const attrDisabled = typeof jqEl.attr('disabled') !== 'undefined' && jqEl.attr('disabled') !== false;
+    const ariaDisabled = jqEl.attr('aria-disabled') === 'true';
+    const dataDisabled = jqEl.data('disabled') === true || jqEl.data('disabled') === 'true';
+
+    return attrDisabled || ariaDisabled || dataDisabled;
+}
+
 // Like Toggle
 $(document).on('click', '.like-btn', function () {
     const btn = $(this);
+
+    // Don't perform like toggles when UI marks the button as disabled
+    if (isElementDisabled(btn)) return;
     const likeableId = btn.data('likeable-id');
     const likeableType = btn.data('likeable-type');
 
@@ -191,9 +204,11 @@ $(document).on('click', '.like-btn', function () {
 // Copy Link
 $(document).on('click', '.copy-link', function (e) {
     e.preventDefault();
-    e.stopPropagation();
 
     const link = $(this);
+
+    // Prevent copy action if link/button is disabled in the UI
+    if (isElementDisabled(link)) return;
     const url = link.data('url');
 
     if (!url) {
@@ -285,9 +300,14 @@ $(document).on('click', '.delete-blog-btn', function () {
 });
 
 // Comment Form Submit
+// Comment Form Submit
 $(document).on('submit', '.comment-form', function (e) {
     e.preventDefault();
     const form = $(this);
+
+    // If the form or its submit button is disabled, ignore the submit
+    const submitBtn = form.find('button[type="submit"]').first();
+    if (isElementDisabled(form) || isElementDisabled(submitBtn)) return;
     const blogId = form.data('blog-id');
     const parentId = form.data('parent-id') || null;
     const input = form.find('.comment-input');
@@ -365,8 +385,13 @@ $(document).on('submit', '.comment-form', function (e) {
 
 // Reply Button
 $(document).on('click', '.reply-btn', function () {
-    const commentId = $(this).data('comment-id');
-    const container = $(this).closest('.comment-item').find('.reply-form-container').first();
+    const $btn = $(this);
+
+    // Ignore reply clicks when UI disables replies
+    if (isElementDisabled($btn)) return;
+
+    const commentId = $btn.data('comment-id');
+    const container = $btn.closest('.comment-item').find('.reply-form-container').first();
 
     if (container.is(':visible')) {
         container.hide().empty();
