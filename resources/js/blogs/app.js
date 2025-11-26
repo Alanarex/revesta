@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 // Auth Alert - Guest users trying to perform actions
 $(document).on('click', '[data-auth-required]', function (e) {
     e.preventDefault();
+    e.stopPropagation();
 
     Swal.fire({
         title: 'Connexion requise',
@@ -20,64 +21,102 @@ $(document).on('click', '[data-auth-required]', function (e) {
     });
 });
 
-// Bookmark Toggle
-$(document).on('click', '.bookmark-btn', function (e) {
+// Bookmark Toggle - Only for authenticated users
+$(document).on('click', '.bookmark-btn:not([data-auth-required])', function (e) {
     e.preventDefault();
+    e.stopPropagation();
+
     const btn = $(this);
     const blogId = btn.data('blog-id');
-    const isBookmarked = btn.data('bookmarked') === true || btn.data('bookmarked') === 'true';
+    const currentState = btn.data('bookmarked') === 'true' || btn.data('bookmarked') === true;
+    const icon = btn.find('i');
+
+    // Optimistic UI update
+    btn.prop('disabled', true);
 
     $.ajax({
         url: '/blogs/bookmarks/toggle',
         method: 'POST',
+        dataType: 'json',
         data: {
             _token: $('meta[name="csrf-token"]').attr('content'),
             blog_id: blogId
         },
         success: function (response) {
             if (response.success) {
-                const icon = btn.find('i');
+                // Toggle the state
+                const newState = !currentState;
+                btn.data('bookmarked', newState);
 
-                // Toggle FontAwesome 5 classes (fas = solid, far = regular/outline)
-                if (isBookmarked) {
-                    icon.removeClass('fas').addClass('far');
-                    btn.data('bookmarked', false);
-                } else {
+                // Update icon: solid (fas) when bookmarked, outline (far) when not
+                if (newState) {
                     icon.removeClass('far').addClass('fas');
-                    btn.data('bookmarked', true);
+                } else {
+                    icon.removeClass('fas').addClass('far');
                 }
 
-                // Show a small tooltip (no modal). Anchor to dropdown toggle if present.
-                try {
-                    const $anchor = btn.closest('.dropdown').find('[data-bs-toggle="dropdown"]').first();
-                    const $target = $anchor.length ? $anchor : btn;
-                    const msg = response.message || (isBookmarked ? 'Signet supprimé' : 'Signet ajouté');
-                    showCopyTooltip($target, msg);
-                } catch (e) {
-                    // fallback to success toast if tooltip fails
-                    Swal.fire({
-                        icon: 'success',
-                        title: response.message,
-                        toast: true,
-                        position: 'top-end',
-                        timer: 2000,
-                        showConfirmButton: false,
-                        timerProgressBar: true
-                    });
-                }
+                // Show tooltip message
+                const message = newState ? 'Signet ajouté' : 'Signet supprimé';
+                showTooltipMessage(btn, message);
+            } else {
+                showTooltipMessage(btn, 'Erreur: ' + (response.message || 'Action échouée'), true);
             }
+            btn.prop('disabled', false);
         },
         error: function (xhr) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: xhr.responseJSON?.message || 'Une erreur est survenue',
-                timer: 2000,
-                showConfirmButton: false
-            });
+            const errorMsg = xhr.responseJSON?.message || 'Une erreur est survenue';
+            showTooltipMessage(btn, errorMsg, true);
+            btn.prop('disabled', false);
         }
     });
 });
+
+// Helper function to show tooltip message near button
+function showTooltipMessage(btn, message, isError = false) {
+    // Remove any existing tooltips first
+    $('.bookmark-tooltip').remove();
+    
+    const tooltip = $('<div class="bookmark-tooltip">').text(message).css({
+        position: 'absolute',
+        padding: '8px 12px',
+        'border-radius': '4px',
+        'font-size': '0.9rem',
+        'z-index': 9999,
+        'pointer-events': 'none',
+        color: '#fff',
+        background: isError ? '#dc3545' : '#28a745',
+        opacity: 0,
+        transition: 'opacity 0.3s ease',
+        'white-space': 'nowrap'
+    });
+
+    $('body').append(tooltip);
+
+    // Position tooltip above the button using viewport coordinates
+    const rect = btn[0].getBoundingClientRect();
+    const tooltipWidth = tooltip.outerWidth();
+    const tooltipHeight = tooltip.outerHeight();
+    
+    // Calculate position relative to viewport, then add scroll offset for absolute positioning
+    const scrollTop = $(window).scrollTop();
+    const scrollLeft = $(window).scrollLeft();
+    
+    tooltip.css({
+        left: (rect.left + scrollLeft + (rect.width / 2) - (tooltipWidth / 2)) + 'px',
+        top: (rect.top + scrollTop - tooltipHeight - 8) + 'px'
+    });
+
+    // Fade in
+    setTimeout(() => {
+        tooltip.css('opacity', '1');
+    }, 10);
+
+    // Fade out and remove
+    setTimeout(() => {
+        tooltip.css('opacity', '0');
+        setTimeout(() => tooltip.remove(), 300);
+    }, 1500);
+}
 
 // Like Toggle
 $(document).on('click', '.like-btn', function () {
@@ -149,151 +188,61 @@ $(document).on('click', '.like-btn', function () {
     });
 });
 
-// Copy Link (click) and lightweight hover tooltip support.
-// Handles both .copy-link and .integration-checklist__copy-button
-$(document).on('click', '.copy-link, .integration-checklist__copy-button', function (e) {
+// Copy Link
+$(document).on('click', '.copy-link', function (e) {
     e.preventDefault();
-    const $btn = $(this);
-    const url = $btn.data('url') || $btn.data('clipboard') || $btn.attr('href') || $btn.data('value') || '';
+    e.stopPropagation();
+
+    const link = $(this);
+    const url = link.data('url');
 
     if (!url) {
-        showCopyTooltip($btn, "Aucun URL trouvé", true);
+        showTooltipMessage(link, 'URL introuvable', true);
         return;
     }
 
-    // Try modern clipboard API first
+    // Use modern Clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => {
-            // Anchor tooltip to dropdown toggle if present
-            const $anchor = $btn.closest('.dropdown').find('[data-bs-toggle="dropdown"]').first();
-            showCopyTooltip($anchor.length ? $anchor : $btn, 'Lien copié!');
-        }).catch(() => {
-            // Fallback if clipboard API fails
-            copyToClipboardFallback(url, $btn);
-        });
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                // Find the share button (dropdown toggle) to position tooltip there
+                const shareBtn = link.closest('.dropdown').find('[data-bs-toggle="dropdown"]').first();
+                const targetBtn = shareBtn.length ? shareBtn : link;
+                showTooltipMessage(targetBtn, 'Lien copié!');
+            })
+            .catch(() => {
+                // Fallback to old method
+                copyLinkFallback(url, link);
+            });
     } else {
-        // Fallback for older browsers
-        copyToClipboardFallback(url, $btn);
+        // Browser doesn't support Clipboard API
+        copyLinkFallback(url, link);
     }
 });
 
-// Fallback method for copying to clipboard (execCommand) — accepts button reference
-function copyToClipboardFallback(text, $btn) {
+// Fallback for older browsers
+function copyLinkFallback(url, link) {
     const textarea = document.createElement('textarea');
-    textarea.value = text;
+    textarea.value = url;
     textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '-9999px';
     document.body.appendChild(textarea);
     textarea.select();
 
     try {
-        const ok = document.execCommand('copy');
-        if (ok) {
-            const $anchor = $btn.closest('.dropdown').find('[data-bs-toggle="dropdown"]').first();
-            showCopyTooltip($anchor.length ? $anchor : $btn, 'Lien copié!');
-        } else {
-            const $anchor = $btn.closest('.dropdown').find('[data-bs-toggle="dropdown"]').first();
-            showCopyTooltip($anchor.length ? $anchor : $btn, 'Échec de la copie', true);
-        }
+        document.execCommand('copy');
+        const shareBtn = link.closest('.dropdown').find('[data-bs-toggle="dropdown"]').first();
+        const targetBtn = shareBtn.length ? shareBtn : link;
+        showTooltipMessage(targetBtn, 'Lien copié!');
     } catch (err) {
-        showCopyTooltip($btn, 'Échec de la copie', true);
+        showTooltipMessage(link, 'Erreur lors de la copie', true);
     } finally {
         document.body.removeChild(textarea);
     }
 }
 
-// Show a transient tooltip near the element. If persistent=true the tooltip will
-// remain until hideCopyTooltip() is called. Uses Bootstrap.Tooltip if available.
-function showCopyTooltip($el, message, isError = false, persistent = false) {
-    if (!$el || !$el.length) return;
-
-    // If Bootstrap's Tooltip is available, prefer it for native-looking tooltips.
-    if (window.bootstrap && window.bootstrap.Tooltip) {
-        try {
-            // create instance with manual trigger so we control show/hide
-            const tip = new bootstrap.Tooltip($el[0], { title: message, trigger: 'manual' });
-            $el.data('bs.tooltip.instance', tip);
-            tip.show();
-
-            if (!persistent) {
-                setTimeout(() => {
-                    try { tip.hide(); } catch (e) { }
-                    try { tip.dispose(); } catch (e) { }
-                    $el.removeData('bs.tooltip.instance');
-                }, 1400);
-            }
-            return;
-        } catch (e) {
-            // fall through to DOM tooltip
-        }
-    }
-
-    // DOM-based tooltip fallback
-    const $tip = $('<div class="copy-tooltip" role="status" aria-live="polite">').text(message).css({
-        position: 'absolute',
-        padding: '6px 10px',
-        color: '#fff',
-        'font-size': '0.85rem',
-        'border-radius': '4px',
-        'z-index': 1060,
-        'pointer-events': 'none',
-        transition: 'opacity 160ms ease, transform 160ms ease',
-        opacity: 0,
-        transform: 'translateY(-6px)'
-    });
-
-    if (isError) $tip.css('background', 'rgba(220,53,69,0.95)');
-    else $tip.css('background', 'rgba(0,0,0,0.85)');
-
-    $('body').append($tip);
-
-    const off = $el.offset();
-    const bw = $el.outerWidth();
-    const th = $tip.outerHeight();
-    const tw = $tip.outerWidth();
-    const left = Math.round(off.left + (bw / 2) - (tw / 2));
-    const top = Math.round(off.top - th - 8);
-
-    $tip.css({ left: left + 'px', top: top + 'px' });
-
-    requestAnimationFrame(() => {
-        $tip.css({ opacity: 1, transform: 'translateY(0)' });
-    });
-
-    if (persistent) {
-        $el.data('copy-tooltip-persistent', true);
-        $el.data('copy-tooltip-element', $tip);
-    } else {
-        setTimeout(() => {
-            $tip.css({ opacity: 0, transform: 'translateY(-6px)' });
-            setTimeout(() => $tip.remove(), 220);
-        }, 1400);
-    }
-}
-
-function hideCopyTooltip($el) {
-    if (!$el || !$el.length) return;
-
-    // If Bootstrap tooltip instance present, hide & dispose
-    const inst = $el.data('bs.tooltip.instance');
-    if (inst && typeof inst.hide === 'function') {
-        try { inst.hide(); } catch (e) { }
-        try { inst.dispose(); } catch (e) { }
-        $el.removeData('bs.tooltip.instance');
-    }
-
-    const $tip = $el.data('copy-tooltip-element');
-    if ($tip && $tip.length) {
-        $tip.remove();
-        $el.removeData('copy-tooltip-element');
-    }
-
-    $el.removeData('copy-tooltip-persistent');
-}
-
-// NOTE: tooltip on hover removed. Tooltip now appears only after the dropdown's
-// "copy link" option is clicked; the click handler anchors the tooltip to the
-// dropdown toggle button (see click handler above).
+// NOTE: tooltip on hover removed. Tooltip now appears only after actions.
 
 // Delete Blog
 $(document).on('click', '.delete-blog-btn', function () {
