@@ -26,6 +26,9 @@ Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
 
 // Authenticated blog routes
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Bookmarks - named without the 'blogs.' prefix so views can use route('bookmarks.index')
+    // Only provide listing and rely on toggle endpoint for add/remove. No delete route needed.
+    Route::get('/blogs/bookmarks', [\App\Http\Controllers\BookmarkController::class, 'index'])->name('bookmarks.index');
     // Blog management routes (specific routes BEFORE wildcard)
     Route::prefix('blogs')->name('blogs.')->group(function () {
         Route::get('/create', [BlogController::class, 'create'])->name('create');
@@ -45,9 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Bookmarks
         Route::post('/bookmarks/toggle', [BlogBookmarkController::class, 'toggle'])->middleware('throttle:60,1')->name('bookmarks.toggle');
-    // My bookmarks listing
-    Route::get('/bookmarks', [\App\Http\Controllers\BookmarkController::class, 'index'])->name('bookmarks.index');
-    Route::delete('/bookmarks/{bookmark}', [\App\Http\Controllers\BookmarkController::class, 'destroy'])->name('bookmarks.destroy');
+    // Bookmarks toggle endpoint remains here; the full listing routes are named without the 'blogs.' prefix above.
     });
 });
 

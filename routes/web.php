@@ -42,3 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // });
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/blogs.php';
+
+// Public user profile (view another user's profile)
+// Use /profile/{userId} so profile routes stay under the 'profile' prefix and
+// views that link to profiles can use route('profile.show', ['userId' => ...])
+Route::get('/profile/{userId}', [ProfileController::class, 'show'])->name('profile.show');

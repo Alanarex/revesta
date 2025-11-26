@@ -26,12 +26,8 @@
                                 <p class="text-muted mb-1">par {{ $b->user?->full_name ?? 'Auteur' }} — {{ $b->created_at?->diffForHumans() }}</p>
                                 <p class="mb-0 text-truncate" style="max-height:3.6em;overflow:hidden">{!! Str::limit(strip_tags($b->short_description ?? $b->content), 220) !!}</p>
                             </div>
-                            <div class="ms-3 text-end">
-                                <form method="POST" action="{{ route('bookmarks.destroy', $bookmark->id) }}" class="bookmark-remove-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger bookmark-remove-btn" type="submit" data-id="{{ $bookmark->id }}">Retirer</button>
-                                </form>
+                                <div class="ms-3 text-end">
+                                <button class="btn btn-sm btn-outline-danger bookmark-toggle-btn" type="button" data-blog-id="{{ $b->id }}" data-toggle-url="{{ route('blogs.bookmarks.toggle') }}">Retirer</button>
                                 <a href="{{ route('blogs.show', $b->slug ?? $b->id) }}" class="btn btn-sm btn-primary mt-2">Voir</a>
                             </div>
                         </div>
@@ -49,32 +45,6 @@
 
 @endsection
 
-@section('scripts')
-<script>
-document.addEventListener('click', function (e) {
-    if (!e.target.closest('.bookmark-remove-btn')) return;
-    e.preventDefault();
-    const btn = e.target.closest('.bookmark-remove-btn');
-    const form = btn.closest('.bookmark-remove-form');
-    const url = form.getAttribute('action');
-
-    if (!confirm('Supprimer ce signet ?')) return;
-
-    fetch(url, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json'
-        }
-    }).then(r => r.json()).then(data => {
-        if (data && data.success) {
-            // remove the card visually
-            const card = btn.closest('.col-12');
-            if (card) card.remove();
-        } else {
-            alert(data.message || 'Impossible de retirer le signet');
-        }
-    }).catch(() => alert('Erreur réseau'));
-});
-</script>
-@endsection
+@push('scripts')
+@vite('resources/js/blogs/bookmarks.js')
+@endpush

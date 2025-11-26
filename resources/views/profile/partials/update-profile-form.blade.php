@@ -2,9 +2,9 @@
 <div class="card modern-card mb-4">
     <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="mb-0">
-            <i class="fa-regular fa-user me-2"></i>{{ __('Profile Information') }}
+            <i class="fa-regular fa-user me-2"></i>Informations du Profil
         </h5>
-        <span class="badge bg-light text-dark">{{ __('Basic Info') }}</span>
+        <span class="badge bg-primary">Informations de base</span>
     </div>
     <div class="card-body">
         <form id="profileForm" method="POST" action="{{ route('profile.update') }}" novalidate>

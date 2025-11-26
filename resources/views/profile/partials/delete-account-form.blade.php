@@ -1,10 +1,10 @@
 <!-- Delete Account Card -->
-<div class="card modern-card mb-4">
-    <div class="card-header d-flex align-items-center justify-content-between">
+<div class="card modern-card border-danger mb-4">
+    <div class="card-header bg-danger text-white d-flex align-items-center justify-content-between">
         <h5 class="mb-0">
-            <i class="fa-solid fa-user-xmark me-2"></i>{{ __('Delete Account') }}
+            <i class="fa-solid fa-user-xmark me-2"></i>Supprimer le Compte
         </h5>
-        <span class="badge bg-light text-dark">{{ __('Irreversible') }}</span>
+        <span class="badge bg-white text-danger">Irréversible</span>
     </div>
     <div class="card-body">
         <div class="row g-3">

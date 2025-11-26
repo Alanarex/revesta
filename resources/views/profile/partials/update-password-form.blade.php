@@ -2,9 +2,9 @@
 <div class="card modern-card mb-4">
     <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="mb-0">
-            <i class="fa-solid fa-key me-2"></i>{{ __('Change Password') }}
+            <i class="fa-solid fa-key me-2"></i>Changer le Mot de Passe
         </h5>
-        <span class="badge bg-light text-dark">{{ __('Security') }}</span>
+        <span class="badge bg-warning text-dark">Sécurité</span>
     </div>
     <div class="card-body">
         <form id="passwordForm" method="POST" action="{{ route('profile.password.update') }}" novalidate>

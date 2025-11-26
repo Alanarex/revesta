@@ -7,6 +7,20 @@
             'active' => request()->routeIs('dashboard'),
             'enabled' => true,
         ],
+        [
+            'title' => 'Blogs',
+            'route' => route('blogs.index'),
+            'icon' => 'fa-newspaper',
+            'active' => request()->routeIs('blogs.*') && !request()->routeIs('admin.blogs.*'),
+            'enabled' => true,
+        ],
+        [
+            'title' => 'Gérer les blogs',
+            'route' => route('admin.blogs.index'),
+            'icon' => 'fa-tasks',
+            'active' => request()->routeIs('admin.blogs.*'),
+            'enabled' => Gate::allows('manage', App\Models\Blog::class),
+        ],
         // [
         //     'title' => 'Statistiques',
         //     'route' => route('statistics'),
@@ -24,7 +38,7 @@
                 <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="Logo" class="sidebar-logo-small">
             </a>
         </div>
-        
+
         <ul class="nav nav-pills flex-column mt-3">
             @foreach ($sidebarItems as $item)
                 @if ($item['enabled'])

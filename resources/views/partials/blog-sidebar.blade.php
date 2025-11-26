@@ -16,7 +16,7 @@
         ],
     ];
 
-    if (Auth::user()->isAdmin()) {
+    if (auth()->check() && auth()->user()->isAdmin()) {
         $sidebarItems[] = [
             'title' => 'Gérer les blogs',
             'route' => route('admin.blogs.index'),
