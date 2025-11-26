@@ -1,10 +1,15 @@
 @php
-    $layout = Auth::check() ? 'layouts.blog' : 'layouts.blog-guest';
+    // Count only direct blog likes (exclude comment likes)
+    $blogLikesCount = \App\Models\BlogLike::where('likeable_type', \App\Models\Blog::class)
+        ->where('likeable_id', $blog->id)
+        ->count();
+    // Count only direct comments (exclude replies)
+    $directCommentsCount = $blog->comments->count();
 @endphp
 
-@extends($layout)
+@extends('blogs.layout')
 
-@section('content')
+@section('blogs-content')
     <div class="row">
         <div class="col-lg-10 mx-auto">
             <div class="card shadow-sm">
@@ -14,7 +19,7 @@
                     <p class="lead text-muted mb-4">{{ $blog->short_description }}</p>
 
                     <div class="d-flex align-items-center mb-4">
-                        <a href="{{ route('users.profile.show', ['userId' => $blog->user_id]) }}"
+                        <a href="{{ route('profile.show', ['userId' => $blog->user_id]) }}"
                             class="text-decoration-none">
                             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                                 style="width: 50px; height: 50px; font-size: 20px; font-weight: bold;">
@@ -22,7 +27,7 @@
                             </div>
                         </a>
                         <div>
-                            <a href="{{ route('users.profile.show', ['userId' => $blog->user_id]) }}"
+                            <a href="{{ route('profile.show', ['userId' => $blog->user_id]) }}"
                                 class="text-decoration-none">
                                 <h6 class="mb-0 text-dark">{{ $blog->user->full_name }}</h6>
                             </a>
@@ -39,21 +44,20 @@
                                 <button class="btn btn-outline-primary like-btn" data-likeable-id="{{ $blog->id }}"
                                     data-likeable-type="App\Models\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}">
                                     <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart"></i>
-                                    <span class="likes-count">{{ $blog->likes_count ?? $blog->likes->count() }}</span>
+                                    <span class="likes-count">{{ $blogLikesCount }}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary"
-                                    onclick="document.getElementById('comments-section').scrollIntoView({ behavior: 'smooth' })">
+                                <button class="btn btn-outline-secondary scroll-to-comments">
                                     <i class="fa fa-comment"></i>
-                                    <span>{{ $blog->comments_count ?? $blog->comments->count() }}</span>
+                                    <span>{{ $directCommentsCount }}</span>
                                 </button>
                             @else
                                 <button class="btn btn-outline-primary" data-auth-required>
                                     <i class="far fa-heart"></i>
-                                    <span>{{ $blog->likes_count ?? $blog->likes->count() }}</span>
+                                    <span>{{ $blogLikesCount }}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary" data-auth-required>
+                                <button class="btn btn-outline-secondary scroll-to-comments">
                                     <i class="fa fa-comment"></i>
-                                    <span>{{ $blog->comments->count() }}</span>
+                                    <span>{{ $directCommentsCount }}</span>
                                 </button>
                             @endauth
                         </div>
@@ -61,18 +65,24 @@
                         <div class="d-flex gap-2">
                             @auth
                                 @php $bookmarked = ($blog->bookmarked_by_auth ?? 0) > 0; @endphp
-                                <button class="btn btn-outline-secondary bookmark-btn" data-blog-id="{{ $blog->id }}"
-                                    data-bookmarked="{{ $bookmarked ? 'true' : 'false' }}">
+                                <button class="btn btn-outline-secondary bookmark-btn" 
+                                    type="button"
+                                    data-blog-id="{{ $blog->id }}"
+                                    data-bookmarked="{{ $bookmarked ? 'true' : 'false' }}"
+                                    title="Ajouter aux signets">
                                     <i class="{{ $bookmarked ? 'fas' : 'far' }} fa-bookmark"></i>
                                 </button>
                             @else
-                                <button class="btn btn-outline-secondary" data-auth-required>
+                                <button class="btn btn-outline-secondary" 
+                                    type="button"
+                                    data-auth-required
+                                    title="Ajouter aux signets">
                                     <i class="far fa-bookmark"></i>
                                 </button>
                             @endauth
 
                             <div class="dropdown">
-                                <button class="btn btn-outline-secondary" data-bs-toggle="dropdown">
+                                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="dropdown">
                                     <i class="fa fa-share-alt"></i>
                                 </button>
                                 <ul class="dropdown-menu">
@@ -93,7 +103,7 @@
                                     </a>
                                 @endif
 
-                                @if (Auth::user()->isAdmin() || Auth::id() === $blog->user_id)
+                                @if ((auth()->check() && auth()->user()->isAdmin()) || Auth::id() === $blog->user_id)
                                     <button class="btn btn-outline-danger delete-blog-btn" data-blog-id="{{ $blog->id }}">
                                         <i class="fa fa-trash"></i>
                                     </button>
@@ -117,21 +127,20 @@
                                 <button class="btn btn-outline-primary like-btn" data-likeable-id="{{ $blog->id }}"
                                     data-likeable-type="App\Models\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}">
                                     <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart"></i>
-                                    <span class="likes-count">{{ $blog->likes_count ?? $blog->likes->count() }}</span>
+                                    <span class="likes-count">{{ $blogLikesCount }}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary"
-                                    onclick="document.getElementById('comments-section').scrollIntoView({ behavior: 'smooth' })">
+                                <button class="btn btn-outline-secondary scroll-to-comments">
                                     <i class="fa fa-comment"></i>
-                                    <span>{{ $blog->comments_count ?? $blog->comments->count() }}</span>
+                                    <span>{{ $directCommentsCount }}</span>
                                 </button>
                             @else
                                 <button class="btn btn-outline-primary" data-auth-required>
                                     <i class="far fa-heart"></i>
-                                    <span>{{ $blog->likes_count ?? $blog->likes->count() }}</span>
+                                    <span>{{ $blogLikesCount }}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary" data-auth-required>
+                                <button class="btn btn-outline-secondary scroll-to-comments">
                                     <i class="fa fa-comment"></i>
-                                    <span>{{ $blog->comments->count() }}</span>
+                                    <span>{{ $directCommentsCount }}</span>
                                 </button>
                             @endauth
                         </div>
@@ -175,8 +184,4 @@
             </div>
         </div>
     </div>
-
-    @push('scripts')
-        @vite('resources/js/blogs/app.js')
-    @endpush
 @endsection

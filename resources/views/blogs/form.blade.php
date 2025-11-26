@@ -1,5 +1,3 @@
-@vite('resources/js/blogs/editor-submit.js')
-
 <div class="row">
         <div class="col-lg-10 mx-auto">
             <div class="card shadow-sm">
