@@ -47,7 +47,11 @@ class BlogRepository
 
         // Apply search filter
         if ($search) {
-            $query->where('title', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('short_description', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%');
+            });
         }
 
         // Apply author filter

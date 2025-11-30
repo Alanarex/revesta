@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateBlogRequest;
+use App\Http\Requests\DeleteBlogRequest;
+use App\Http\Requests\EditBlogRequest;
+use App\Http\Requests\PublishBlogRequest;
+use App\Http\Requests\SearchPublicBlogsRequest;
+use App\Http\Requests\ShowBlogRequest;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
 use App\Models\Blog;
 use App\Services\BlogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class BlogController extends Controller
 {
@@ -16,12 +21,24 @@ class BlogController extends Controller
         protected BlogService $blogService
     ) {
     }
-    public function index(Request $request)
+    public function index(SearchPublicBlogsRequest $request)
     {
-        Gate::authorize('viewAny', Blog::class);
+        $search = $request->getSearchTerm();
+        $blogs = $this->blogService->getPublishedBlogs($search, 10, Auth::id());
 
-    $search = $request->get('search');
-    $blogs = $this->blogService->getPublishedBlogs($search, 10, Auth::id());
+        // Handle AJAX requests
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('blogs.partials.blogs-list', [
+                    'blogs' => $blogs,
+                ])->render(),
+                'pagination' => $blogs->appends($request->query())->links()->toHtml(),
+                'count' => $blogs->total(),
+                'current_page' => $blogs->currentPage(),
+                'last_page' => $blogs->lastPage(),
+            ]);
+        }
 
         return view('blogs.index', [
             'blogs' => $blogs,
@@ -34,15 +51,37 @@ class BlogController extends Controller
         ]);
     }
 
-    public function show(Blog $blog)
+    public function show(ShowBlogRequest $request, Blog $blog)
     {
-        Gate::authorize('view', $blog);
-
         $blog = $this->blogService->findBlog($blog->id, Auth::id());
+
+        // Calculate permissions
+        $interactionsDisabled = !$blog->isPublished();
+        $canLike = Auth::check() && !$interactionsDisabled;
+        $canBookmark = Auth::check() && !$interactionsDisabled;
+        $canShare = !$interactionsDisabled;
+        $canComment = Auth::check() && !$interactionsDisabled;
+        $canEdit = Auth::check() && Auth::id() === $blog->user_id;
+        $canDelete = Auth::check() && ((auth()->user()->isAdmin()) || Auth::id() === $blog->user_id);
+
+        // Calculate counts
+        $blogLikesCount = \App\Models\BlogLike::where('likeable_type', Blog::class)
+            ->where('likeable_id', $blog->id)
+            ->count();
+        $directCommentsCount = $blog->comments->count();
 
         return view('blogs.show', [
             'blog' => $blog,
             'title' => $blog->title,
+            'canLike' => $canLike,
+            'canBookmark' => $canBookmark,
+            'canShare' => $canShare,
+            'canComment' => $canComment,
+            'canEdit' => $canEdit,
+            'canDelete' => $canDelete,
+            'blogLikesCount' => $blogLikesCount,
+            'directCommentsCount' => $directCommentsCount,
+            'interactionsDisabled' => $interactionsDisabled,
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard')],
                 ['label' => 'Blogs', 'url' => route('blogs.index')],
@@ -51,9 +90,8 @@ class BlogController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(CreateBlogRequest $request)
     {
-        Gate::authorize('create', Blog::class);
 
         return view('blogs.create', [
             'title' => 'Créer un blog',
@@ -69,18 +107,26 @@ class BlogController extends Controller
     {
         $blog = $this->blogService->createBlog(Auth::user(), $request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => $request->validated()['status'] === 'pending'
+        // Handle AJAX requests
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $request->validated()['status'] === 'pending'
+                    ? 'Blog soumis pour approbation!'
+                    : 'Brouillon sauvegardé!',
+                'redirect' => route('profile.edit', ['tab' => 'blogs'])
+            ]);
+        }
+
+        // Regular form submission - redirect directly
+        return redirect(route('profile.edit', ['tab' => 'blogs']))
+            ->with('success', $request->validated()['status'] === 'pending'
                 ? 'Blog soumis pour approbation!'
-                : 'Brouillon sauvegardé!',
-            'redirect' => route('profile.edit', ['tab' => 'blogs'])
-        ]);
+                : 'Brouillon sauvegardé!');
     }
 
-    public function edit(Blog $blog)
+    public function edit(EditBlogRequest $request, Blog $blog)
     {
-        Gate::authorize('update', $blog);
 
         return view('blogs.edit', [
             'blog' => $blog,
@@ -98,18 +144,44 @@ class BlogController extends Controller
     {
         $this->blogService->updateBlog($blog, $request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => $request->validated()['status'] === 'pending'
+        // Handle AJAX requests
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $request->validated()['status'] === 'pending'
+                    ? 'Blog soumis pour approbation!'
+                    : 'Brouillon sauvegardé!',
+                'redirect' => route('blogs.show', $blog)
+            ]);
+        }
+
+        // Regular form submission - redirect directly
+        return redirect(route('blogs.show', $blog))
+            ->with('success', $request->validated()['status'] === 'pending'
                 ? 'Blog soumis pour approbation!'
-                : 'Brouillon sauvegardé!',
-            'redirect' => route('profile.edit', ['tab' => 'blogs'])
-        ]);
+                : 'Brouillon sauvegardé!');
     }
 
-    public function destroy(Blog $blog, Request $request)
+    public function publish(PublishBlogRequest $request, Blog $blog)
     {
-        Gate::authorize('delete', $blog);
+        $this->blogService->publishBlog($blog);
+
+        // Handle AJAX requests
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Blog soumis pour approbation!',
+                'redirect' => route('blogs.show', $blog)
+            ]);
+        }
+
+        // Regular form submission - redirect directly
+        return redirect(route('blogs.show', $blog))
+            ->with('success', 'Blog soumis pour approbation!');
+    }
+
+    public function destroy(DeleteBlogRequest $request, Blog $blog)
+    {
 
         $this->blogService->deleteBlog($blog);
 

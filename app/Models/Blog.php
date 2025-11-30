@@ -101,8 +101,11 @@ class Blog extends Model
     public function scopeSearchByTitle($query, $search)
     {
         if ($search) {
-            return $query->where('title', 'like', '%' . $search . '%')
-                        ->orWhere('short_description', 'like', '%' . $search . '%');
+            return $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('short_description', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%');
+            });
         }
         return $query;
     }

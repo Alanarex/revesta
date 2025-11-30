@@ -62,4 +62,23 @@ class BlogCommentPolicy
     {
         return $user->isAdmin();
     }
+
+    /**
+     * Determine whether the user can like the comment.
+     */
+    public function like(User $user, BlogComment $comment): bool
+    {
+        // Can like comments on published blogs
+        if ($comment->blog && $comment->blog->isPublished()) {
+            return true;
+        }
+
+        // Can like own comments in any blog status
+        if ($user->id === $comment->user_id) {
+            return true;
+        }
+
+        // Cannot like comments on draft/pending/rejected blogs that aren't yours
+        return false;
+    }
 }

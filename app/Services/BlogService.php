@@ -118,6 +118,26 @@ class BlogService
     }
 
     /**
+     * Publish a blog (submit for approval).
+     */
+    public function publishBlog(Blog $blog): bool
+    {
+        // Only allow publishing if it's a draft
+        if (!$blog->isDraft()) {
+            return false;
+        }
+
+        $updateData = [
+            'status' => Blog::PENDING,
+        ];
+
+        // Notify admins for approval
+        $this->notifyAdminsForApproval($blog, $blog->user);
+
+        return $this->blogRepository->update($blog, $updateData);
+    }
+
+    /**
      * Delete a blog.
      */
     public function deleteBlog(Blog $blog): bool

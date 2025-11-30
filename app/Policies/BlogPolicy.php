@@ -107,4 +107,42 @@ class BlogPolicy
     {
         return $user->isAdmin();
     }
+
+    /**
+     * Determine whether the user can like the blog.
+     */
+    public function like(User $user, Blog $blog): bool
+    {
+        // Can like published blogs
+        if ($blog->status === Blog::PUBLISHED) {
+            return true;
+        }
+
+        // Can like own blogs in any status
+        if ($user->id === $blog->user_id) {
+            return true;
+        }
+
+        // Cannot like draft, pending, or rejected blogs that aren't yours
+        return false;
+    }
+
+    /**
+     * Determine whether the user can bookmark the blog.
+     */
+    public function bookmark(User $user, Blog $blog): bool
+    {
+        // Can bookmark published blogs
+        if ($blog->status === Blog::PUBLISHED) {
+            return true;
+        }
+
+        // Can bookmark own blogs in any status
+        if ($user->id === $blog->user_id) {
+            return true;
+        }
+
+        // Cannot bookmark draft, pending, or rejected blogs that aren't yours
+        return false;
+    }
 }
