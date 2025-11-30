@@ -8,7 +8,7 @@ A complete blog system has been implemented with features for guests, authentica
 - Posts (blogs) with statuses: draft, pending, published, rejected
 - Nested comments with replies and likes
 - Bookmarks
-- Admin moderation (approve/reject) with bulk actions
+- Admin blogs management (approve/reject) with bulk actions
 - Notifications (background jobs dispatch)
 - Rich text editor (Quill)
 
@@ -45,7 +45,7 @@ A complete blog system has been implemented with features for guests, authentica
 - Views: `resources/views/blogs/*`, `resources/views/admin/blogs/*`
 - JS: `resources/js/blogs/*`, `resources/js/admin-blogs-index.js`
 
-## Notes on moderation & bulk actions
+## Notes on blogs management & bulk actions
 - Bulk actions endpoint (`/admin/blogs/bulk-action`) validates `blog_ids` and `action`.
 - `getAllPendingIds` returns matching pending blog ids for "select all across pages" in admin UI.
 - Be cautious with very large result sets; the endpoint returns all matching IDs and may be large.
