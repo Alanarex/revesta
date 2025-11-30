@@ -5,15 +5,15 @@
         <div class="card-body text-center py-5">
             <i class="fa fa-newspaper fa-3x text-muted mb-3"></i>
             <p class="text-muted">Aucun blog trouvé pour cette recherche.</p>
-            <button type="button" class="btn btn-sm btn-outline-primary" onclick="$('#search-input').val('').trigger('input');">
+            <a href="{{ route('blogs.index') }}" class="btn btn-sm btn-outline-primary">
                 <i class="fa fa-times"></i> Effacer la recherche
-            </button>
+            </a>
         </div>
     </div>
 @endforelse
 
 @if($blogs->hasPages())
     <div class="d-flex justify-content-center mt-4">
-        {{ $blogs->links('pagination::bootstrap-5') }}
+        {{ $blogs->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div>
 @endif

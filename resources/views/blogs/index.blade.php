@@ -30,13 +30,7 @@
 
     <div class="row">
         <div class="col-12">
-            <div id="blogs-container">
-                @include('blogs.partials.blogs-list', ['blogs' => $blogs])
-            </div>
+            @include('blogs.partials.blogs-list', ['blogs' => $blogs])
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    @vite('resources/js/blogs/search.js')
-@endpush

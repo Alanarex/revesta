@@ -26,20 +26,6 @@ class BlogController extends Controller
         $search = $request->getSearchTerm();
         $blogs = $this->blogService->getPublishedBlogs($search, 10, Auth::id());
 
-        // Handle AJAX requests
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'html' => view('blogs.partials.blogs-list', [
-                    'blogs' => $blogs,
-                ])->render(),
-                'pagination' => $blogs->appends($request->query())->links()->toHtml(),
-                'count' => $blogs->total(),
-                'current_page' => $blogs->currentPage(),
-                'last_page' => $blogs->lastPage(),
-            ]);
-        }
-
         return view('blogs.index', [
             'blogs' => $blogs,
             'search' => $search,
