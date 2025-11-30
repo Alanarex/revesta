@@ -19,9 +19,13 @@
         @include('partials.sidebar')
 
         <div id="main-content-wrapper" class="flex-grow-1">
-            @include('partials.navbar')
+            @auth
+                @include('partials.navbar')
+            @else
+                @include('partials.navbar-guest')
+            @endauth
 
-            <main class="container-fluid p-0 pt-3" id="main-content">
+            <main class="container-fluid pt-3" id="main-content">
                 @yield('content')
             </main>
         </div>

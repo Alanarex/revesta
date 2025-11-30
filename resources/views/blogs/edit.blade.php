@@ -1,9 +1,5 @@
-@extends('layouts.blog')
+@extends('layouts.blogs')
 
 @section('content')
 	@include('blogs.form', ['blog' => $blog])
 @endsection
-
-@push('scripts')
-	@vite('resources/js/blogs/editor-submit.js')
-@endpush

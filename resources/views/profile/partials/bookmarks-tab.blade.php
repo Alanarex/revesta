@@ -15,11 +15,11 @@
                 <div class="mb-3">
                     @include('blogs.partials.card', [
                         'blog' => $bookmark->blog,
-                        'showAuthor' => true,
-                        'showBookmark' => true,
-                        'showShare' => true,
-                        'showEdit' => false,
-                        'showDelete' => false,
+                        'canAuthor' => true,
+                        'canBookmark' => true,
+                        'canShare' => true,
+                        'canEdit' => false,
+                        'canDelete' => false,
                     ])
                 </div>
             @endif

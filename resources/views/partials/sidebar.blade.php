@@ -11,14 +11,14 @@
             'title' => 'Blogs',
             'route' => route('blogs.index'),
             'icon' => 'fa-newspaper',
-            'active' => request()->routeIs('blogs.*') && !request()->routeIs('admin.blogs.*'),
+            'active' => request()->routeIs('blogs.*') ,
             'enabled' => true,
         ],
         [
             'title' => 'Gérer les blogs',
             'route' => route('admin.blogs.index'),
             'icon' => 'fa-tasks',
-            'active' => request()->routeIs('admin.blogs.*'),
+            'active' => request()->routeIs('admin.blogs.index'),
             'enabled' => Gate::allows('manage', App\Models\Blog::class),
         ],
         // [

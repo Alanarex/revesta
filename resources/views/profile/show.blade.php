@@ -1,11 +1,4 @@
-@php
-    // Use the authenticated app layout when the viewer is authenticated,
-    // otherwise use the guest blog layout so guests don't see authenticated UI.
-    $useAuthLayout = isset($isAuthenticated) ? (bool) $isAuthenticated : auth()->check();
-    $layout = $useAuthLayout ? 'layouts.app' : 'layouts.blog-guest';
-@endphp
-
-@extends($layout)
+@extends('layouts.app')
 
 @section('content')
     <div class="main-content">
@@ -23,11 +16,11 @@
                             @forelse($publishedBlogs as $blog)
                                 @include('blogs.partials.card', [
                                     'blog' => $blog,
-                                    'showAuthor' => false,
-                                    'showBookmark' => true,
-                                    'showShare' => true,
-                                    'showEdit' => false,
-                                    'showDelete' => false,
+                                    'canAuthor' => false,
+                                    'canBookmark' => true,
+                                    'canShare' => true,
+                                    'canEdit' => false,
+                                    'canDelete' => false,
                                 ])
                             @empty
                                 <div class="text-center py-5">

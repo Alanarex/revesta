@@ -1,13 +1,13 @@
-@extends('blogs.layout')
+@extends('layouts.blogs')
 
-@section('blogs-content')
+@section('content')
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div class="flex-grow-1" style="max-width: 500px;">
                     <form action="{{ route('blogs.index') }}" method="GET" class="d-flex">
-                        <input type="text" name="search" class="form-control" placeholder="Rechercher un blog..."
-                            value="{{ $search ?? '' }}">
+                        <input type="text" id="search-input" name="search" class="form-control"
+                            placeholder="Rechercher un blog..." value="{{ $search ?? '' }}">
                         <button type="submit" class="btn btn-primary ms-2">
                             <i class="fa fa-search"></i>
                         </button>
@@ -30,20 +30,13 @@
 
     <div class="row">
         <div class="col-12">
-            @forelse($blogs as $blog)
-                @include('blogs.partials.card', ['blog' => $blog])
-            @empty
-                <div class="card">
-                    <div class="card-body text-center py-5">
-                        <i class="fa fa-newspaper fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Aucun blog trouvé.</p>
-                    </div>
-                </div>
-            @endforelse
-
-            <div class="d-flex justify-content-center mt-4">
-                {{ $blogs->links('pagination::bootstrap-5') }}
+            <div id="blogs-container">
+                @include('blogs.partials.blogs-list', ['blogs' => $blogs])
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    @vite('resources/js/blogs/search.js')
+@endpush

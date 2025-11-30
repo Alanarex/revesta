@@ -46,11 +46,11 @@
                 <div class="mb-3">
                     @include('blogs.partials.card', [
                         'blog' => $blog,
-                        'showAuthor' => false,
-                        'showBookmark' => false,
-                        'showShare' => true,
-                        'showEdit' => true,
-                        'showDelete' => true,
+                        'canAuthor' => false,
+                        'canBookmark' => false,
+                        'canShare' => true,
+                        'canEdit' => true,
+                        'canDelete' => true,
                     ])
                 </div>
             @empty
@@ -71,11 +71,11 @@
                 <div class="mb-3">
                     @include('blogs.partials.card', [
                         'blog' => $blog,
-                        'showAuthor' => false,
-                        'showBookmark' => false,
-                        'showShare' => true,
-                        'showEdit' => true,
-                        'showDelete' => true,
+                        'canAuthor' => false,
+                        'canBookmark' => false,
+                        'canShare' => true,
+                        'canEdit' => true,
+                        'canDelete' => true,
                     ])
                 </div>
             @empty
@@ -96,11 +96,11 @@
                 <div class="mb-3">
                     @include('blogs.partials.card', [
                         'blog' => $blog,
-                        'showAuthor' => false,
-                        'showBookmark' => false,
-                        'showShare' => false,
-                        'showEdit' => true,
-                        'showDelete' => true,
+                        'canAuthor' => false,
+                        'canBookmark' => false,
+                        'canShare' => false,
+                        'canEdit' => true,
+                        'canDelete' => true,
                     ])
                 </div>
             @empty
@@ -121,11 +121,11 @@
                 <div class="mb-3">
                     @include('blogs.partials.card', [
                         'blog' => $blog,
-                        'showAuthor' => false,
-                        'showBookmark' => false,
-                        'showShare' => false,
-                        'showEdit' => true,
-                        'showDelete' => true,
+                        'canAuthor' => false,
+                        'canBookmark' => false,
+                        'canShare' => false,
+                        'canEdit' => true,
+                        'canDelete' => true,
                     ])
                 </div>
             @empty
@@ -146,11 +146,11 @@
                 <div class="mb-3">
                     @include('blogs.partials.card', [
                         'blog' => $blog,
-                        'showAuthor' => false,
-                        'showBookmark' => false,
-                        'showShare' => false,
-                        'showEdit' => true,
-                        'showDelete' => true,
+                        'canAuthor' => false,
+                        'canBookmark' => false,
+                        'canShare' => false,
+                        'canEdit' => true,
+                        'canDelete' => true,
                     ])
                 </div>
             @empty
@@ -173,11 +173,11 @@
         <div class="mb-3">
             @include('blogs.partials.card', [
                 'blog' => $blog,
-                'showAuthor' => false,
-                'showBookmark' => true,
-                'showShare' => true,
-                'showEdit' => false,
-                'showDelete' => false,
+                'canAuthor' => false,
+                'canBookmark' => true,
+                'canShare' => true,
+                'canEdit' => false,
+                'canDelete' => false,
             ])
         </div>
     @empty
