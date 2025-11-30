@@ -8,6 +8,11 @@ window.$ = window.jQuery = $;
 
 import 'jquery-validation';
 
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
 import 'bootstrap';
+
+import './helper.js';
 
 import './partials/sidebar.js';
