@@ -11,7 +11,14 @@ class ToggleBookmarkRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        if (!auth()->check()) {
+            return false;
+        }
+
+        $blogId = $this->input('blog_id');
+        $blog = \App\Models\Blog::find($blogId);
+
+        return $blog && \Gate::allows('bookmark', $blog);
     }
 
     /**

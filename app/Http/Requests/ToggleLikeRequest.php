@@ -11,7 +11,24 @@ class ToggleLikeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        if (!auth()->check()) {
+            return false;
+        }
+
+        $likeableType = $this->input('likeable_type');
+        $likeableId = $this->input('likeable_id');
+
+        if ($likeableType === 'App\Models\Blog') {
+            $blog = \App\Models\Blog::find($likeableId);
+            return $blog && \Gate::allows('like', $blog);
+        }
+
+        if ($likeableType === 'App\Models\BlogComment') {
+            $comment = \App\Models\BlogComment::find($likeableId);
+            return $comment && \Gate::allows('like', $comment);
+        }
+
+        return false;
     }
 
     /**
