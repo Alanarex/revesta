@@ -45,7 +45,7 @@
                         @if ($canAuthor)
                             <a href="{{ route('profile.show', ['userId' => $blog->user_id]) }}"
                                 class="text-decoration-none">
-                                <h6 class="mb-1 text-dark">{{ $blog->user->full_name }}</h6>
+                                <h6 class="mb-1">{{ $blog->user->full_name }}</h6>
                             </a>
                         @endif
                         <a href="{{ route('blogs.show', $blog) }}" class="text-decoration-none">
@@ -82,8 +82,7 @@
                                     <i class="{{ $bookmarked ? 'fas' : 'far' }} fa-bookmark"></i>
                                 </button>
                             @else
-                                <button class="btn btn-outline-secondary btn-sm" type="button" data-auth-required
-                                    @if ($interactionsDisabled) disabled aria-disabled="true" data-disabled="true" title="Actions désactivées pour ce statut" @endif>
+                                <button class="btn btn-outline-secondary btn-sm" type="button" data-auth-required>
                                     <i class="far fa-bookmark"></i>
                                 </button>
                             @endauth
@@ -141,26 +140,18 @@
     </div>
 </div>
 
-@push('scripts')
-    @if ($canBookmark && empty($bookmarkScriptIncluded))
+@once
+    @push('scripts')
+        @if ($canBookmark ?? true)
+            @vite('resources/js/blogs/components/bookmark.js')
+        @endif
 
-        @vite('resources/js/blogs/components/bookmark.js')
-        @php
-            $bookmarkScriptIncluded = true;
-        @endphp
-    @endif
+        @if ($canShare ?? true)
+            @vite('resources/js/blogs/components/share.js')
+        @endif
 
-    @if ($canShare && empty($shareScriptIncluded))
-        @vite('resources/js/blogs/components/share.js')
-        @php
-            $shareScriptIncluded = true;
-        @endphp
-    @endif
-
-    @if ($canDelete && empty($deleteScriptIncluded))
-        @vite('resources/js/blogs/components/delete.js')
-        @php
-            $deleteScriptIncluded = true;
-        @endphp
-    @endif
-@endpush
+        @if ($canDelete ?? true)
+            @vite('resources/js/blogs/components/delete.js')
+        @endif
+    @endpush
+@endonce
