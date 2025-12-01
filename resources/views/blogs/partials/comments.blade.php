@@ -18,7 +18,7 @@
                     <div class="flex-grow-1">
                         <a href="{{ route('profile.show', ['userId' => $comment->user_id]) }}"
                             class="text-decoration-none">
-                            <h6 class="mb-1 text-dark">{{ $commentUser ? $commentUser->full_name : __('Utilisateur') }}
+                            <h6 class="mb-1">{{ $commentUser ? $commentUser->full_name : __('Utilisateur') }}
                             </h6>
                         </a>
                         <p class="mb-2">{{ $comment->content }}</p>
@@ -43,7 +43,7 @@
                             @php $repliesCount = $comment->replies_count ?? $comment->replies->count(); @endphp
                             @if ($repliesCount > 0)
                                 <button class="btn btn-sm btn-link text-decoration-none p-0 show-replies-btn"
-                                    data-comment-id="{{ $comment->id }}" data-shown="false">
+                                    data-comment-id="{{ $comment->id }}" data-shown="false" data-replies-count="{{ $repliesCount }}">
                                     <i class="fa fa-chevron-down"></i> {{ $repliesCount }} réponse(s)
                                 </button>
                             @endif

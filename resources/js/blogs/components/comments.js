@@ -82,7 +82,10 @@ export class CommentsManager {
             container.hide().empty();
         } else {
             const blogId = $('meta[name="blog-id"]').attr('content') || 'null';
-            const initials = $('body').data('user-initials') || '';
+            
+            // Get initials from the authenticated user's avatar in the main comment form
+            const mainCommentAvatar = $('.comment-form[data-parent-id=""]').closest('.d-flex').find('.bg-primary.text-white.rounded-circle');
+            const initials = mainCommentAvatar.length ? mainCommentAvatar.text().trim() : '';
 
             container.html(`
                 <div class="d-flex align-items-start">
@@ -100,6 +103,11 @@ export class CommentsManager {
                     </form>
                 </div>
             `).show();
+            
+            // Focus on the reply input after it's been added to the DOM
+            setTimeout(() => {
+                container.find('.comment-input').focus();
+            }, 100);
         }
     }
 
@@ -109,7 +117,7 @@ export class CommentsManager {
         const container = btn.closest('.comment-item').find('.replies-container').first();
         const shown = btn.data('shown') === 'true';
 
-        const repliesCount = btn.data('replies-count') || 0;
+        const repliesCount = parseInt(btn.data('replies-count'), 10) || 0;
 
         if (shown) {
             container.hide();
