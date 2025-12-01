@@ -1,31 +1,21 @@
-/**
- * Handle authentication required elements
- * Any element with data-auth-required attribute will show a login prompt
- */
-$(document).on('click', '[data-auth-required]', function (e) {
+import { initAuthRequiredHandler } from '../utils/auth-handler';
+
+// Initialize authentication required handler
+initAuthRequiredHandler();
+
+// Scroll to comments section
+$(document).on('click', '.scroll-to-comments', function(e) {
     e.preventDefault();
-    e.stopPropagation();
-
-    const $element = $(this);
-    const message = $element.data('auth-message') || 'Vous devez être connecté pour effectuer cette action.';
-    const loginUrl = $element.data('login-url') || '/login';
-
-    Swal.fire({
-        title: 'Connexion requise',
-        text: message,
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Se connecter',
-        cancelButtonText: 'Annuler',
-        confirmButtonColor: '#007bff',
-        cancelButtonColor: '#6c757d'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Redirect to login page with return URL
-            const currentUrl = encodeURIComponent(window.location.href);
-            window.location.href = `${loginUrl}?redirect=${currentUrl}`;
-        }
-    });
-
-    return false;
+    const commentsSection = $('#comments-section');
+    if (commentsSection.length) {
+        $('html, body').animate({
+            scrollTop: commentsSection.offset().top - 20
+        }, 0, function() {
+            // Focus on the main comment input after scroll completes
+            const commentInput = commentsSection.find('.comment-form[data-parent-id=""] .comment-input').first();
+            if (commentInput.length) {
+                commentInput.focus();
+            }
+        });
+    }
 });

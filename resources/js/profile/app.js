@@ -1,4 +1,8 @@
 import Swal from 'sweetalert2';
+import { initAuthRequiredHandler } from '../utils/auth-handler';
+
+// Initialize authentication required handler
+initAuthRequiredHandler();
 
 $(function () {
     // Toggle password visibility
