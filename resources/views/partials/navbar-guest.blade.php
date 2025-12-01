@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
         <!-- Logo -->
-        <a class="navbar-brand" href="{{ route('home') }}">
-            <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="{{ config('app.name') }}" height="40">
+        <a class="navbar-brand" href="{{ route('blogs.index') }}">
+            <img src="{{ Vite::asset('resources/images/logo_large.svg') }}" alt="{{ config('app.name') }}" height="40">
         </a>
 
         <!-- Sign In Button -->
