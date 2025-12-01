@@ -46,7 +46,7 @@ class BlogController extends Controller
         $canLike = Auth::check() && !$interactionsDisabled;
         $canBookmark = Auth::check() && !$interactionsDisabled;
         $canShare = !$interactionsDisabled;
-        $canComment = Auth::check() && !$interactionsDisabled;
+        $canComment = Auth::check();
         $canEdit = Auth::check() && Auth::id() === $blog->user_id;
         $canDelete = Auth::check() && ((auth()->user()->isAdmin()) || Auth::id() === $blog->user_id);
 
@@ -100,12 +100,12 @@ class BlogController extends Controller
                 'message' => $request->validated()['status'] === 'pending'
                     ? 'Blog soumis pour approbation!'
                     : 'Brouillon sauvegardé!',
-                'redirect' => route('profile.edit', ['tab' => 'blogs'])
+                'redirect' => route('blogs.show', $blog)
             ]);
         }
 
         // Regular form submission - redirect directly
-        return redirect(route('profile.edit', ['tab' => 'blogs']))
+        return redirect(route('blogs.show', $blog))
             ->with('success', $request->validated()['status'] === 'pending'
                 ? 'Blog soumis pour approbation!'
                 : 'Brouillon sauvegardé!');
