@@ -73,29 +73,32 @@ export class LikeButton {
         try {
             const iconHtml = `<i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>`;
 
-            // Find other buttons for the same item
-            let selector = `.like-btn[data-likeable-id="${likeableId}"]`;
-            if (likeableType) {
-                selector += `[data-likeable-type="${likeableType}"]`;
-            }
+            // Normalize the likeable type to handle both single and double backslashes
+            const normalizedType = likeableType.replace(/\\\\/g, '\\');
 
-            $(selector).not(clickedBtn).each(function () {
+            // Find other buttons for the same item (check both formats)
+            $(`.like-btn[data-likeable-id="${likeableId}"]`).not(clickedBtn).each(function () {
                 const $other = $(this);
-                const $otherIcon = $other.find('i').first();
-                const $otherCount = $other.find('.likes-count').first();
+                const otherType = ($other.data('likeable-type') || '').replace(/\\\\/g, '\\');
+                
+                // Only sync if types match (after normalization)
+                if (otherType === normalizedType) {
+                    const $otherIcon = $other.find('i').first();
+                    const $otherCount = $other.find('.likes-count').first();
 
-                // Update icon
-                if ($otherIcon.length) {
-                    $otherIcon.replaceWith(iconHtml);
+                    // Update icon
+                    if ($otherIcon.length) {
+                        $otherIcon.replaceWith(iconHtml);
+                    }
+
+                    // Update count
+                    if ($otherCount.length) {
+                        $otherCount.text(likesCount);
+                    }
+
+                    // Update data attribute
+                    $other.data('liked', isLiked ? 'true' : 'false');
                 }
-
-                // Update count
-                if ($otherCount.length) {
-                    $otherCount.text(likesCount);
-                }
-
-                // Update data attribute
-                $other.data('liked', isLiked ? 'true' : 'false');
             });
         } catch (e) {
             // Non-fatal error, continue silently
