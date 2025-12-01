@@ -1,0 +1,22 @@
+/* Quill Editor Styles - Make entire editor area clickable */
+.ql-container {
+    font-family: Arial, sans-serif;
+}
+
+.ql-editor {
+    min-height: 300px;
+    cursor: text;
+}
+
+.ql-editor:focus {
+    outline: none;
+}
+
+/* Ensure the editor fills the container height */
+#editor .ql-container {
+    height: auto;
+}
+
+#editor .ql-editor {
+    height: 100%;
+}
