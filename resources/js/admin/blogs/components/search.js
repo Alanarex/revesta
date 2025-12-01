@@ -3,8 +3,6 @@
  * Handles dynamic search and filtering for admin blog management
  */
 
-import { showTooltip } from '../../../helper.js';
-
 export class AdminBlogsSearch {
     constructor() {
         this.searchTimeout = null;
@@ -102,10 +100,6 @@ export class AdminBlogsSearch {
                 this.updateResults(response.html);
                 this.updatePagination(response.pagination);
                 this.updateUrl(query, authorId, this.currentPage);
-
-                if (query || authorId) {
-                    showTooltip($('#search'), `Résultats filtrés (${response.count} blogs)`);
-                }
             },
             error: (xhr) => {
                 this.showError('Erreur lors de la recherche');
@@ -180,24 +174,14 @@ export class AdminBlogsSearch {
 
     showLoadingState() {
         this.isLoading = true;
-        $('#blogs-container .blog-item').css('opacity', '0.6');
-        $('#blogs-container .pagination').css('pointer-events', 'none');
-
-        // Show loading indicator
-        if (!$('.search-loading').length) {
-            $('#blogs-container').append('<div class="search-loading text-center py-4"><div class="spinner-border text-primary" role="status"><span class="sr-only">Recherche en cours...</span></div><p class="text-muted mt-2">Recherche en cours...</p></div>');
-        }
     }
 
     hideLoadingState() {
         this.isLoading = false;
-        $('#blogs-container .blog-item').css('opacity', '1');
-        $('#blogs-container .pagination').css('pointer-events', 'auto');
-        $('.search-loading').remove();
     }
 
     showError(message) {
-        showTooltip($('#search'), message, true);
+        console.error(message);
     }
 
     // Public methods
