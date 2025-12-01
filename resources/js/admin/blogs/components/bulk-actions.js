@@ -135,12 +135,7 @@ export class BulkActions {
         Swal.fire({
             title: confirmMessage,
             input: 'textarea',
-            inputPlaceholder: 'Raison du refus (obligatoire - minimum 10 caractères)',
-            inputValidator: (value) => {
-                if (!value || value.trim().length < 10) {
-                    return 'Veuillez fournir une raison détaillée (minimum 10 caractères)';
-                }
-            },
+            inputPlaceholder: 'Raison du refus (optionnelle)',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Oui, refuser',

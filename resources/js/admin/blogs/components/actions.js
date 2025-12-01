@@ -50,12 +50,7 @@ export class AdminBlogActions {
         Swal.fire({
             title: 'Rejeter ce blog?',
             input: 'textarea',
-            inputPlaceholder: 'Raison du rejet (obligatoire - minimum 10 caractères)',
-            inputValidator: (value) => {
-                if (!value || value.trim().length < 10) {
-                    return 'Veuillez fournir une raison détaillée (minimum 10 caractères)';
-                }
-            },
+            inputPlaceholder: 'Raison du rejet (optionnelle)',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Oui, rejeter',

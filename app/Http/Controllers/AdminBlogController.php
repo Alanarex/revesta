@@ -111,7 +111,7 @@ class AdminBlogController extends Controller
         $request->validate([
             'blog_ids' => 'required|array|min:1',
             'blog_ids.*' => 'exists:blogs,id',
-            'reason' => 'required|string|max:500',
+            'reason' => 'nullable|string|max:500',
         ]);
 
         $blogIds = $request->input('blog_ids');
