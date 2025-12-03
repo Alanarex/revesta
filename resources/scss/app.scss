@@ -1,9 +1,13 @@
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "quill/dist/quill.snow.css";
+
 @import './colors.scss';
 @import './fonts.scss';
 
 @import "bootstrap/scss/bootstrap";
 
 @import './partials/sidebar';
+@import './components/quill';
 
 /*
  * Global layout variables and base styles

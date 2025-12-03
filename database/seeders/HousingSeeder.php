@@ -9,6 +9,11 @@ class HousingSeeder extends Seeder
 {
     public function run()
     {
-        Housing::factory()->count(10)->create();
+        $this->command->info('Creating housing types...');
+        
+        $count = 10;
+        Housing::factory()->count($count)->create();
+        
+        $this->command->info('✅ Created ' . $count . ' housing types.');
     }
 }

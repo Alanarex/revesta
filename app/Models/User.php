@@ -86,4 +86,50 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Accessor: full_name
+     * Combines first_name and last_name, falling back to `name` or 'User'.
+     */
+    public function getFullNameAttribute(): string
+    {
+        $first = trim((string) $this->first_name);
+        $last = trim((string) $this->last_name);
+        $combined = trim($first . ' ' . $last);
+        if ($combined !== '') {
+            return $combined;
+        }
+        return (string) ($this->name ?? 'User');
+    }
+
+    /**
+     * Accessor: initials
+     * Builds uppercase initials from first_name and last_name, falling back to first char of name or 'U'.
+     */
+    public function getInitialsAttribute(): string
+    {
+        $firstInitial = $this->first_name ? mb_substr($this->first_name, 0, 1) : ($this->name ? mb_substr($this->name, 0, 1) : 'U');
+        $lastInitial = $this->last_name ? mb_substr($this->last_name, 0, 1) : '';
+        return mb_strtoupper($firstInitial . $lastInitial);
+    }
+
+    /**
+     * Convenience helper to check whether the user is an administrator.
+     * Relies on the `role` relation and the `roles.name` value.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role && isset($this->role->name) && strcasecmp($this->role->name, 'admin') === 0;
+    }
+
+    /**
+     * Get the blog bookmarks for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function blogBookmarks()
+    {
+        return $this->hasMany(BlogBookmark::class);
+    }
 }

@@ -8,7 +8,7 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ Vite::asset('resources/images/logo.svg') }}">
 
-    <title>{{ $title ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
+    <title>{{ $title ?? false ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
 
     @include('partials.styles')
 
@@ -16,12 +16,18 @@
 
 <body class="d-flex flex-column min-vh-100 sidebar-collapsed">
     <div class="d-flex" id="layout-wrapper">
-        @include('partials.sidebar')
+        @auth
+            @include('partials.sidebar')
+        @endauth
 
         <div id="main-content-wrapper" class="flex-grow-1">
-            @include('partials.navbar')
+            @auth
+                @include('partials.navbar')
+            @else
+                @include('partials.navbar-guest')
+            @endauth
 
-            <main class="container-fluid pt-3" id="main-content">
+            <main class="container-fluid p-0 pt-3" id="main-content">
                 @yield('content')
             </main>
         </div>

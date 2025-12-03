@@ -9,6 +9,11 @@ class AdSeeder extends Seeder
 {
     public function run()
     {
-        Ad::factory()->count(10)->create();
+        $this->command->info('Creating advertisements...');
+        
+        $count = 10;
+        Ad::factory()->count($count)->create();
+        
+        $this->command->info('✅ Created ' . $count . ' advertisements.');
     }
 }

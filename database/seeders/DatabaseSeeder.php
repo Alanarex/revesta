@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ConditionSeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
+            BlogSeeder::class,
             SimulationSeeder::class,
             AidSimulationSeeder::class,
         ]);
