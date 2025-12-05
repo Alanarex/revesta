@@ -14,6 +14,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.getElementById('sidebarToggle');
     const body = document.body;
+    const html = document.documentElement;
 
     if (!toggleBtn) return;
 
@@ -33,4 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (savedState === 'false') {
         body.classList.remove('sidebar-collapsed');
     }
+
+    // Enable transitions after the saved state has been applied
+    html.classList.remove('page-loading');
 });

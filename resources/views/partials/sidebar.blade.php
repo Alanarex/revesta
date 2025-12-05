@@ -30,7 +30,7 @@
     ];
 @endphp
 
-<nav id="sidebar" class="bg-light border-end vh-100 position-fixed top-0 start-0" style="z-index: 1030;">
+<aside id="sidebar" class="bg-light border-end">
     <div class="d-flex flex-column h-100 p-3 pt-0">
         <div class="sidebar-logo-container mb-4 py-3">
             <a href="{{ route('dashboard') }}" class="d-block">
@@ -53,4 +53,4 @@
             @endforeach
         </ul>
     </div>
-</nav>
+</aside>

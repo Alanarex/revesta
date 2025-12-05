@@ -2,7 +2,11 @@
 #sidebar {
     width: 250px;
     transition: width 0.3s ease;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+    position: sticky;
+    top: 0;
     
     .sidebar-logo-container {
         height: var(--navbar-height, 60px);
@@ -75,23 +79,11 @@ body.sidebar-collapsed {
             padding-right: 0.5rem;
         }
     }
-    
-    #layout-wrapper {
-        margin-left: 70px !important;
-    }
-    
-    .navbar.fixed-top {
-        margin-left: 70px !important;
-    }
 }
 
 /* Full width sidebar (default/expanded state) */
 body:not(.sidebar-collapsed) {
-    #layout-wrapper {
-        margin-left: 250px !important;
-    }
-    
-    .navbar.fixed-top {
-        margin-left: 250px !important;
+    #sidebar {
+        width: 250px;
     }
 }

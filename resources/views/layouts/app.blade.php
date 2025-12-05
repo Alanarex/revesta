@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="page-loading">
 
 <head>
     <meta charset="UTF-8">
@@ -14,13 +14,13 @@
 
 </head>
 
-<body class="d-flex flex-column min-vh-100 sidebar-collapsed">
-    <div class="d-flex" id="layout-wrapper">
+<body class="sidebar-collapsed">
+    <div id="layout-wrapper">
         @auth
             @include('partials.sidebar')
         @endauth
 
-        <div id="main-content-wrapper" class="flex-grow-1">
+        <div id="main-content-wrapper">
             @auth
                 @include('partials.navbar')
             @else
