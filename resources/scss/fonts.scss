@@ -1,3 +1,16 @@
-html {
-    color: var(--bs-dark);
+/* Neulis Cursive Font Family */
+@font-face {
+    font-family: 'Neulis Cursive';
+    src: url('../fonts/neulis/fonnts.com-Neulis_Cursive_Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Neulis Cursive';
+    src: url('../fonts/neulis/fonnts.com-Neulis_Cursive_Italic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
 }

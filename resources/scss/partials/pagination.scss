@@ -1,0 +1,31 @@
+@import '../colors';
+
+/* Pagination Styles */
+.pagination {
+    .page-item {
+        &.active .page-link {
+            background-color: $primary;
+            border-color: $primary;
+            color: white;
+        }
+
+        .page-link {
+            color: $primary;
+
+            &:hover {
+                color: darken($primary, 10%);
+                background-color: lighten($primary, 45%);
+                border-color: $primary;
+            }
+
+            &:focus {
+                box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+                border-color: $primary;
+            }
+        }
+
+        &.disabled .page-link {
+            color: #6c757d;
+        }
+    }
+}

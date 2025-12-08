@@ -3,7 +3,7 @@
 @section('title', 'Connexion')
 
 @section('content')
-    <div class="card shadow-sm">
+    <div class="card border-0">
         <div class="card-body">
             <div class="text-center mb-4">
                 <img src="{{ Vite::asset('resources/images/logo_large.svg') }}" alt="Logo" class="img-fluid"
@@ -49,7 +49,7 @@
                 <!-- Remember Me -->
                 <div class="mb-3 form-check">
                     <input class="form-check-input" type="checkbox" name="remember" id="remember_me">
-                    <label class="form-check-label" for="remember_me">
+                    <label class="form-check-label text-dark" for="remember_me">
                         {{ __('Se souvenir de moi') }}
                     </label>
                 </div>

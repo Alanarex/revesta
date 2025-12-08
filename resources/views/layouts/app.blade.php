@@ -14,28 +14,26 @@
 
 </head>
 
-<body class="d-flex flex-column min-vh-100 sidebar-collapsed">
-    <div class="d-flex" id="layout-wrapper">
+<body
+    class="hold-transition @auth sidebar-mini @endauth sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
         @auth
+            @include('partials.navbar')
             @include('partials.sidebar')
+        @else
+            @include('partials.navbar-guest')
         @endauth
 
-        <div id="main-content-wrapper" class="flex-grow-1">
-            @auth
-                @include('partials.navbar')
-            @else
-                @include('partials.navbar-guest')
-            @endauth
-
-            <main class="container-fluid p-0 pt-3" id="main-content">
+        <div class="content-wrapper">
+            <main class="container-fluid p-3" id="main-content">
                 @yield('content')
             </main>
         </div>
+
+        @include('partials.footer')
     </div>
 
-    @include('partials.footer')
+    @include('partials.scripts')
 </body>
-
-@include('partials.scripts')
 
 </html>

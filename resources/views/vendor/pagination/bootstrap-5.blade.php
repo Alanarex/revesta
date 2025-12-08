@@ -97,3 +97,7 @@
             </div>
     </nav>
 @endif
+
+@push('styles')
+    @vite('resources/scss/partials/pagination.scss')
+@endpush
