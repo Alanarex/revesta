@@ -1,12 +1,14 @@
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 @import "quill/dist/quill.snow.css";
+@import "admin-lte/dist/css/adminlte.min.css";
 
-@import './colors.scss';
-@import './fonts.scss';
+@import './colors';
+@import './fonts';
 
 @import "bootstrap/scss/bootstrap";
 
 @import './partials/sidebar';
+@import './partials/pagination';
 @import './components/quill';
 
 /*
@@ -50,4 +52,29 @@ main#main-content {
 .navbar.navbar-expand-lg {
     height: var(--navbar-height);
     flex-shrink: 0;
+}
+
+/* Navbar dropdown styling */
+.navbar-nav .dropdown-menu {
+    .dropdown-item {
+        cursor: pointer;
+        
+        &:hover {
+            background-color: #f4f6f9;
+        }
+        
+        form {
+            margin: 0;
+            
+            button {
+                width: 100%;
+                text-align: left;
+                background: none;
+                border: none;
+                padding: 0;
+                color: inherit;
+                cursor: pointer;
+            }
+        }
+    }
 }

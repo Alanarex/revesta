@@ -13,10 +13,10 @@
     @include('partials.styles')
 </head>
 
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100">
 
-    <main class="container py-5" id="main-content">
-        <div class="row justify-content-center">
+    <main class="container d-flex align-items-center justify-content-center" id="main-content" style="min-height: 100vh;">
+        <div class="row justify-content-center w-100">
             <div class="col-md-6">
                 @yield('content')
             </div>

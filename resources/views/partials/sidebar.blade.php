@@ -11,7 +11,7 @@
             'title' => 'Blogs',
             'route' => route('blogs.index'),
             'icon' => 'fa-newspaper',
-            'active' => request()->routeIs('blogs.*') ,
+            'active' => request()->routeIs('blogs.*'),
             'enabled' => true,
         ],
         [
@@ -21,36 +21,39 @@
             'active' => request()->routeIs('admin.blogs.index'),
             'enabled' => Gate::allows('manage', App\Models\Blog::class),
         ],
-        // [
-        //     'title' => 'Statistiques',
-        //     'route' => route('statistics'),
-        //     'icon' => 'fa-chart-bar',
-        //     'active' => request()->routeIs('statistics'),
-        // ],
     ];
 @endphp
 
-<aside id="sidebar" class="bg-light border-end">
-    <div class="d-flex flex-column h-100 p-3 pt-0">
-        <div class="sidebar-logo-container mb-4 py-3">
-            <a href="{{ route('dashboard') }}" class="d-block">
-                <img src="{{ Vite::asset('resources/images/logo_large.svg') }}" alt="Logo" class="sidebar-logo-large">
-                <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="Logo" class="sidebar-logo-small">
-            </a>
-        </div>
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-light-primary elevation-2">
+    <!-- Brand Logo -->
+    <a href="{{ route('dashboard') }}" class="brand-link text-decoration-none">
+        <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="Logo" class="brand-image">
+        <span class="brand-text h-100">
+            <span class="text-primary">re</span><span class="text-secondary">vesta</span>
+        </span>
+    </a>
 
-        <ul class="nav nav-pills flex-column mt-3">
-            @foreach ($sidebarItems as $item)
-                @if ($item['enabled'])
-                    <li class="nav-item">
-                        <a href="{{ $item['route'] }}"
-                            class="nav-link text-dark d-flex align-items-center {{ !empty($item['active']) && $item['active'] ? 'active' : '' }}">
-                            <i class="fa {{ $item['icon'] }} sidebar-icon"></i>
-                            <span class="sidebar-text ms-2">{{ $item['title'] }}</span>
-                        </a>
-                    </li>
-                @endif
-            @endforeach
-        </ul>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
+                @foreach ($sidebarItems as $item)
+                    @if ($item['enabled'])
+                        <li class="nav-item">
+                            <a href="{{ $item['route'] }}"
+                                class="nav-link {{ !empty($item['active']) && $item['active'] ? 'active' : '' }}">
+                                <i class="nav-icon fas {{ $item['icon'] }}"></i>
+                                <p>{{ $item['title'] }}</p>
+                            </a>
+                        </li>
+                    @endif
+                @endforeach
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
     </div>
+    <!-- /.sidebar -->
 </aside>
