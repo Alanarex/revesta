@@ -1,0 +1,37 @@
+.navbar-expand .navbar-nav .dropdown-menu {
+    z-index: 1500;
+}
+
+.dropdown-menu[data-bs-popper] {
+    left: auto !important;
+    right: 1rem !important;
+    min-width: 12rem;
+    max-width: calc(100vw - 1rem);
+    inset-inline-end: 1rem !important;
+    inset-inline-start: auto !important;
+}
+
+body.guest-layout .app-wrapper {
+    display: block;
+}
+
+body.guest-layout .app-main,
+body.guest-layout .main-footer {
+    width: 100%;
+}
+
+@media (max-width: 991.98px) {
+    body:not(.guest-layout) .app-wrapper {
+        display: block;
+        min-height: 100vh;
+    }
+
+    body:not(.guest-layout) .app-main {
+        min-height: calc(100vh - var(--lte-app-header-height, 60px) - var(--lte-app-footer-min-height, 3rem));
+    }
+
+    body:not(.guest-layout) .main-footer {
+        position: relative;
+        margin-top: auto;
+    }
+}
