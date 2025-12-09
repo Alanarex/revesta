@@ -1,62 +1,98 @@
-/* AdminLTE Sidebar customizations */
+/* AdminLTE 4 Sidebar customizations */
 
-/* Ensure sidebar hover-expand works on mini sidebar */
-.sidebar-mini.sidebar-collapse .main-sidebar:hover {
-    width: 250px !important;
+/* Sidebar Brand Styling */
+.sidebar-brand {
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+    justify-content: flex-start;
 }
 
-/* Smooth transitions for sidebar */
-.main-sidebar {
-    transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-/* Hide text on collapsed sidebar, show on hover */
-.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) {
-    .nav-sidebar .nav-link p {
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-}
-
-.sidebar-mini.sidebar-collapse .main-sidebar:hover {
-    .nav-sidebar .nav-link p {
-        opacity: 1;
-        transition: opacity 0.3s ease;
-    }
-}
-
-/* Brand logo adjustments */
 .brand-link {
-    transition: width 0.3s ease-in-out;
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px;
     text-decoration: none !important;
-    
+    transition: all 0.3s ease;
+
     &:hover {
         text-decoration: none !important;
+        border-radius: 0.25rem;
     }
+}
+
+.brand-image {
+    width: 40px !important;
+    height: 40px !important;
 }
 
 /* Brand text styling with Neulis font */
 .brand-text {
-    font-family: 'Neulis', sans-serif;
+    font-family: 'Neulis Cursive', sans-serif;
     font-weight: 400;
+    font-size: 2rem;
     letter-spacing: 0.5px;
-    
+    white-space: nowrap;
+    display: flex;
+    gap: 0;
+
     .text-primary {
         color: #9CC41B !important;
     }
-    
+
     .text-secondary {
         color: #0f1a13 !important;
     }
 }
 
-/* Ensure icons stay visible and centered when collapsed */
-.sidebar-mini.sidebar-collapse .nav-sidebar > .nav-item > .nav-link .nav-icon {
-    margin-right: 0;
+/* Sidebar Wrapper */
+.sidebar-wrapper {
+    overflow-y: auto;
+    padding-top: 1rem;
 }
 
-/* Custom active state color using primary color */
-.nav-sidebar .nav-link.active {
-    background-color: #9CC41B !important;
-    color: white !important;
+/* Navigation link styling */
+.nav-sidebar .nav-link {
+    position: relative;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease;
+    color: inherit;
+
+    &:hover {
+        background-color: rgba(156, 196, 27, 0.1) !important;
+    }
+
+    &.active {
+        background-color: rgba(156, 196, 27, 0.2) !important;
+        color: #9CC41B !important;
+        font-weight: 500;
+        border-left: 4px solid #9CC41B;
+    }
+}
+
+/* Navigation icon styling */
+.nav-sidebar .nav-icon {
+    margin-right: 0.5rem;
+    width: 20px;
+    display: inline-block;
+}
+
+/* Sidebar text overflow fix */
+.nav-sidebar .nav-link p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 !important;
+    flex-grow: 1;
+}
+
+/* Ensure icons stay visible and centered when collapsed */
+.sidebar-expand-lg .app-sidebar.sidebar-mini .nav-sidebar>.nav-item>.nav-link .nav-icon {
+    margin-right: 0 !important;
+    text-align: center;
+}
+
+.nav-item {
+    color: var(--lte-sidebar-color);
 }

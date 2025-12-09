@@ -1,80 +1,30 @@
-@import "@fortawesome/fontawesome-free/css/all.min.css";
-@import "quill/dist/quill.snow.css";
-@import "admin-lte/dist/css/adminlte.min.css";
+/* -------------------------------------------------
+   1. Variables (must come first)
+-------------------------------------------------- */
+@import "./colors";
+@import "./fonts";
 
-@import './colors';
-@import './fonts';
-
+/* -------------------------------------------------
+   2. Bootstrap SCSS (compiled with your variables)
+-------------------------------------------------- */
 @import "bootstrap/scss/bootstrap";
 
-@import './partials/sidebar';
-@import './partials/pagination';
-@import './components/quill';
+/* -------------------------------------------------
+   3. Vendor CSS that is already compiled
+-------------------------------------------------- */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import "quill/dist/quill.snow.css";
 
-/*
- * Global layout variables and base styles
- * - --navbar-height controls both the fixed navbar and the sidebar logo
- *   container to keep visual alignment.
- */
-:root {
-    --navbar-height: 70px;
-}
+/* -------------------------------------------------
+   4. AdminLTE (built CSS)
+-------------------------------------------------- */
+@import "admin-lte/dist/css/adminlte.min.css";
 
-body {
-    padding-top: 0;
-    font-family: Arial, sans-serif;
-    margin: 0;
-}
-
-#layout-wrapper {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: row;
-}
-
-#sidebar {
-    flex-shrink: 0;
-}
-
-#main-content-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-main#main-content {
-    flex: 1;
-    padding-top: 1rem;
-}
-
-/* Navbar styles */
-.navbar.navbar-expand-lg {
-    height: var(--navbar-height);
-    flex-shrink: 0;
-}
-
-/* Navbar dropdown styling */
-.navbar-nav .dropdown-menu {
-    .dropdown-item {
-        cursor: pointer;
-        
-        &:hover {
-            background-color: #f4f6f9;
-        }
-        
-        form {
-            margin: 0;
-            
-            button {
-                width: 100%;
-                text-align: left;
-                background: none;
-                border: none;
-                padding: 0;
-                color: inherit;
-                cursor: pointer;
-            }
-        }
-    }
-}
+/* -------------------------------------------------
+   5. Your custom overrides
+-------------------------------------------------- */
+@import "./partials/navbar";
+@import "./partials/sidebar";
+@import "./partials/pagination";
+@import "./components/quill";

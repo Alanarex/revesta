@@ -1,14 +1,14 @@
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+<nav class="main-header navbar navbar-expand">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
     </ul>
 
     <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
+    <ul class="navbar-nav ms-auto">
         <!-- User Dropdown Menu -->
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
@@ -22,7 +22,7 @@
                 </li>
                 <li>
                     <a href="{{ route('profile.edit') }}" class="dropdown-item">
-                        <i class="fas fa-user mr-2"></i> Profil
+                        <i class="fas fa-user me-2"></i> Profil
                     </a>
                 </li>
 
@@ -34,7 +34,7 @@
                     <form method="POST" action="{{ route('logout') }}" class="d-inline">
                         @csrf
                         <button type="submit" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                            <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
                         </button>
                     </form>
                 </li>

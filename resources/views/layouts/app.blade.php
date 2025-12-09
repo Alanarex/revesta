@@ -14,9 +14,8 @@
 
 </head>
 
-<body
-    class="hold-transition @auth sidebar-mini @endauth sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed">
-    <div class="wrapper">
+<body class="@auth sidebar-expand-lg sidebar-mini bg-body-tertiary @else guest-layout bg-body-tertiary @endauth">
+    <div class="app-wrapper">
         @auth
             @include('partials.navbar')
             @include('partials.sidebar')
@@ -24,12 +23,15 @@
             @include('partials.navbar-guest')
         @endauth
 
-        <div class="content-wrapper">
-            <main class="container-fluid p-3" id="main-content">
-                @yield('content')
-            </main>
-        </div>
-
+        <main class="app-main">
+            <div class="app-content-header">
+            </div>
+            <div class="app-content">
+                <div class="container-fluid">
+                    @yield('content')
+                </div>
+            </div>
+        </main>
         @include('partials.footer')
     </div>
 
