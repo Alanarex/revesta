@@ -78,7 +78,6 @@ class BlogController extends Controller
 
     public function create(CreateBlogRequest $request)
     {
-
         return view('blogs.create', [
             'title' => 'Créer un blog',
             'breadcrumbs' => [
@@ -130,22 +129,25 @@ class BlogController extends Controller
     {
         $this->blogService->updateBlog($blog, $request->validated());
 
+        // Determine success message based on status
+        $status = $request->validated()['status'];
+        $message = match($status) {
+            'published' => 'Blog publié avec succès!',
+            'pending' => 'Blog soumis pour approbation!',
+            'draft' => 'Brouillon sauvegardé!',
+        };
+
         // Handle AJAX requests
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => $request->validated()['status'] === 'pending'
-                    ? 'Blog soumis pour approbation!'
-                    : 'Brouillon sauvegardé!',
+                'message' => $message,
                 'redirect' => route('blogs.show', $blog)
             ]);
         }
 
         // Regular form submission - redirect directly
-        return redirect(route('blogs.show', $blog))
-            ->with('success', $request->validated()['status'] === 'pending'
-                ? 'Blog soumis pour approbation!'
-                : 'Brouillon sauvegardé!');
+        return redirect(route('blogs.show', $blog))->with('success', $message);
     }
 
     public function publish(PublishBlogRequest $request, Blog $blog)

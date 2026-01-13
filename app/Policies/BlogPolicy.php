@@ -49,7 +49,7 @@ class BlogPolicy
      */
     public function create(User $user): bool
     {
-        return true; // All authenticated users can create blogs
+        return $user->isAdmin();
     }
 
     /**
@@ -57,7 +57,7 @@ class BlogPolicy
      */
     public function update(User $user, Blog $blog): bool
     {
-        return $user->id === $blog->user_id;
+        return $user->isAdmin();
     }
 
     /**
@@ -65,7 +65,7 @@ class BlogPolicy
      */
     public function delete(User $user, Blog $blog): bool
     {
-        return $user->id === $blog->user_id || $user->isAdmin();
+        return $user->isAdmin();
     }
 
     /**

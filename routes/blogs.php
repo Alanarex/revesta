@@ -28,12 +28,14 @@ Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
 // Blog management routes (specific routes BEFORE wildcard)
 Route::prefix('blogs')->name('blogs.')->group(function () {
     Route::middleware(['auth', 'verified'])->group(function () {
-        Route::get('/create', [BlogController::class, 'create'])->name('create');
-        Route::post('/', [BlogController::class, 'store'])->middleware('throttle:10,1')->name('store');
-        Route::get('/{blog}/edit', [BlogController::class, 'edit'])->name('edit');
-        Route::put('/{blog}', [BlogController::class, 'update'])->middleware('throttle:20,1')->name('update');
-        Route::post('/{blog}/publish', [BlogController::class, 'publish'])->middleware('throttle:10,1')->name('publish');
-        Route::delete('/{blog}', [BlogController::class, 'destroy'])->middleware('throttle:10,1')->name('destroy');
+        Route::middleware([IsAdmin::class])->group(function () {
+            Route::get('/create', [BlogController::class, 'create'])->name('create');
+            Route::post('/', [BlogController::class, 'store'])->middleware('throttle:10,1')->name('store');
+            Route::get('/{blog}/edit', [BlogController::class, 'edit'])->name('edit');
+            Route::put('/{blog}', [BlogController::class, 'update'])->middleware('throttle:20,1')->name('update');
+            Route::post('/{blog}/publish', [BlogController::class, 'publish'])->middleware('throttle:10,1')->name('publish');
+            Route::delete('/{blog}', [BlogController::class, 'destroy'])->middleware('throttle:10,1')->name('destroy');
+        });
 
         // Comments
         Route::post('/{blog}/comments', [BlogCommentController::class, 'store'])->middleware('throttle:20,1')->name('comments.store');

@@ -12,7 +12,7 @@ class StoreBlogRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
-    {
+    {   
         return Gate::allows('create', Blog::class);
     }
 
@@ -27,7 +27,7 @@ class StoreBlogRequest extends FormRequest
             'title' => 'required|string|max:255',
             'short_description' => 'required|string|max:500',
             'content' => 'required|string',
-            'status' => 'required|in:draft,pending',
+            'status' => 'required|in:draft,pending,published',
         ];
     }
 
@@ -45,7 +45,7 @@ class StoreBlogRequest extends FormRequest
             'short_description.max' => 'La description ne peut pas dépasser 500 caractères.',
             'content.required' => 'Le contenu est obligatoire.',
             'status.required' => 'Le statut est obligatoire.',
-            'status.in' => 'Le statut doit être soit brouillon, soit en attente.',
+            'status.in' => 'Le statut doit être soit brouillon, soit en attente, soit publié.',
         ];
     }
 }

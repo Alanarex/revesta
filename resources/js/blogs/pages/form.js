@@ -5,7 +5,7 @@
 
 import Quill from 'quill';
 
-$(function() {
+$(function () {
 
     // Only initialize if the blog form exists on the page
     if ($('#blogForm').length === 0) {
@@ -22,9 +22,9 @@ $(function() {
         const toolbarOptions = [
             [{ 'header': [1, 2, 3, false] }],
             ['bold', 'italic', 'underline', 'strike'],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'script': 'sub'}, { 'script': 'super' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'script': 'sub' }, { 'script': 'super' }],
+            [{ 'indent': '-1' }, { 'indent': '+1' }],
             [{ 'color': [] }, { 'background': [] }],
             [{ 'align': [] }],
             ['blockquote', 'code-block'],
@@ -47,19 +47,13 @@ $(function() {
             quill.root.innerHTML = initialContent;
         }
 
-        // Sync Quill content to hidden textarea on form submission
-        $('#blogForm').on('submit', function() {
-            $contentTextarea.val(quill.root.innerHTML);
-        });
-
         // Update textarea on Quill content change (for validation)
-        quill.on('text-change', function() {
+        quill.on('text-change', function () {
             $contentTextarea.val(quill.root.innerHTML);
-            $contentTextarea.trigger('change');
         });
     }
 
-    // Initialize form validation
+    // Initialize form validation (excluding content/quill)
     $('#blogForm').validate({
         rules: {
             title: {
@@ -69,9 +63,6 @@ $(function() {
             short_description: {
                 required: true,
                 maxlength: 500
-            },
-            content: {
-                required: true
             }
         },
         messages: {
@@ -82,10 +73,41 @@ $(function() {
             short_description: {
                 required: 'La description courte est obligatoire.',
                 maxlength: 'La description courte ne peut pas dépasser 500 caractères.'
-            },
-            content: {
-                required: 'Le contenu est obligatoire.'
             }
+        },
+        errorElement: 'div',
+        errorClass: 'invalid-feedback d-block',
+        highlight: function (element) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element) {
+            $(element).removeClass('is-invalid');
+        },
+        errorPlacement: function (error, element) {
+            element.after(error);
+        }
+    });
+
+    // Custom Quill content validation on submit
+    $('#blogForm').on('submit', function () {
+        if (!quill) return;
+        $contentTextarea.val(quill.root.innerHTML);
+        const quillEditor = $('#editor .ql-editor');
+        const html = quillEditor.html();
+        const text = quillEditor.text().trim();
+        let isValid = true;
+        // Remove previous error
+        $('#editor').removeClass('is-invalid');
+        $('#editor').nextAll('.invalid-feedback, .invalid-feedback.d-block').remove();
+        if (text.length === 0 || html === '<p><br></p>') {
+            // Show error
+            $('#editor').addClass('is-invalid');
+            $('#editor').after('<div class="invalid-feedback d-block">Le contenu est obligatoire.</div>');
+            isValid = false;
+        }
+        if (!isValid) {
+            // Prevent form submission
+            return false;
         }
     });
 

@@ -15,13 +15,11 @@
                 </div>
                 <div>
                     @auth
-                        <a href="{{ route('blogs.create') }}" class="btn btn-success">
-                            <i class="fa fa-pen"></i> Écrire un blog
-                        </a>
-                    @else
-                        <button class="btn btn-success" data-auth-required>
-                            <i class="fa fa-pen"></i> Écrire un blog
-                        </button>
+                        @can('create', App\Models\Blog::class)
+                            <a href="{{ route('blogs.create') }}" class="btn btn-success">
+                                <i class="fa fa-pen"></i> Écrire un blog
+                            </a>
+                        @endcan
                     @endauth
                 </div>
             </div>
