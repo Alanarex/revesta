@@ -62,6 +62,19 @@
                     </div>
                 </div>
 
+                <div class="col-12">
+                    <label for="bio" class="form-label">{{ __('Bio') }}</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-pen"></i></span>
+                        <textarea class="form-control @error('bio') is-invalid @enderror" id="bio"
+                            name="bio" rows="4" placeholder="Tell us about yourself...">{{ old('bio', $user->bio) }}</textarea>
+                        @error('bio')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <small class="form-text text-muted">Maximum 500 characters</small>
+                </div>
+
                 <div class="col-md-6">
                     <label for="civil_status" class="form-label">{{ __('Civil Status') }}</label>
                     <div class="input-group">

@@ -26,6 +26,7 @@ class ProfileService
             'phone'      => $data['phone'] ?? $user->phone,
             'civil_status' => $data['civil_status'] ?? $user->civil_status,
             'family_status' => $data['family_status'] ?? $user->family_status,
+            'bio'        => $data['bio'] ?? '',
         ]);
     }
 
