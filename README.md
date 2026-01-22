@@ -166,6 +166,68 @@ http://revesta.local
 
 ---
 
+## Testing
+
+The application includes comprehensive automated tests to ensure code quality and reliability. Tests are completely isolated from your local development database.
+
+### ⚡ Quick Test Commands
+
+```bash
+# Run all tests
+php artisan test
+
+# Run tests without coverage (faster)
+php artisan test --no-coverage
+
+# Run specific test file
+php artisan test tests/Feature/Controllers/AddressControllerTest.php
+
+# Run tests matching a pattern
+php artisan test --filter="address"
+
+# Show verbose output
+php artisan test --verbose
+```
+
+### 🔒 Database Safety
+
+- Tests use a **separate MySQL database** (`revesta_testing`)
+- Your local development database (`revesta_db`) is **never modified**
+- Each test gets a fresh, clean database state via the `RefreshDatabase` trait
+- Database is automatically migrated and reset between tests
+
+### 📋 Test Suite
+
+**16+ test files** covering:
+- ✅ Authentication (login, registration, password reset, email verification)
+- ✅ Address management (CRUD, search, validation, label generation)
+- ✅ Form validation
+- ✅ JSON API endpoints
+- ✅ Database connections and integrity
+
+### 📖 Full Documentation
+
+For comprehensive testing documentation including:
+- Testing architecture and how it works
+- Debugging failed tests with examples
+- Writing new tests following best practices
+- Troubleshooting common issues
+- Performance optimization tips
+
+**See: [TESTING.md](TESTING.md)** (1170+ lines of detailed guidance)
+
+### 🛠️ Setup One-Time (First Time Only)
+
+```bash
+# Create the test database
+mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS revesta_testing;"
+
+# Verify it was created
+mysql -u root -proot -e "SHOW DATABASES;" | grep revesta_testing
+```
+
+---
+
 ## Author
 
 **Alaa Khalil**
