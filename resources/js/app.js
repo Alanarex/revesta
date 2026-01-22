@@ -20,7 +20,11 @@ window.Swal = Swal;
 import 'admin-lte';
 
 /* -------------------- Bootstrap JS -------------------- */
-import 'bootstrap/js/dist/dropdown';
+import 'bootstrap';
+
+/* -------------------- DataTables -------------------- */
+import DataTable from 'datatables.net-bs5';
+window.DataTable = DataTable;
 
 /* -------------------- Custom helper JS -------------------- */
 import './helper.js';           // Your own helper functions
