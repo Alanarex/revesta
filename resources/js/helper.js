@@ -62,10 +62,30 @@ export function hideTooltip(tooltip) {
     }
 }
 
+/**
+ * Shows a delete confirmation SweetAlert dialog
+ * @param {string} title - The title of the confirmation dialog
+ * @param {string} text - The message text
+ * @returns {Promise} A promise that resolves with the user's choice
+ */
+export function confirmDelete(title = 'Êtes-vous sûr?', text = 'Cette action ne peut pas être annulée.') {
+    return Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler'
+    });
+}
+
 // Make functions globally available when imported
 if (typeof window !== 'undefined') {
     window.helpers = {
         showTooltip,
-        hideTooltip
+        hideTooltip,
+        confirmDelete
     };
 }

@@ -15,13 +15,21 @@ class Housing extends Model
         'surface',
         'construction_year',
         'energy_class',
-        'adresse_id',
+        'address_id',
         'fiscal_income_id',
     ];
 
     public function address()
     {
-        return $this->belongsTo(Address::class, 'adresse_id');
+        return $this->belongsTo(Address::class, 'address_id');
+    }
+
+    /**
+     * Polymorphic relationship: Get all addresses for this housing
+     */
+    public function addresses()
+    {
+        return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
     }
 
     public function fiscalIncomeRange()

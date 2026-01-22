@@ -12,14 +12,21 @@
             'route' => route('blogs.index'),
             'icon' => 'bi-newspaper',
             'active' => request()->routeIs('blogs.*'),
-            'enabled' => true,
+            'enabled' => Gate::allows('viewAny', App\Models\Blog::class),
         ],
         [
-            'title' => 'Gérer les blogs',
+            'title' => 'Approbation des Blogs',
             'route' => route('admin.blogs.index'),
             'icon' => 'bi-clipboard-check',
             'active' => request()->routeIs('admin.blogs.index'),
             'enabled' => Gate::allows('manage', App\Models\Blog::class),
+        ],
+        [
+            'title' => 'Adresses',
+            'route' => route('admin.addresses.index'),
+            'icon' => 'bi-geo-alt',
+            'active' => request()->routeIs('admin.addresses.index'),
+            'enabled' => Gate::allows('manage', App\Models\Address::class),
         ],
     ];
 @endphp
