@@ -12,7 +12,18 @@ class HousingSeeder extends Seeder
         $this->command->info('Creating housing types...');
         
         $count = 10;
-        Housing::factory()->count($count)->create();
+        $housings = Housing::factory()->count($count)->create();
+        
+        // Attach addresses via polymorphic relationship
+        foreach ($housings as $housing) {
+            if ($housing->address_id) {
+                $housing->addresses()->attach($housing->address_id, [
+                    'type' => 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
         
         $this->command->info('✅ Created ' . $count . ' housing types.');
     }

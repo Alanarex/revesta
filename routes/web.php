@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/blogs.php';
+require __DIR__ . '/admin.php';
 
 // Public user profile (view another user's profile)
 // Use /profile/{userId} so profile routes stay under the 'profile' prefix and

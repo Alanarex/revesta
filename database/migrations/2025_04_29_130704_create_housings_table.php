@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->year('construction_year')->nullable();
             $table->string('energy_class')->nullable();
 
-            $table->foreignId('adresse_id')->constrained('addresses')->cascadeOnDelete();
+            $table->foreignId('address_id')->constrained('addresses')->cascadeOnDelete();
             $table->foreignId('fiscal_income_id')->nullable()->constrained('fiscal_income_ranges')->nullOnDelete();
 
             $table->timestamps();

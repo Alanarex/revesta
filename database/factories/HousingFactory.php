@@ -15,7 +15,7 @@ class HousingFactory extends Factory
             'surface' => $this->faker->randomFloat(2, 20, 200),
             'construction_year' => $this->faker->optional()->year,
             'energy_class' => $this->faker->optional()->randomElement(['A', 'B', 'C', 'D', 'E', 'F', 'G']),
-            'adresse_id' => Address::factory(),
+            'address_id' => Address::factory(),
             'fiscal_income_id' => FiscalIncomeRange::factory(),
         ];
     }

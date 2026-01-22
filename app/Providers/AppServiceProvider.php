@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Address;
 use App\Models\Blog;
 use App\Models\BlogComment;
 use App\Models\User;
+use App\Policies\AddressPolicy;
 use App\Policies\BlogCommentPolicy;
 use App\Policies\BlogPolicy;
 use App\Policies\UserPolicy;
@@ -29,5 +31,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Blog::class, BlogPolicy::class);
         Gate::policy(BlogComment::class, BlogCommentPolicy::class);
+        Gate::policy(Address::class, AddressPolicy::class);
     }
 }
