@@ -57,6 +57,14 @@ class User extends Authenticatable
         return $this->belongsTo(Address::class);
     }
 
+    /**
+     * Polymorphic relationship: Get all addresses for this user
+     */
+    public function addresses()
+    {
+        return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class);
