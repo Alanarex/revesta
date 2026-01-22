@@ -11,7 +11,7 @@ class AddressSeeder extends Seeder
     {
         $this->command->info('Creating addresses...');
         
-        $count = 10;
+        $count = 40;
         Address::factory()->count($count)->create();
         
         $this->command->info('✅ Created ' . $count . ' addresses.');
