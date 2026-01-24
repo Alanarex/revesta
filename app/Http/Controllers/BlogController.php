@@ -83,7 +83,7 @@ class BlogController extends Controller
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard')],
                 ['label' => 'Blogs', 'url' => route('blogs.index')],
-                ['label' => 'Créer', 'url' => route('blogs.create')],
+                ['label' => 'Créer', 'url' => route('admin.blogs.create')],
             ],
         ]);
     }
@@ -120,7 +120,7 @@ class BlogController extends Controller
                 ['label' => 'Accueil', 'url' => route('dashboard')],
                 ['label' => 'Blogs', 'url' => route('blogs.index')],
                 ['label' => $blog->title, 'url' => route('blogs.show', $blog)],
-                ['label' => 'Modifier', 'url' => route('blogs.edit', $blog)],
+                ['label' => 'Modifier', 'url' => route('admin.blogs.edit', $blog)],
             ],
         ]);
     }

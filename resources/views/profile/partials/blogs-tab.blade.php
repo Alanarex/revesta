@@ -58,7 +58,7 @@
                     <i class="fa fa-newspaper fa-4x text-muted mb-3"></i>
                     <h5 class="text-muted">Aucun blog</h5>
                     <p class="text-muted mb-3">Commencez à partager vos idées avec le monde</p>
-                    <a href="{{ route('blogs.create') }}" class="btn btn-primary">
+                    <a href="{{ route('admin.blogs.create') }}" class="btn btn-primary">
                         <i class="fa fa-pen me-2"></i>Écrire votre premier blog
                     </a>
                 </div>

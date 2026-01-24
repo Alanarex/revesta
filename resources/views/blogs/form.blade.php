@@ -7,7 +7,7 @@
             <div class="card-body p-4">
                 @php
                     $isEdit = isset($blog);
-                    $action = $isEdit ? route('blogs.update', $blog) : route('blogs.store');
+                    $action = $isEdit ? route('admin.blogs.update', $blog) : route('admin.blogs.store');
                 @endphp
 
                 <form id="blogForm" action="{{ $action }}" method="POST">

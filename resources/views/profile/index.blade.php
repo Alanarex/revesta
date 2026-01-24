@@ -37,7 +37,7 @@
                             <div class="profile-actions">
                                 @auth
                                     @can('create', App\Models\Blog::class)
-                                        <a href="{{ route('blogs.create') }}" class="btn btn-primary">
+                                        <a href="{{ route('admin.blogs.create') }}" class="btn btn-primary">
                                             <i class="fa fa-pen me-2"></i>Écrire un blog
                                         </a>
                                     @endcan

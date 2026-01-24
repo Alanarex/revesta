@@ -108,7 +108,7 @@
                         @endif
 
                         @if ($canEdit && $isOwner)
-                            <a href="{{ route('blogs.edit', $blog) }}" class="btn btn-outline-secondary btn-sm">
+                            <a href="{{ route('admin.blogs.edit', $blog) }}" class="btn btn-outline-secondary btn-sm">
                                 <i class="fa fa-edit"></i>
                             </a>
                         @endif

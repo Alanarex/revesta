@@ -8,7 +8,7 @@
                 Ce blog est un brouillon.
                 @if ($canEdit)
                     <a href="#" class="publish-draft-link ms-2 text-primary" data-blog-id="{{ $blog->id }}"
-                        data-publish-url="{{ route('blogs.publish', $blog) }}" data-csrf-token="{{ csrf_token() }}">
+                        data-publish-url="{{ route('admin.blogs.publish', $blog) }}" data-csrf-token="{{ csrf_token() }}">
                         <small>Soumettre pour approbation</small>
                     </a>
                 @endif
@@ -121,7 +121,7 @@
                             @endif
 
                             @if ($canEdit)
-                                <a href="{{ route('blogs.edit', $blog) }}" class="btn btn-outline-secondary"
+                                <a href="{{ route('admin.blogs.edit', $blog) }}" class="btn btn-outline-secondary"
                                     title="Modifier">
                                     <i class="fa fa-edit"></i>
                                 </a>

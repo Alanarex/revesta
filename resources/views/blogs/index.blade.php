@@ -16,7 +16,7 @@
                 <div>
                     @auth
                         @can('create', App\Models\Blog::class)
-                            <a href="{{ route('blogs.create') }}" class="btn btn-success">
+                            <a href="{{ route('admin.blogs.create') }}" class="btn btn-success">
                                 <i class="fa fa-pen"></i> Écrire un blog
                             </a>
                         @endcan
