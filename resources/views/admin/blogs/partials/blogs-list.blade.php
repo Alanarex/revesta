@@ -9,7 +9,7 @@
                     'canEdit' => auth()->user()->isAdmin(),
                     'canDelete' => auth()->user()->isAdmin(),
                     'canCheckbox' => false,
-                    'canApproveReject' => $blog->isPending(),
+                    'canApproveReject' => auth()->check() && auth()->user()->isAdmin() && $blog->isPending(),
                 ])
             </div>
         </div>

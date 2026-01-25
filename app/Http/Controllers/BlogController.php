@@ -78,6 +78,8 @@ class BlogController extends Controller
         $canComment = Auth::check();
         $canEdit = Auth::check() && Auth::id() === $blog->user_id;
         $canDelete = Auth::check() && ((auth()->user()->isAdmin()) || Auth::id() === $blog->user_id);
+        $canApprove = Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
+        $canReject = Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
 
         return view('admin.blogs.show', [
             'blog' => $blog,
@@ -88,6 +90,8 @@ class BlogController extends Controller
             'canComment' => $canComment,
             'canEdit' => $canEdit,
             'canDelete' => $canDelete,
+            'canApprove' => $canApprove,
+            'canReject' => $canReject,
             'interactionsDisabled' => $interactionsDisabled,
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard')],

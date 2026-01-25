@@ -124,11 +124,6 @@
                                     </li>
                                 @endif
 
-                                @php
-                                    $canApprove = isset($blog) && Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
-                                    $canReject = isset($blog) && Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
-                                @endphp
-
                                 @if ($canApprove || $canReject)
                                     <li><hr class="dropdown-divider"></li>
                                 @endif

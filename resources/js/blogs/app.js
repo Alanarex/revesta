@@ -26,27 +26,49 @@ $(document).on('click', '.approve-single-btn', function(e) {
     const blogId = $(this).data('blog-id');
     const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-    if (confirm('Êtes-vous sûr de vouloir approuver ce blog?')) {
-        $.ajax({
-            url: `/admin/blogs/${blogId}/approve`,
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            },
-            success: (response) => {
-                if (response.success) {
-                    alert('Blog approuvé avec succès');
-                    location.reload();
-                } else {
-                    alert(response.message || 'Erreur lors de l\'approbation');
+    Swal.fire({
+        title: 'Approuver le blog?',
+        text: 'Êtes-vous sûr de vouloir approuver ce blog?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, approuver',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/admin/blogs/${blogId}/approve`,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: (response) => {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Succès!',
+                            text: 'Blog approuvé avec succès',
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Erreur',
+                            text: response.message || 'Erreur lors de l\'approbation',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: (xhr) => {
+                    const message = xhr.responseJSON?.message || 'Erreur lors de l\'approbation';
+                    Swal.fire({
+                        title: 'Erreur',
+                        text: message,
+                        icon: 'error'
+                    });
                 }
-            },
-            error: (xhr) => {
-                const message = xhr.responseJSON?.message || 'Erreur lors de l\'approbation';
-                alert(message);
-            }
-        });
-    }
+            });
+        }
+    });
 });
 
 // Reject blog button handler
@@ -55,29 +77,51 @@ $(document).on('click', '.reject-single-btn', function(e) {
     const blogId = $(this).data('blog-id');
     const csrfToken = $('meta[name="csrf-token"]').attr('content');
     
-    const reason = prompt('Entrez la raison du rejet (facultatif):');
-    if (reason !== null) { // null means cancel was clicked
-        $.ajax({
-            url: `/admin/blogs/${blogId}/reject`,
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            },
-            data: {
-                rejection_reason: reason || ''
-            },
-            success: (response) => {
-                if (response.success) {
-                    alert('Blog rejeté avec succès');
-                    location.reload();
-                } else {
-                    alert(response.message || 'Erreur lors du rejet');
+    Swal.fire({
+        title: 'Rejeter le blog',
+        input: 'textarea',
+        inputLabel: 'Raison du rejet',
+        inputPlaceholder: 'Entrez la raison du rejet (facultatif)',
+        showCancelButton: true,
+        confirmButtonText: 'Rejeter',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/admin/blogs/${blogId}/reject`,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                data: {
+                    rejection_reason: result.value || ''
+                },
+                success: (response) => {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Succès!',
+                            text: 'Blog rejeté avec succès',
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Erreur',
+                            text: response.message || 'Erreur lors du rejet',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: (xhr) => {
+                    const message = xhr.responseJSON?.message || 'Erreur lors du rejet';
+                    Swal.fire({
+                        title: 'Erreur',
+                        text: message,
+                        icon: 'error'
+                    });
                 }
-            },
-            error: (xhr) => {
-                const message = xhr.responseJSON?.message || 'Erreur lors du rejet';
-                alert(message);
-            }
-        });
-    }
+            });
+        }
+    });
 });
