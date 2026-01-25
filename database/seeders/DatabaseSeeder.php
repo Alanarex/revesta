@@ -10,7 +10,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
-            AdminUserSeeder::class,
         ]);
 
         // Only seed users in local or testing environments
@@ -22,10 +21,11 @@ class DatabaseSeeder extends Seeder
                 HousingSeeder::class,
                 AdSeeder::class,
                 ConditionSeeder::class,
+                UserSeeder::class,
+                AdminUserSeeder::class,
                 BlogSeeder::class,
                 SimulationSeeder::class,
                 AidSimulationSeeder::class,
-                UserSeeder::class,
             ]);
         }
     }
