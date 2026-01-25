@@ -123,6 +123,33 @@
                                         </button>
                                     </li>
                                 @endif
+
+                                @php
+                                    $canApprove = isset($blog) && Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
+                                    $canReject = isset($blog) && Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
+                                @endphp
+
+                                @if ($canApprove || $canReject)
+                                    <li><hr class="dropdown-divider"></li>
+                                @endif
+
+                                @if ($canApprove)
+                                    <li>
+                                        <button type="button" class="dropdown-item text-success approve-single-btn"
+                                            data-blog-id="{{ $blog->id }}">
+                                            <i class="fa fa-check me-2"></i> Approuver
+                                        </button>
+                                    </li>
+                                @endif
+
+                                @if ($canReject)
+                                    <li>
+                                        <button type="button" class="dropdown-item text-danger reject-single-btn"
+                                            data-blog-id="{{ $blog->id }}">
+                                            <i class="fa fa-times me-2"></i> Rejeter
+                                        </button>
+                                    </li>
+                                @endif
                             </ul>
                         </div>
                     </div>
