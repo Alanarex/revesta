@@ -3,5 +3,5 @@
 @section('content')
     @yield('content')
 
-    @include('blogs.partials.scripts')
+    @include('admin.blogs.partials.scripts')
 @endsection
