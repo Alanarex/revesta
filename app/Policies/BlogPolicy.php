@@ -8,14 +8,6 @@ use App\Models\User;
 class BlogPolicy
 {
     /**
-     * Determine whether the user can view any blogs.
-     */
-    public function viewAny(?User $user): bool
-    {
-        return true; // Anyone can view published blogs
-    }
-
-    /**
      * Determine whether the user can view the blog.
      */
     public function view(?User $user, Blog $blog): bool
@@ -32,12 +24,12 @@ class BlogPolicy
 
         // Rejected: only the author can view (admin may manage via admin panel)
         if ($blog->status === Blog::REJECTED) {
-            return $user !== null && $user->id === $blog->user_id;
+            return $user->isAdmin();
         }
 
         // Pending: author or admin can view
         if ($blog->status === Blog::PENDING) {
-            return $user !== null && ($user->id === $blog->user_id || $user->isAdmin());
+            return $user->isAdmin();
         }
 
         // Fallback deny
@@ -118,12 +110,6 @@ class BlogPolicy
             return true;
         }
 
-        // Can like own blogs in any status
-        if ($user->id === $blog->user_id) {
-            return true;
-        }
-
-        // Cannot like draft, pending, or rejected blogs that aren't yours
         return false;
     }
 
@@ -137,12 +123,6 @@ class BlogPolicy
             return true;
         }
 
-        // Can bookmark own blogs in any status
-        if ($user->id === $blog->user_id) {
-            return true;
-        }
-
-        // Cannot bookmark draft, pending, or rejected blogs that aren't yours
         return false;
     }
 }
