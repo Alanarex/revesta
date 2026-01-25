@@ -14,7 +14,7 @@
                             <h5 class="mb-3">Blogs Publiés</h5>
                             
                             @forelse($publishedBlogs as $blog)
-                                @include('blogs.partials.card', [
+                                @include('admin.blogs.partials.card', [
                                     'blog' => $blog,
                                     'canAuthor' => false,
                                     'canBookmark' => true,

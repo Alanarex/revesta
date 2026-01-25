@@ -44,7 +44,7 @@
             @endphp
             @forelse($allBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -69,7 +69,7 @@
         <div class="tab-pane fade" id="published-blogs">
             @forelse($publishedBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -94,7 +94,7 @@
             @endphp
             @forelse($pendingBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -119,7 +119,7 @@
             @endphp
             @forelse($drafts as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -144,7 +144,7 @@
             @endphp
             @forelse($rejectedBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -171,7 +171,7 @@
     
     @forelse($publishedBlogs as $blog)
         <div class="mb-3">
-            @include('blogs.partials.card', [
+            @include('admin.blogs.partials.card', [
                 'blog' => $blog,
                 'canAuthor' => false,
                 'canBookmark' => true,
@@ -189,7 +189,7 @@
     @endforelse
 @endif
 
-@include('blogs.partials.scripts')
+@include('admin.blogs.partials.scripts')
 
 @push('styles')
 <style>

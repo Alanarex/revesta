@@ -4,7 +4,7 @@
         <!-- Start Navbar Links -->
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link d-flex align-items-center" href="{{ route('blogs.index') }}">
+                <a class="nav-link d-flex align-items-center" href="{{ route('admin.blogs.index') }}">
                     <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="Logo" style="height: 35px; margin-right: 10px;">
                     <span class="fw-light" style="font-family: 'Neulis Cursive', cursive; font-size: 2.5rem;">
                         <span class="text-primary">re</span><span class="text-secondary">vesta</span>
