@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 class ProfileService
 {
     public function __construct(
-        private readonly UserRepository $users
+        private readonly UserRepository $userRepository
     ) {}
 
     public function updateProfile(User $user, array $data): User
@@ -19,7 +19,7 @@ class ProfileService
             $user->email_verified_at = null;
         }
 
-        return $this->users->update($user, [
+        return $this->userRepository->update($user, [
             'first_name' => $data['first_name'] ?? $user->first_name,
             'last_name'  => $data['last_name'] ?? $user->last_name,
             'email'      => $data['email'] ?? $user->email,
