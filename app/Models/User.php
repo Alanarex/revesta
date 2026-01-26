@@ -27,6 +27,7 @@ class User extends Authenticatable
         'civil_status',
         'family_status',
         'cookies_accepted',
+        'bio',
     ];
 
     /**

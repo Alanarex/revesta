@@ -49,6 +49,7 @@ class UpdateProfileRequest extends FormRequest
             'phone' => ['nullable', 'string', 'min:6', 'max:20'],
             'civil_status' => ['nullable', 'string', Rule::in(['monsieur', 'madame'])],
             'family_status' => ['nullable', 'string', Rule::in(['married', 'civil_partnership', 'divorced', 'separated', 'single', 'widowed'])],
+            'bio' => ['nullable', 'string', 'max:500'],
         ];
     }
 }
