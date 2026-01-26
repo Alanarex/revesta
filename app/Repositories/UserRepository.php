@@ -12,4 +12,13 @@ class UserRepository
         $user->save();
         return $user;
     }
+
+    public function findByEmail(?string $email): ?User
+    {
+        if (empty($email)) {
+            return null;
+        }
+
+        return User::where('email', $email)->first();
+    }
 }
