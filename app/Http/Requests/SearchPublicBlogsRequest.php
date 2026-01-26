@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class SearchPublicBlogsRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class SearchPublicBlogsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return \Gate::allows('viewAny', \App\Models\Blog::class);
+        return Gate::allows('viewAny', Blog::class);
     }
 
     /**

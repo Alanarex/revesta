@@ -6,13 +6,14 @@ use App\Http\Requests\CreateBlogRequest;
 use App\Http\Requests\DeleteBlogRequest;
 use App\Http\Requests\EditBlogRequest;
 use App\Http\Requests\PublishBlogRequest;
-use App\Http\Requests\SearchPublicBlogsRequest;
+use App\Http\Requests\RejectBlogRequest;
+use App\Http\Requests\SearchBlogsRequest;
 use App\Http\Requests\ShowBlogRequest;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
+use App\Http\Requests\ApproveBlogRequest;
 use App\Models\Blog;
 use App\Services\BlogService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BlogController extends Controller
@@ -21,18 +22,46 @@ class BlogController extends Controller
         protected BlogService $blogService
     ) {
     }
-    public function index(SearchPublicBlogsRequest $request)
+    public function index(SearchBlogsRequest $request)
     {
         $search = $request->getSearchTerm();
-        $blogs = $this->blogService->getPublishedBlogs($search, 10, Auth::id());
+        $authorId = $request->getAuthorId();
+        $status = $request->query('status');
+        $dateFrom = $request->query('date_from');
+        $dateTo = $request->query('date_to');
 
-        return view('blogs.index', [
+        $blogs = $this->blogService->getAllBlogs(20, $search, $authorId, $status, $dateFrom, $dateTo);
+
+        // Get all authors who have created blogs for the filter dropdown
+        $authors = $this->blogService->getAllAuthors();
+
+        // Handle AJAX requests
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'html' => view('admin.blogs.partials.blogs-list', [
+                    'blogs' => $blogs,
+                ])->render(),
+                'pagination' => $blogs->appends($request->query())->links('pagination::bootstrap-5')->toHtml(),
+                'count' => $blogs->total(),
+                'current_page' => $blogs->currentPage(),
+                'last_page' => $blogs->lastPage(),
+            ]);
+        }
+
+        return view('admin.blogs.index', [
             'blogs' => $blogs,
-            'search' => $search,
-            'title' => 'Blogs',
+            'authors' => $authors,
+            'currentAuthor' => $authorId,
+            'currentSearch' => $search,
+            'currentStatus' => $status,
+            'currentDateFrom' => $dateFrom,
+            'currentDateTo' => $dateTo,
+            'title' => 'Gestion des blogs',
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard')],
-                ['label' => 'Blogs', 'url' => route('blogs.index')],
+                ['label' => 'Administration', 'url' => '#'],
+                ['label' => 'Gestion des blogs', 'url' => route('admin.blogs.index')],
             ],
         ]);
     }
@@ -49,14 +78,10 @@ class BlogController extends Controller
         $canComment = Auth::check();
         $canEdit = Auth::check() && Auth::id() === $blog->user_id;
         $canDelete = Auth::check() && ((auth()->user()->isAdmin()) || Auth::id() === $blog->user_id);
+        $canApprove = Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
+        $canReject = Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
 
-        // Calculate counts
-        $blogLikesCount = \App\Models\BlogLike::where('likeable_type', Blog::class)
-            ->where('likeable_id', $blog->id)
-            ->count();
-        $directCommentsCount = $blog->comments->count();
-
-        return view('blogs.show', [
+        return view('admin.blogs.show', [
             'blog' => $blog,
             'title' => $blog->title,
             'canLike' => $canLike,
@@ -65,26 +90,25 @@ class BlogController extends Controller
             'canComment' => $canComment,
             'canEdit' => $canEdit,
             'canDelete' => $canDelete,
-            'blogLikesCount' => $blogLikesCount,
-            'directCommentsCount' => $directCommentsCount,
+            'canApprove' => $canApprove,
+            'canReject' => $canReject,
             'interactionsDisabled' => $interactionsDisabled,
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard')],
-                ['label' => 'Blogs', 'url' => route('blogs.index')],
-                ['label' => $blog->title, 'url' => route('blogs.show', $blog)],
+                ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
+                ['label' => $blog->title, 'url' => route('admin.blogs.show', $blog)],
             ],
         ]);
     }
 
     public function create(CreateBlogRequest $request)
     {
-
-        return view('blogs.create', [
+        return view('admin.blogs.create', [
             'title' => 'Créer un blog',
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard')],
-                ['label' => 'Blogs', 'url' => route('blogs.index')],
-                ['label' => 'Créer', 'url' => route('blogs.create')],
+                ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
+                ['label' => 'Créer', 'url' => route('admin.blogs.create')],
             ],
         ]);
     }
@@ -100,12 +124,12 @@ class BlogController extends Controller
                 'message' => $request->validated()['status'] === 'pending'
                     ? 'Blog soumis pour approbation!'
                     : 'Brouillon sauvegardé!',
-                'redirect' => route('blogs.show', $blog)
+                'redirect' => route('admin.blogs.show', $blog)
             ]);
         }
 
         // Regular form submission - redirect directly
-        return redirect(route('blogs.show', $blog))
+        return redirect(route('admin.blogs.show', $blog))
             ->with('success', $request->validated()['status'] === 'pending'
                 ? 'Blog soumis pour approbation!'
                 : 'Brouillon sauvegardé!');
@@ -114,14 +138,14 @@ class BlogController extends Controller
     public function edit(EditBlogRequest $request, Blog $blog)
     {
 
-        return view('blogs.edit', [
+        return view('admin.blogs.edit', [
             'blog' => $blog,
             'title' => 'Modifier le blog',
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard')],
-                ['label' => 'Blogs', 'url' => route('blogs.index')],
-                ['label' => $blog->title, 'url' => route('blogs.show', $blog)],
-                ['label' => 'Modifier', 'url' => route('blogs.edit', $blog)],
+                ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
+                ['label' => $blog->title, 'url' => route('admin.blogs.show', $blog)],
+                ['label' => 'Modifier', 'url' => route('admin.blogs.edit', $blog)],
             ],
         ]);
     }
@@ -130,22 +154,25 @@ class BlogController extends Controller
     {
         $this->blogService->updateBlog($blog, $request->validated());
 
+        // Determine success message based on status
+        $status = $request->validated()['status'];
+        $message = match ($status) {
+            'published' => 'Blog publié avec succès!',
+            'pending' => 'Blog soumis pour approbation!',
+            'draft' => 'Brouillon sauvegardé!',
+        };
+
         // Handle AJAX requests
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => $request->validated()['status'] === 'pending'
-                    ? 'Blog soumis pour approbation!'
-                    : 'Brouillon sauvegardé!',
-                'redirect' => route('blogs.show', $blog)
+                'message' => $message,
+                'redirect' => route('admin.blogs.show', $blog)
             ]);
         }
 
         // Regular form submission - redirect directly
-        return redirect(route('blogs.show', $blog))
-            ->with('success', $request->validated()['status'] === 'pending'
-                ? 'Blog soumis pour approbation!'
-                : 'Brouillon sauvegardé!');
+        return redirect(route('admin.blogs.show', $blog))->with('success', $message);
     }
 
     public function publish(PublishBlogRequest $request, Blog $blog)
@@ -157,12 +184,12 @@ class BlogController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Blog soumis pour approbation!',
-                'redirect' => route('blogs.show', $blog)
+                'redirect' => route('admin.blogs.show', $blog)
             ]);
         }
 
         // Regular form submission - redirect directly
-        return redirect(route('blogs.show', $blog))
+        return redirect(route('admin.blogs.show', $blog))
             ->with('success', 'Blog soumis pour approbation!');
     }
 
@@ -174,6 +201,28 @@ class BlogController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Blog supprimé avec succès!'
+        ]);
+    }
+
+    public function approve(ApproveBlogRequest $request, Blog $blog)
+    {
+        // Authorization is handled by ApproveBlogRequest
+        $this->blogService->approveBlog($blog, Auth::user());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Blog approuvé et publié!'
+        ]);
+    }
+
+    public function reject(RejectBlogRequest $request, Blog $blog)
+    {
+        // Authorization is handled by RejectBlogRequest
+        $this->blogService->rejectBlog($blog, Auth::user(), $request->validated()['reason'] ?? null);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Blog refusé!'
         ]);
     }
 }

@@ -9,15 +9,8 @@
         ],
         [
             'title' => 'Blogs',
-            'route' => route('blogs.index'),
-            'icon' => 'bi-newspaper',
-            'active' => request()->routeIs('blogs.*'),
-            'enabled' => Gate::allows('viewAny', App\Models\Blog::class),
-        ],
-        [
-            'title' => 'Approbation des Blogs',
             'route' => route('admin.blogs.index'),
-            'icon' => 'bi-clipboard-check',
+            'icon' => 'bi-newspaper',
             'active' => request()->routeIs('admin.blogs.index'),
             'enabled' => Gate::allows('manage', App\Models\Blog::class),
         ],

@@ -1,5 +1,5 @@
 @extends('layouts.blogs')
 
 @section('content')
-	@include('blogs.form')
+	@include('admin.blogs.form')
 @endsection

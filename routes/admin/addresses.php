@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AddressController;
-use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*

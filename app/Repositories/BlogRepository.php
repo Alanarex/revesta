@@ -37,20 +37,28 @@ class BlogRepository
     }
 
     /**
-     * Get pending blogs for admin approval with optimized queries.
+     * Get all blogs with optional status and search filters.
      */
-    public function getPendingBlogs(int $perPage = 20, ?string $search = null, ?int $authorId = null): LengthAwarePaginator
+    public function getAllBlogs(int $perPage = 20, ?string $search = null, ?int $authorId = null, ?string $status = null, ?string $dateFrom = null, ?string $dateTo = null): LengthAwarePaginator
     {
         $query = Blog::select(['id', 'title', 'short_description', 'user_id', 'status', 'created_at', 'updated_at'])
-            ->with(['user:id,first_name,last_name,email'])
-            ->where('status', 'pending');
+            ->with(['user:id,first_name,last_name,email']);
+
+        // Apply status filter
+        if ($status && in_array($status, ['draft', 'pending', 'published', 'rejected'])) {
+            $query->where('status', $status);
+        }
 
         // Apply search filter
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', '%' . $search . '%')
                   ->orWhere('short_description', 'like', '%' . $search . '%')
-                  ->orWhere('content', 'like', '%' . $search . '%');
+                  ->orWhere('content', 'like', '%' . $search . '%')
+                  ->orWhereHas('user', function ($q) use ($search) {
+                      $q->where('first_name', 'like', '%' . $search . '%')
+                        ->orWhere('last_name', 'like', '%' . $search . '%');
+                  });
             });
         }
 
@@ -59,43 +67,30 @@ class BlogRepository
             $query->where('user_id', $authorId);
         }
 
+        // Apply date range filters
+        if ($dateFrom) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
         return $query->orderBy('created_at', 'desc')
             ->paginate($perPage);
     }
 
     /**
-     * Get authors who have pending blogs.
+     * Get all authors who have created blogs.
      */
-    public function getAuthorsWithPendingBlogs()
+    public function getAllAuthors()
     {
         return Blog::select('user_id')
             ->with(['user:id,first_name,last_name'])
-            ->where('status', 'pending')
-            ->groupBy('user_id')
+            ->distinct()
             ->get()
             ->pluck('user')
             ->sortBy('first_name');
-    }
-
-    /**
-     * Get all pending blog IDs (with optional filters).
-     */
-    public function getAllPendingBlogIds(?string $search = null, ?int $authorId = null): array
-    {
-        $query = Blog::select('id')
-            ->where('status', 'pending');
-
-        // Apply search filter
-        if ($search) {
-            $query->where('title', 'like', '%' . $search . '%');
-        }
-
-        // Apply author filter
-        if ($authorId) {
-            $query->where('user_id', $authorId);
-        }
-
-        return $query->pluck('id')->toArray();
     }
 
     /**

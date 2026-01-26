@@ -1,5 +1,6 @@
 import Swal from 'sweetalert2';
 import { initAuthRequiredHandler } from '../utils/auth-handler';
+import * as bootstrap from 'bootstrap';
 
 // Initialize authentication required handler
 initAuthRequiredHandler();
@@ -189,6 +190,30 @@ $(function () {
                     }
                 });
             }
+        });
+    });
+
+    // Handle Bootstrap tabs with URL parameter support
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    
+    if (tabParam) {
+        // Get the tab button to activate
+        const tabButton = document.querySelector(`#tab-${tabParam}`);
+        if (tabButton) {
+            const tab = new bootstrap.Tab(tabButton);
+            tab.show();
+        }
+    }
+
+    // Handle tab switching and update URL
+    const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabButtons.forEach(button => {
+        button.addEventListener('shown.bs.tab', function (e) {
+            const tabId = this.id.replace('tab-', '');
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('tab', tabId);
+            window.history.replaceState({}, '', newUrl);
         });
     });
 });

@@ -26,7 +26,7 @@ class UpdateBlogRequest extends FormRequest
             'title' => 'required|string|max:255',
             'short_description' => 'required|string|max:500',
             'content' => 'required|string',
-            'status' => 'required|in:draft,pending',
+            'status' => 'required|in:draft,pending,published',
         ];
     }
 

@@ -15,7 +15,8 @@ class BlogService
     public function __construct(
         protected BlogRepository $blogRepository,
         protected NotificationRepository $notificationRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Get published blogs with search.
@@ -28,25 +29,17 @@ class BlogService
     /**
      * Get pending blogs for admin.
      */
-    public function getPendingBlogs(int $perPage = 20, ?string $search = null, ?int $authorId = null)
+    public function getAllBlogs(int $perPage = 20, ?string $search = null, ?int $authorId = null, ?string $status = null, ?string $dateFrom = null, ?string $dateTo = null)
     {
-        return $this->blogRepository->getPendingBlogs($perPage, $search, $authorId);
+        return $this->blogRepository->getAllBlogs($perPage, $search, $authorId, $status, $dateFrom, $dateTo);
     }
 
     /**
-     * Get authors who have pending blogs.
+     * Get all authors who have created blogs.
      */
-    public function getAuthorsWithPendingBlogs()
+    public function getAllAuthors()
     {
-        return $this->blogRepository->getAuthorsWithPendingBlogs();
-    }
-
-    /**
-     * Get all pending blog IDs (with optional filters).
-     */
-    public function getAllPendingBlogIds(?string $search = null, ?int $authorId = null): array
-    {
-        return $this->blogRepository->getAllPendingBlogIds($search, $authorId);
+        return $this->blogRepository->getAllAuthors();
     }
 
     /**
@@ -182,49 +175,5 @@ class BlogService
     {
         // Dispatch job to notify admins in background
         NotifyAdminsForBlogApproval::dispatch($blog, $author);
-    }
-
-    /**
-     * Bulk action on multiple blogs (approve or reject).
-     */
-    public function bulkAction(string $action, array $blogIds, User $admin, ?string $reason = null): array
-    {
-        $processed = 0;
-        $failed = 0;
-
-        foreach ($blogIds as $blogId) {
-            try {
-                $blog = Blog::find($blogId);
-                
-                if (!$blog || $blog->status !== 'pending') {
-                    $failed++;
-                    continue;
-                }
-
-                if ($action === 'approve') {
-                    $this->approveBlog($blog, $admin);
-                    $processed++;
-                } elseif ($action === 'reject') {
-                    $this->rejectBlog($blog, $admin, $reason);
-                    $processed++;
-                }
-            } catch (\Exception $e) {
-                $failed++;
-            }
-        }
-
-        $message = $action === 'approve' 
-            ? "{$processed} blog(s) approuvé(s)"
-            : "{$processed} blog(s) rejeté(s)";
-
-        if ($failed > 0) {
-            $message .= ", {$failed} échec(s)";
-        }
-
-        return [
-            'message' => $message,
-            'processed' => $processed,
-            'failed' => $failed,
-        ];
     }
 }

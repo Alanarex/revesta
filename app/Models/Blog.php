@@ -53,6 +53,34 @@ class Blog extends Model
         return $this->status === self::REJECTED;
     }
 
+    /**
+     * Get status badge CSS class
+     */
+    public function getStatusBadgeClass(): string
+    {
+        return match ($this->status) {
+            self::DRAFT => 'bg-secondary',
+            self::PENDING => 'bg-warning',
+            self::PUBLISHED => 'bg-success',
+            self::REJECTED => 'bg-danger',
+            default => 'bg-secondary',
+        };
+    }
+
+    /**
+     * Get status label
+     */
+    public function getStatusLabel(): string
+    {
+        return match ($this->status) {
+            self::DRAFT => 'Brouillon',
+            self::PENDING => 'En attente',
+            self::PUBLISHED => 'Publié',
+            self::REJECTED => 'Rejeté',
+            default => ucfirst($this->status),
+        };
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

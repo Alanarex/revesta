@@ -9,17 +9,24 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            AddressSeeder::class,
-            FiscalIncomeRangeSeeder::class,
-            AidSeeder::class,
-            HousingSeeder::class,
-            AdSeeder::class,
-            ConditionSeeder::class,
             RoleSeeder::class,
-            UserSeeder::class,
-            BlogSeeder::class,
-            SimulationSeeder::class,
-            AidSimulationSeeder::class,
         ]);
+
+        // Only seed users in local or testing environments
+        if (app()->environment('local')) {
+            $this->call([
+                AddressSeeder::class,
+                FiscalIncomeRangeSeeder::class,
+                AidSeeder::class,
+                HousingSeeder::class,
+                AdSeeder::class,
+                ConditionSeeder::class,
+                UserSeeder::class,
+                AdminUserSeeder::class,
+                BlogSeeder::class,
+                SimulationSeeder::class,
+                AidSimulationSeeder::class,
+            ]);
+        }
     }
 }

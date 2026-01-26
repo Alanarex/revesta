@@ -28,12 +28,12 @@
                                 @php
                                     $commentLiked = ($comment->liked_by_auth ?? 0) > 0;
                                 @endphp
-                                <button class="btn btn-sm btn-link text-decoration-none like-btn p-0"
+                                <button class="btn btn-link p-0 like-btn text-decoration-none text-danger"
                                     data-likeable-id="{{ $comment->id }}" data-likeable-type="App\Models\BlogComment"
                                     data-liked="{{ $commentLiked ? 'true' : 'false' }}">
-                                    <i class="{{ $commentLiked ? 'fas' : 'far' }} fa-heart"></i>
+                                    <i class="{{ $commentLiked ? 'fas' : 'far' }} fa-heart" style="font-size: 1.25rem;"></i>
                                     <span
-                                        class="likes-count">{{ $comment->likes_count ?? $comment->likes->count() }}</span>
+                                        class="likes-count ms-1 small">{{ $comment->likes_count ?? $comment->likes->count() }}</span>
                                 </button>
                                 <button class="btn btn-sm btn-link text-decoration-none p-0 reply-btn"
                                     data-comment-id="{{ $comment->id }}">
@@ -51,7 +51,7 @@
                     </div>
                     @auth
                         @if ((auth()->check() && auth()->user()->isAdmin()) || Auth::id() === $comment->user_id)
-                            <button class="btn btn-sm btn-outline-danger delete-comment-btn"
+                            <button class="btn btn-link p-0 delete-comment-btn text-decoration-none text-danger"
                                 data-comment-id="{{ $comment->id }}">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -61,9 +61,10 @@
 
                 <div class="reply-form-container mt-2" style="display: none;"></div>
 
-                <div class="replies-container mt-3" style="display: none;">
+                <div class="replies-container mt-3 position-relative" style="display: none;">
+                    <div style="position: absolute; left: -25px; top: -15px; bottom: 0; width: 2px; background-color: #e0e0e0;"></div>
                     @if ($level < 3)
-                        @include('blogs.partials.comments', [
+                        @include('admin.blogs.partials.comments', [
                             'comments' => $comment->replies->take(2),
                             'level' => $level + 1,
                         ])

@@ -71,8 +71,6 @@ export class LikeButton {
 
     syncLikeButtons(likeableId, likeableType, isLiked, likesCount, clickedBtn) {
         try {
-            const iconHtml = `<i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>`;
-
             // Normalize the likeable type to handle both single and double backslashes
             const normalizedType = likeableType.replace(/\\\\/g, '\\');
 
@@ -86,8 +84,10 @@ export class LikeButton {
                     const $otherIcon = $other.find('i').first();
                     const $otherCount = $other.find('.likes-count').first();
 
-                    // Update icon
+                    // Update icon - preserve the original font-size style
                     if ($otherIcon.length) {
+                        const originalStyle = $otherIcon.attr('style') || '';
+                        const iconHtml = `<i class="${isLiked ? 'fas' : 'far'} fa-heart" style="${originalStyle}"></i>`;
                         $otherIcon.replaceWith(iconHtml);
                     }
 

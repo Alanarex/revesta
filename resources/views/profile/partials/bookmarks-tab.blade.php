@@ -5,7 +5,7 @@
             <i class="fa fa-bookmark fa-4x text-muted mb-3"></i>
             <h5 class="text-muted">Aucun signet</h5>
             <p class="text-muted mb-3">Vous n'avez pas encore sauvegardé de blog</p>
-            <a href="{{ route('blogs.index') }}" class="btn btn-primary">
+            <a href="{{ route('admin.blogs.index') }}" class="btn btn-primary">
                 <i class="fa fa-newspaper me-2"></i>Découvrir des blogs
             </a>
         </div>
@@ -13,7 +13,7 @@
         @foreach($bookmarks as $bookmark)
             @if($bookmark->blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $bookmark->blog,
                         'canAuthor' => true,
                         'canBookmark' => true,

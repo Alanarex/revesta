@@ -34,7 +34,7 @@ class BlogCommentController extends Controller
         // comments are level 0; replies are level 1 (client may increase further).
         $level = $validated['parent_id'] ? 1 : 0;
 
-        $html = view('blogs.partials.comments', [
+        $html = view('admin.blogs.partials.comments', [
             'comments' => collect([$comment]),
             'level' => $level
         ])->render();
@@ -73,7 +73,7 @@ class BlogCommentController extends Controller
         $result = $this->commentService->getReplies($comment->id, $offset, $limit);
 
         // Render the replies using the existing comments partial for consistency
-        $html = view('blogs.partials.comments', [
+        $html = view('admin.blogs.partials.comments', [
             'comments' => $result['replies'],
             'level' => $level
         ])->render();

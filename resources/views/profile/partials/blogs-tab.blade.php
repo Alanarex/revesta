@@ -44,7 +44,7 @@
             @endphp
             @forelse($allBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -58,7 +58,7 @@
                     <i class="fa fa-newspaper fa-4x text-muted mb-3"></i>
                     <h5 class="text-muted">Aucun blog</h5>
                     <p class="text-muted mb-3">Commencez à partager vos idées avec le monde</p>
-                    <a href="{{ route('blogs.create') }}" class="btn btn-primary">
+                    <a href="{{ route('admin.blogs.create') }}" class="btn btn-primary">
                         <i class="fa fa-pen me-2"></i>Écrire votre premier blog
                     </a>
                 </div>
@@ -69,7 +69,7 @@
         <div class="tab-pane fade" id="published-blogs">
             @forelse($publishedBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -94,7 +94,7 @@
             @endphp
             @forelse($pendingBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -119,7 +119,7 @@
             @endphp
             @forelse($drafts as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -144,7 +144,7 @@
             @endphp
             @forelse($rejectedBlogs as $blog)
                 <div class="mb-3">
-                    @include('blogs.partials.card', [
+                    @include('admin.blogs.partials.card', [
                         'blog' => $blog,
                         'canAuthor' => false,
                         'canBookmark' => false,
@@ -171,7 +171,7 @@
     
     @forelse($publishedBlogs as $blog)
         <div class="mb-3">
-            @include('blogs.partials.card', [
+            @include('admin.blogs.partials.card', [
                 'blog' => $blog,
                 'canAuthor' => false,
                 'canBookmark' => true,
@@ -189,7 +189,7 @@
     @endforelse
 @endif
 
-@include('blogs.partials.scripts')
+@include('admin.blogs.partials.scripts')
 
 @push('styles')
 <style>

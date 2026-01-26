@@ -6,6 +6,11 @@ use App\Models\User;
 
 class UserPolicy
 {
+    public function admin(User $user): bool
+    {
+        return $user->isAdmin();
+    }
+    
     public function update(User $user, User $model): bool
     {
         return $user->id === $model->id;
