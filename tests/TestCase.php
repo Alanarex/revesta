@@ -19,6 +19,11 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->startSession();
+        // Ensure API routes are loaded in the testing environment in case
+        // the RouteServiceProvider is not present or routes are not auto-registered.
+        if (file_exists(base_path('routes/api.php'))) {
+            require base_path('routes/api.php');
+        }
     }
 
     /**
