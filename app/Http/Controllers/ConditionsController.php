@@ -56,11 +56,11 @@ class ConditionsController extends Controller
             'breadcrumbs' => [
                 [
                     'label' => 'Accueil',
-                    'url' => route('dashboard'),
+                    'url' => route('dashboard.index'),
                 ],
                 [
                     'label' => 'Conditions',
-                    'url' => route('conditions.index'),
+                    'url' => route('admin.conditions.index'),
                 ],
             ],
         ]);
@@ -80,7 +80,7 @@ class ConditionsController extends Controller
             Condition::where('id', $id)->update($data);
         }
 
-        return redirect()->route('conditions.index')->with('success', 'Conditions mises à jour.');
+        return redirect()->route('admin.conditions.index')->with('success', 'Conditions mises à jour.');
     }
 
 }

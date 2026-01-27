@@ -10,7 +10,6 @@ use App\Policies\AddressPolicy;
 use App\Policies\BlogCommentPolicy;
 use App\Policies\BlogPolicy;
 use App\Policies\UserPolicy;
-use App\Repositories\TokenRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -44,9 +43,6 @@ class AppServiceProvider extends ServiceProvider
             return new UserRepository();
         });
 
-        $this->app->singleton(TokenRepository::class, function ($app) {
-            return new TokenRepository();
-        });
 
         $this->app->singleton(AuthService::class, function ($app) {
             return new AuthService($app->make(UserRepository::class));

@@ -59,7 +59,7 @@ class BlogController extends Controller
             'currentDateTo' => $dateTo,
             'title' => 'Gestion des blogs',
             'breadcrumbs' => [
-                ['label' => 'Accueil', 'url' => route('dashboard')],
+                ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Administration', 'url' => '#'],
                 ['label' => 'Gestion des blogs', 'url' => route('admin.blogs.index')],
             ],
@@ -94,7 +94,7 @@ class BlogController extends Controller
             'canReject' => $canReject,
             'interactionsDisabled' => $interactionsDisabled,
             'breadcrumbs' => [
-                ['label' => 'Accueil', 'url' => route('dashboard')],
+                ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
                 ['label' => $blog->title, 'url' => route('admin.blogs.show', $blog)],
             ],
@@ -106,7 +106,7 @@ class BlogController extends Controller
         return view('admin.blogs.create', [
             'title' => 'Créer un blog',
             'breadcrumbs' => [
-                ['label' => 'Accueil', 'url' => route('dashboard')],
+                ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
                 ['label' => 'Créer', 'url' => route('admin.blogs.create')],
             ],
@@ -142,7 +142,7 @@ class BlogController extends Controller
             'blog' => $blog,
             'title' => 'Modifier le blog',
             'breadcrumbs' => [
-                ['label' => 'Accueil', 'url' => route('dashboard')],
+                ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
                 ['label' => $blog->title, 'url' => route('admin.blogs.show', $blog)],
                 ['label' => 'Modifier', 'url' => route('admin.blogs.edit', $blog)],

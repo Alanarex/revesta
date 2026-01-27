@@ -5,7 +5,6 @@ namespace Tests\Feature\Security;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
-use App\Repositories\TokenRepository;
 use Carbon\Carbon;
 
 class ApiAuthSecurityTest extends TestCase
@@ -16,9 +15,15 @@ class ApiAuthSecurityTest extends TestCase
     {
         $user = User::factory()->create();
 
-        // create a token and ensure it works
-        $pair = app(TokenRepository::class)->createFor($user, ['*'], Carbon::now()->addDays(1));
-        $plain = $pair['plain'];
+        // create a token via Sanctum and ensure it works
+        $new = $user->createToken('test', ['*']);
+        $plain = $new->plainTextToken;
+        $tokenModel = $new->accessToken ?? ($new->token ?? null);
+
+        if ($tokenModel) {
+            $tokenModel->expires_at = Carbon::now()->addDays(1);
+            $tokenModel->save();
+        }
 
         $resp = $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"]);
         $resp->assertStatus(200);
@@ -31,16 +36,17 @@ class ApiAuthSecurityTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $repo = app(TokenRepository::class);
-        $pair = $repo->createFor($user, ['*'], Carbon::now()->addDays(1));
-        $plain = $pair['plain'];
-        $token = $pair['token'];
+        $new = $user->createToken('test', ['*']);
+        $plain = $new->plainTextToken;
+        $tokenModel = $new->accessToken ?? ($new->token ?? null);
 
         // token works initially
         $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"])->assertStatus(200);
 
         // revoke
-        $repo->revoke($token);
+        if ($tokenModel) {
+            $tokenModel->delete();
+        }
 
         // now token is rejected
         $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"])->assertStatus(401);
@@ -50,9 +56,14 @@ class ApiAuthSecurityTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $repo = app(TokenRepository::class);
-        $pair = $repo->createFor($user, ['*'], Carbon::now()->subHour());
-        $plain = $pair['plain'];
+        $new = $user->createToken('test', ['*']);
+        $plain = $new->plainTextToken;
+        $tokenModel = $new->accessToken ?? ($new->token ?? null);
+
+        if ($tokenModel) {
+            $tokenModel->expires_at = Carbon::now()->subHour();
+            $tokenModel->save();
+        }
 
         $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"])->assertStatus(401);
     }

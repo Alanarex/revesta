@@ -27,6 +27,6 @@ class RegisteredUserController extends Controller
     {
         $registration->registerAndLogin($request->validated());
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard.index', absolute: false));
     }
 }

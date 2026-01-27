@@ -4,22 +4,21 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Route Loader (v1)
 |--------------------------------------------------------------------------
 |
-| All API endpoints under /api/v1 prefix.
-| Child routes are defined in api/ subdirectory.
-|
-| Endpoints:
-| - Authentication: /auth (register, login, logout, me)
-| - Blogs: /blogs (list, show, like, comment)
+| Loads API route definitions under the `/api/v1` prefix. Individual API
+| feature routes are stored in the `routes/api/` directory and are included
+| here so they share the `api` middleware group and naming prefix.
 |
 */
 
-Route::prefix('api/v1')
+Route::prefix('v1')
+    ->middleware('api')
     ->name('api.v1.')
     ->group(function () {
-        foreach (glob(__DIR__ . '/api/*.php') as $filename) {
+
+        foreach (glob(__DIR__ . '/api/v1/*.php') as $filename) {
             require $filename;
         }
     });
