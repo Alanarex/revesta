@@ -22,11 +22,6 @@ Route::controller(AuthController::class)
         Route::post('/login', 'login')
             ->name('login');
 
-        // Temporary diagnostic route: call `me` without Sanctum middleware
-        // to determine whether the crash happens inside the auth middleware.
-        Route::get('/me_noauth', 'me')
-            ->name('me.noauth');
-
         Route::middleware('auth:sanctum')
             ->group(function () {
 
