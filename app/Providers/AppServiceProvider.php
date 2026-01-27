@@ -30,6 +30,7 @@ use App\Services\CommentService;
 use App\Services\LikeService;
 use App\Services\NotificationService;
 use App\Services\ProfileService;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -59,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(VerificationService::class, function ($app) {
             return new VerificationService();
         });
-        
+
         // Other repositories
         $this->app->singleton(AddressRepository::class, function ($app) {
             return new AddressRepository();
@@ -112,6 +113,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Passport::enablePasswordGrant();
+
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Blog::class, BlogPolicy::class);
         Gate::policy(BlogComment::class, BlogCommentPolicy::class);
