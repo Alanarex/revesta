@@ -3,54 +3,73 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\LoginApiRequest;
-use App\Repositories\UserRepository;
-use App\Repositories\TokenRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class AuthController extends Controller
 {
-    public function __construct(
-        protected UserRepository $userRepository,
-        protected TokenRepository $tokenRepository
-    ) {
-    }
-
-    public function login(LoginApiRequest $request)
+    /**
+     * Login using Passport OAuth2 Password Grant
+     * This is just a proxy to /oauth/token
+     */
+    public function login(Request $request)
     {
-        $data = $request->validated();
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-        $user = $this->userRepository->findByEmail($data['email']);
+        $client = config('passport.password_client');
 
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
-            throw ValidationException::withMessages(['email' => trans('auth.failed')]);
+        if (!$client || empty($client['id']) || empty($client['secret'])) {
+            return response()->json([
+                'message' => 'Password grant client not configured',
+            ], 500);
         }
 
-        $pair = $this->tokenRepository->createFor($user, ['*'], now()->addDays(30));
+        $data = [
+            'grant_type' => 'password',
+            'client_id' => $client['id'],
+            'client_secret' => $client['secret'],
+            'username' => $request->email,
+            'password' => $request->password,
+            'scope' => '',
+        ];
 
+        $proxy = SymfonyRequest::create(
+            '/oauth/token',
+            'POST',
+            $data,
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+            ]
+        );
+
+        return app()->handle($proxy);
+    }
+
+
+    /**
+     * Get authenticated user
+     */
+    public function me(Request $request)
+    {
         return response()->json([
-            'token' => $pair['plain'],
-            'token_type' => 'Bearer',
-            'expires_at' => $pair['token']->expires_at?->toDateTimeString(),
-            'user' => $user,
+            'user' => $request->user(),
         ]);
     }
 
-    public function me(Request $request)
-    {
-        return response()->json($request->user());
-    }
-
+    /**
+     * Logout = revoke only current access token
+     */
     public function logout(Request $request)
     {
-        $token = $request->attributes->get('api_token');
+        $token = $request->user()->token();
 
-        if ($token) {
-            $this->tokenRepository->revoke($token);
-        }
+        $token->revoke();
 
-        return response()->json(['message' => 'Logged out']);
+        return response()->noContent();
     }
 }

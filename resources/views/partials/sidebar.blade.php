@@ -2,9 +2,9 @@
     $sidebarItems = [
         [
             'title' => 'Accueil',
-            'route' => route('dashboard'),
+            'route' => route('dashboard.index'),
             'icon' => 'bi-house',
-            'active' => request()->routeIs('dashboard'),
+            'active' => request()->routeIs('dashboard.*'),
             'enabled' => true,
         ],
         [
@@ -28,7 +28,7 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <!-- Sidebar Brand -->
     <div class="sidebar-brand">
-        <a href="{{ route('dashboard') }}" class="brand-link">
+        <a href="{{ route('dashboard.index') }}" class="brand-link">
             <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="Logo" class="brand-image opacity-75">
             <span class="brand-text fw-light">
                 <span class="text-primary">re</span><span class="text-secondary">vesta</span>

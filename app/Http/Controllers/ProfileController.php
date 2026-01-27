@@ -154,7 +154,7 @@ class ProfileController extends Controller
             'bookmarks' => $bookmarks,
             'isViewingOwnProfile' => true,
             'breadcrumbs' => [
-                ['label' => 'Dashboard', 'url' => route('dashboard')],
+                ['label' => 'Dashboard', 'url' => route('dashboard.index')],
                 ['label' => 'Profile', 'url' => route('profile.edit')],
             ],
             'title' => 'My Profile',
@@ -205,6 +205,6 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('status', 'account-deleted');
+        return redirect(route('dashboard.index'))->with('status', 'account-deleted');
     }
 }

@@ -16,7 +16,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('conditions.update') }}">
+        <form method="POST" action="{{ route('admin.conditions.update') }}">
             @csrf
 
             @foreach ($conditionsGrouped as $aidId => $conditions)

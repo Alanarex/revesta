@@ -8,7 +8,7 @@ Revesta is a Laravel-based ERP and dashboard tool designed to help users simulat
 
 ## Requirements
 
-* PHP 8.3
+* PHP 8.2
 * Composer (latest)
 * MariaDB (10.5+) or compatible MySQL
 * Nginx (Linux/macOS) or Apache (WAMP/XAMPP)
@@ -126,6 +126,13 @@ Create a database named:
 revesta_db
 ```
 
+It's also required to create the test database used by the test suite. Create both with:
+
+```bash
+mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS revesta_db;"
+mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS revesta_testing;"
+```
+
 ### 7. Configure Environment File
 
 ```bash
@@ -155,6 +162,92 @@ php artisan key:generate
 php artisan migrate
 php artisan db:seed
 ```
+
+### 9.a Laravel Passport (API authentication)
+
+This project uses Laravel Passport for API authentication. The commands and notes below reflect how Passport is used in this repository — keys remain in `storage/` by default.
+
+Basic install & keys
+
+```bash
+# Install Passport (if not already required via composer)
+composer require laravel/passport
+
+# Create encryption keys and default clients (interactive)
+php artisan passport:install
+
+# Force-generate RSA keys (useful to refresh keys non-interactively)
+php artisan passport:keys --force
+
+# Apply migrations (run after `passport:install` in this project)
+php artisan migrate
+
+# Ensure storage key file permissions (web user should be able to read keys)
+chown www-data:www-data storage/oauth-*.key || true
+chmod 600 storage/oauth-private.key || true
+chmod 640 storage/oauth-public.key || true
+```
+
+Client creation
+
+```bash
+# Create a password-grant client (the command will prompt for a name and provider)
+php artisan passport:client --password
+```
+
+You do not need to pre-specify the name/provider in the command; the interactive prompt will ask and the created client will work for the password grant flow.
+
+Useful maintenance & inspection commands
+
+```bash
+# List oauth clients (quick DB check)
+php artisan tinker --execute="DB::table('oauth_clients')->get()"
+
+# Re-run migrations from scratch (DESTROYS data) and reseed
+php artisan migrate:fresh --seed
+
+# Clear all caches and compiled files during debugging
+php artisan optimize:clear
+
+# Regenerate Composer autoload files
+composer dump-autoload
+```
+
+Testing OAuth token issuance (example using Password Grant)
+
+```bash
+# Replace CLIENT_ID and CLIENT_SECRET with the client credentials from oauth_clients
+curl -u "CLIENT_ID:CLIENT_SECRET" -X POST "http://revesta.local/oauth/token" \
+    -d "grant_type=password&username=admin@gmail.com&password=password&scope=*"
+```
+
+Debugging & troubleshooting notes
+
+- Keys and permissions:
+    - Keys are stored in `storage/oauth-private.key` and `storage/oauth-public.key` by default in this project. Ensure these files exist and the web user (for example `www-data`) can read them.
+    - If you encounter token signature or EncryptionException errors, re-run `php artisan passport:keys --force` and ensure the permissions above are set. Run `php artisan optimize:clear` after key or config changes.
+
+- Database and clients:
+    - Check the `oauth_clients`, `oauth_access_tokens`, and `oauth_refresh_tokens` tables to verify clients and tokens. Use `php artisan tinker` or a database client to inspect rows.
+    - If tokens are not issued, confirm you are using the correct client and grant type for the request (password or personal).
+
+- Common fixes:
+    - After changing `.env`, key files, or config, run: `php artisan config:clear` and `php artisan cache:clear`.
+    - Restart PHP-FPM or queue workers when keys or config change: `sudo systemctl restart php8.3-fpm` and `php artisan queue:restart`.
+    - If you see network errors like `cURL error 7`, verify Nginx/Apache are running and the host/port are reachable.
+
+- Logs and error details:
+    - Tail the application log while reproducing the issue: `tail -f storage/logs/laravel.log`.
+    - For HTTP-level troubleshooting, use `curl --verbose` or Postman to inspect request/response headers and bodies.
+
+- Environment-stored keys (alternative):
+    - If you prefer to store keys in environment variables instead of files, copy the private/public key contents into `.env` as `PASSPORT_PRIVATE_KEY` and `PASSPORT_PUBLIC_KEY` and update `config/passport.php` accordingly. After changing config, run `php artisan config:clear`.
+
+- Recreating clients and tokens:
+    - To recreate problematic clients, delete their rows from `oauth_clients` and run `php artisan passport:install` or create new clients with `php artisan passport:client`.
+
+These commands and notes reflect how Passport is used in this repository and should help with setup and debugging.
+
 
 ### 10. Access the Application
 

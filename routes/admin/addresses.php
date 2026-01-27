@@ -5,24 +5,41 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Address Routes
+| Admin Address Routes
 |--------------------------------------------------------------------------
 |
-| Here are all the routes related to address management:
-| - Admin-only address listing with datatable
-| - Address creation and editing
-| - Address deletion
+| Administrative routes for managing addresses within the application.
+| Includes listing (with datatables support), create/edit forms, and
+| deletion endpoints. All routes are intended for admin use.
 |
 */
 
-Route::prefix('addresses')
+Route::controller(AddressController::class)
+    ->prefix('addresses')
     ->name('addresses.')
     ->group(function () {
-        Route::get('/', [AddressController::class, 'index'])->name('index');
-        Route::get('/list', [AddressController::class, 'list'])->name('list');
-        Route::get('/create', [AddressController::class, 'create'])->name('create');
-        Route::post('/', [AddressController::class, 'store'])->middleware('throttle:10,1')->name('store');
-        Route::get('/{address}/edit', [AddressController::class, 'edit'])->name('edit');
-        Route::put('/{address}', [AddressController::class, 'update'])->middleware('throttle:20,1')->name('update');
-        Route::delete('/{address}', [AddressController::class, 'destroy'])->middleware('throttle:10,1')->name('destroy');
+
+        Route::get('/', 'index')
+            ->name('index');
+
+        Route::get('/list', 'list')
+            ->name('list');
+
+        Route::get('/create', 'create')
+            ->name('create');
+
+        Route::post('/', 'store')
+            ->middleware('throttle:10,1')
+            ->name('store');
+
+        Route::get('/{address}/edit', 'edit')
+            ->name('edit');
+
+        Route::put('/{address}', 'update')
+            ->middleware('throttle:20,1')
+            ->name('update');
+
+        Route::delete('/{address}', 'destroy')
+            ->middleware('throttle:10,1')
+            ->name('destroy');
     });
