@@ -1,3 +1,5 @@
+# Ignore Passport keys
+app/secrets/oauth/
 /.phpunit.cache
 /node_modules
 /public/build
