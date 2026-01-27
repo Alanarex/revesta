@@ -5,6 +5,7 @@ namespace Tests;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Client;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -18,12 +19,18 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->startSession();
-        // Ensure API routes are loaded in the testing environment in case
-        // the RouteServiceProvider is not present or routes are not auto-registered.
-        if (file_exists(base_path('routes/api.php'))) {
-            require base_path('routes/api.php');
-        }
+        // Create Password Grant Client for tests (Passport v12 stores allowed
+        // grant types in `grant_types` instead of a `password_client` flag)
+        $client = Client::factory()->create([
+            'grant_types' => ['password', 'refresh_token'],
+            'revoked' => false,
+        ]);
+
+        // Make it available to the app
+        config([
+            'passport.password_client.id' => $client->id,
+            'passport.password_client.secret' => $client->secret,
+        ]);
     }
 
     /**

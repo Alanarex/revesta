@@ -3,68 +3,75 @@
 namespace Tests\Feature\Security;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use Carbon\Carbon;
 
 class ApiAuthSecurityTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_protected_route_requires_valid_token(): void
+    public function protected_route_requires_a_valid_access_token(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'password' => bcrypt('password'),
+        ]);
 
-        // create a token via Sanctum and ensure it works
-        $new = $user->createToken('test', ['*']);
-        $plain = $new->plainTextToken;
-        $tokenModel = $new->accessToken ?? ($new->token ?? null);
+        $token = $this->loginAndGetAccessToken($user);
 
-        if ($tokenModel) {
-            $tokenModel->expires_at = Carbon::now()->addDays(1);
-            $tokenModel->save();
-        }
-
-        $resp = $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"]);
-        $resp->assertStatus(200);
+        // valid token works
+        $this->getJson('/api/v1/auth/me', [
+            'Authorization' => "Bearer {$token}",
+        ])->assertStatus(200);
 
         // invalid token fails
-        $this->getJson('/api/v1/auth/me', ['Authorization' => 'Bearer invalid-token'])->assertStatus(401);
+        $this->getJson('/api/v1/auth/me', [
+            'Authorization' => 'Bearer invalid-token',
+        ])->assertStatus(401);
     }
 
-    public function test_revoked_token_is_rejected(): void
+    public function revoked_token_is_rejected(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'password' => bcrypt('password'),
+        ]);
 
-        $new = $user->createToken('test', ['*']);
-        $plain = $new->plainTextToken;
-        $tokenModel = $new->accessToken ?? ($new->token ?? null);
+        $token = $this->loginAndGetAccessToken($user);
 
-        // token works initially
-        $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"])->assertStatus(200);
+        // revoke via Passport
+        $user->tokens()->first()->revoke();
 
-        // revoke
-        if ($tokenModel) {
-            $tokenModel->delete();
-        }
-
-        // now token is rejected
-        $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"])->assertStatus(401);
+        // token is now invalid
+        $this->getJson('/api/v1/auth/me', [
+            'Authorization' => "Bearer {$token}",
+        ])->assertStatus(401);
     }
 
-    public function test_expired_token_is_rejected(): void
+    public function expired_token_is_rejected(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'password' => bcrypt('password'),
+        ]);
 
-        $new = $user->createToken('test', ['*']);
-        $plain = $new->plainTextToken;
-        $tokenModel = $new->accessToken ?? ($new->token ?? null);
+        $token = $this->loginAndGetAccessToken($user);
 
-        if ($tokenModel) {
-            $tokenModel->expires_at = Carbon::now()->subHour();
-            $tokenModel->save();
-        }
+        // Force expiry (simulate passage of time)
+        Carbon::setTestNow(Carbon::now()->addYears(2));
 
-        $this->getJson('/api/v1/auth/me', ['Authorization' => "Bearer {$plain}"])->assertStatus(401);
+        $this->getJson('/api/v1/auth/me', [
+            'Authorization' => "Bearer {$token}",
+        ])->assertStatus(401);
+
+        Carbon::setTestNow(); // reset
+    }
+
+    /* -------------------------------------------------------------
+     | Helpers
+     |--------------------------------------------------------------*/
+    protected function loginAndGetAccessToken(User $user): string
+    {
+        $response = $this->postJson('/api/v1/auth/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        return $response->json('access_token');
     }
 }
