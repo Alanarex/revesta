@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Authentication endpoints for the API. Includes `login` (public) and
-| `me`/`logout` protected by `auth:sanctum`. Registered under the
+| `me`/`logout` protected by `auth:api`. Registered under the
 | `/api/v1/auth` prefix by the API loader.
 |
 */
@@ -22,7 +22,7 @@ Route::controller(AuthController::class)
         Route::post('/login', 'login')
             ->name('login');
 
-        Route::middleware('auth:sanctum')
+        Route::middleware('auth:api')
             ->group(function () {
 
                 Route::get('/me', 'me')

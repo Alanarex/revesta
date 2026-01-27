@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 | API endpoints for blog resources exposed under `/api/v1/blogs`. Public
 | endpoints provide listing and detail views; authenticated endpoints (via
-| `auth:sanctum`) allow likes, bookmarks and comment management.
+| `auth:api`) allow likes, bookmarks and comment management.
 |
 */
 
@@ -32,7 +32,7 @@ Route::prefix('blogs')
         });
 
         // Authenticated user interactions
-        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:api')->group(function () {
 
             // Like/Unlike blog
             Route::post('/{blog}/likes/toggle', [BlogLikeController::class, 'toggle'])
