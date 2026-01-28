@@ -28,7 +28,7 @@ class BlogController extends Controller
      * Get list of published blogs with likes and comments count
      * 
      * @param SearchPublicBlogsRequest $request
-        * @group Blogs
+     * @group Blogs
      * @return BlogCollection
      */
     public function index(SearchPublicBlogsRequest $request): BlogCollection
@@ -46,7 +46,7 @@ class BlogController extends Controller
      * 
      * @param ShowBlogRequest $request
      * @param Blog $blog
-        * @group Blogs
+     * @group Blogs
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(ShowBlogRequest $request, Blog $blog): JsonResponse

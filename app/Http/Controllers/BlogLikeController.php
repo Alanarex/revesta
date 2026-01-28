@@ -19,17 +19,18 @@ class BlogLikeController extends Controller
      */
     public function __construct(
         protected LikeService $likeService
-    ) {}
+    ) {
+    }
 
     /**
      * Toggle like for a blog or comment
      *
-        * @group Blogs
-        * @authenticated
+     * @group Blogs
+     * @authenticated
      * @bodyParam likeable_id integer required ID of the resource to like/unlike. Example: 123
      * @bodyParam likeable_type string required Fully-qualified model class name. Example: App\\Models\\Blog
      */
-    public function toggle(ToggleLikeRequest $request): JsonResponse
+    public function toggle(ToggleLikeRequest $request, Blog $blog): JsonResponse
     {
         $validated = $request->validated();
 

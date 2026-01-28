@@ -27,8 +27,8 @@ class BlogCommentController extends Controller
     /**
      * Store a comment for a blog
      *
-        * @group Blogs
-        * @authenticated
+     * @group Blogs
+     * @authenticated
      * @bodyParam content string required The text content of the comment. Example: Great article!
      * @bodyParam parent_id integer nullable Optional parent comment id for replies.
      */
@@ -48,18 +48,12 @@ class BlogCommentController extends Controller
         // Render the single comment HTML using the existing partial to keep markup
         // consistent with server-rendered comments. Determine the level: top-level
         // comments are level 0; replies are level 1 (client may increase further).
-        $level = $validated['parent_id'] ? 1 : 0;
-
-        $html = view('admin.blogs.partials.comments', [
-            'comments' => collect([$comment]),
-            'level' => $level
-        ])->render();
+        $level = (isset($validated['parent_id']) && $validated['parent_id']) ? 1 : 0;
 
         return response()->json([
             'success' => true,
             'message' => 'Commentaire ajouté!',
             'comment' => $comment,
-            'html' => $html,
             'level' => $level
         ]);
     }
@@ -67,8 +61,8 @@ class BlogCommentController extends Controller
     /**
      * Load more comments (pagination)
      *
-        * @group Blogs
-        * @authenticated
+     * @group Blogs
+     * @authenticated
      */
     public function loadMore(Blog $blog, LoadCommentsRequest $request): JsonResponse
     {

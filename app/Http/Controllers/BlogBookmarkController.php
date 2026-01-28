@@ -24,14 +24,9 @@ class BlogBookmarkController extends Controller
      *
         * @group Blogs
         * @authenticated
-     * @bodyParam blog_id integer required ID of the blog to toggle bookmark for. Example: 42
      */
-    public function toggle(ToggleBookmarkRequest $request): JsonResponse
+    public function toggle(ToggleBookmarkRequest $request, Blog $blog): JsonResponse
     {
-        $validated = $request->validated();
-
-        $blog = Blog::findOrFail($validated['blog_id']);
-
         $result = $this->bookmarkService->toggleBookmark(Auth::user(), $blog);
 
         return response()->json([
