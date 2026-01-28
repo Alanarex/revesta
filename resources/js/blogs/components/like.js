@@ -23,14 +23,17 @@ export class LikeButton {
 
         const likeableId = btn.data('likeable-id');
         const likeableType = btn.data('likeable-type');
+        const blogId = btn.data('blog-id') || $('meta[name="blog-id"]').attr('content');
 
         // Determine entity type for better error messages
         const isBlog = likeableType.includes('Blog') && !likeableType.includes('Comment');
         const isComment = likeableType.includes('BlogComment');
         const entityName = isBlog ? 'blog' : (isComment ? 'commentaire' : 'élément');
 
+        const url = `/blogs/${blogId}/likes/toggle`;
+
         $.ajax({
-            url: '/blogs/likes/toggle',
+            url: url,
             method: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
