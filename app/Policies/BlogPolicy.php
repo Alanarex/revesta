@@ -37,6 +37,15 @@ class BlogPolicy
     }
 
     /**
+     * Determine whether the user can view any blogs (listing/public index).
+     * Public listings should be accessible to guests to view published blogs.
+     */
+    public function viewAny(?User $user): bool
+    {
+        return true;
+    }
+
+    /**
      * Determine whether the user can create blogs.
      */
     public function create(User $user): bool

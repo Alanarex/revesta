@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ToggleBookmarkRequest extends FormRequest
@@ -15,10 +16,14 @@ class ToggleBookmarkRequest extends FormRequest
             return false;
         }
 
-        $blogId = $this->input('blog_id');
-        $blog = \App\Models\Blog::find($blogId);
+        // Use the route-bound blog model only (ID is passed in the URL as {blog})
+        $blog = $this->route('blog');
 
-        return $blog && \Gate::allows('bookmark', $blog);
+        if (!$blog || !($blog instanceof Blog)) {
+            return false;
+        }
+
+        return \Gate::allows('bookmark', $blog);
     }
 
     /**
@@ -28,9 +33,7 @@ class ToggleBookmarkRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'blog_id' => 'required|exists:blogs,id',
-        ];
+        return [];
     }
 
     /**
@@ -40,10 +43,7 @@ class ToggleBookmarkRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
-            'blog_id.required' => 'L\'ID du blog est obligatoire.',
-            'blog_id.exists' => 'Le blog n\'existe pas.',
-        ];
+        return [];
     }
 
     /**
@@ -55,9 +55,9 @@ class ToggleBookmarkRequest extends FormRequest
     {
         return [
             'blog_id' => [
-                'description' => 'ID of the blog to toggle bookmark for.',
+                'description' => 'ID of the blog to toggle bookmark for. This is passed as the `{blog}` route parameter (URL), not in the request body.',
                 'type' => 'integer',
-                'required' => true,
+                'required' => false,
                 'example' => 42,
             ],
         ];

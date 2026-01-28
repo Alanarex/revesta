@@ -3,6 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\Blog;
+use App\Models\BlogComment;
 
 class ToggleLikeRequest extends FormRequest
 {
@@ -11,24 +15,44 @@ class ToggleLikeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (!auth()->check()) {
-            return false;
-        }
+        return auth()->check();
+    }
 
-        $likeableType = $this->input('likeable_type');
-        $likeableId = $this->input('likeable_id');
+    /**
+     * Add conditional validation: existence of the selected model and permission check.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $type = $this->input('likeable_type');
+            $id = $this->input('likeable_id');
 
-        if ($likeableType === 'App\Models\Blog') {
-            $blog = \App\Models\Blog::find($likeableId);
-            return $blog && \Gate::allows('like', $blog);
-        }
+            if ($type === Blog::class) {
+                $model = Blog::find($id);
+                if (!$model) {
+                    $validator->errors()->add('likeable_id', 'The specified blog does not exist.');
+                    return;
+                }
 
-        if ($likeableType === 'App\Models\BlogComment') {
-            $comment = \App\Models\BlogComment::find($likeableId);
-            return $comment && \Gate::allows('like', $comment);
-        }
+                if (!\Gate::allows('like', $model)) {
+                    $validator->errors()->add('likeable', 'This action is unauthorized.');
+                    return;
+                }
+            }
 
-        return false;
+            if ($type === BlogComment::class) {
+                $model = BlogComment::find($id);
+                if (!$model) {
+                    $validator->errors()->add('likeable_id', 'The specified comment does not exist.');
+                    return;
+                }
+
+                if (!\Gate::allows('like', $model)) {
+                    $validator->errors()->add('likeable', 'This action is unauthorized.');
+                    return;
+                }
+            }
+        });
     }
 
     /**
