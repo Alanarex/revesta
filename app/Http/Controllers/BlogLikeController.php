@@ -34,22 +34,13 @@ class BlogLikeController extends Controller
     {
         $validated = $request->validated();
 
-        // Find the likeable model and preload counts including whether the auth user
-        // already liked it to avoid extra exists/count queries in the service.
+        // For blog likes, use the already-resolved route model `$blog` to avoid
+        // an extra select; for comments, find that comment. The service will
+        // perform efficient DB-level operations and return the up-to-date count.
         if ($validated['likeable_type'] === Blog::class) {
-            $likeable = Blog::withCount([
-                'likes',
-                'likes as liked_by_auth' => function ($q) {
-                    $q->where('user_id', Auth::id());
-                }
-            ])->findOrFail($validated['likeable_id']);
+            $likeable = $blog;
         } else {
-            $likeable = BlogComment::withCount([
-                'likes',
-                'likes as liked_by_auth' => function ($q) {
-                    $q->where('user_id', Auth::id());
-                }
-            ])->findOrFail($validated['likeable_id']);
+            $likeable = BlogComment::findOrFail($validated['likeable_id']);
         }
 
         $result = $this->likeService->toggleLike(Auth::user(), $likeable);

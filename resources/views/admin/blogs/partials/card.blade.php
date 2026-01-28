@@ -52,10 +52,9 @@
         <!-- Left: Stats -->
         <div class="d-flex gap-3 text-muted small">
             @php
-                $blogLikesCount = \App\Models\BlogLike::where('likeable_type', \App\Models\Blog::class)
-                    ->where('likeable_id', $blog->id)
-                    ->count();
-                $directCommentsCount = $blog->comments->count();
+                // Use preloaded counts when available to avoid N+1 queries.
+                $blogLikesCount = $blog->likes_count ?? 0;
+                $directCommentsCount = $blog->direct_comments_count ?? 0;
             @endphp
             <span>
                 <i class="fa fa-clock"></i>

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class LikeService
 {
@@ -12,30 +13,38 @@ class LikeService
      */
     public function toggleLike(User $user, Model $likeable): array
     {
-        // If the controller preloaded `liked_by_auth` and `likes_count`, use them
-        // to avoid extra EXISTS()/COUNT() queries. Otherwise fallback to checks.
-        $preloadedLiked = $likeable->getAttribute('liked_by_auth') ?? null;
-        $preloadedCount = $likeable->getAttribute('likes_count') ?? null;
+        // Use DB-level operations to avoid Eloquent model hydration and extra
+        // exists/count queries. We'll operate directly on the `blog_likes` table
+        // for both blogs and comments (polymorphic relation).
+        $likeableType = $likeable instanceof \App\Models\Blog ? \App\Models\Blog::class : \App\Models\BlogComment::class;
+        $likeableId = $likeable->id;
 
-        if ($preloadedLiked !== null) {
-            $alreadyLiked = ((int)$preloadedLiked) > 0;
-        } else {
-            $alreadyLiked = $likeable->likes()->where('user_id', $user->id)->exists();
-        }
+        // Attempt to delete an existing like first; if none deleted, insert.
+        $deleted = DB::table('blog_likes')
+            ->where('likeable_type', $likeableType)
+            ->where('likeable_id', $likeableId)
+            ->where('user_id', $user->id)
+            ->delete();
 
-        if ($alreadyLiked) {
-            // remove
-            $likeable->likes()->where('user_id', $user->id)->delete();
+        if ($deleted) {
             $liked = false;
-            $count = $preloadedCount !== null ? max(0, (int)$preloadedCount - 1) : $likeable->likes()->count();
         } else {
-            // create
-            $likeable->likes()->create([
-                'user_id' => $user->id
+            $inserted = DB::table('blog_likes')->insertOrIgnore([
+                'user_id' => $user->id,
+                'likeable_id' => $likeableId,
+                'likeable_type' => $likeableType,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
-            $liked = true;
-            $count = $preloadedCount !== null ? (int)$preloadedCount + 1 : $likeable->likes()->count();
+
+            $liked = $inserted > 0;
         }
+
+        // Return current likes count as a single aggregate query.
+        $count = DB::table('blog_likes')
+            ->where('likeable_type', $likeableType)
+            ->where('likeable_id', $likeableId)
+            ->count();
 
         return [
             'liked' => $liked,

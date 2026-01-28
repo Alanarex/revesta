@@ -63,6 +63,10 @@ class CommentService
             'content' => $content
         ]);
 
+        // Attach the author relation to avoid an immediate extra query when
+        // the controller wants to return the created comment with its user.
+        $comment->setRelation('user', $user);
+
         // Notify blog author (if not self-comment)
         if ($blog->user_id !== $user->id) {
             $message = $parentId 
