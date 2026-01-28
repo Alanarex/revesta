@@ -41,12 +41,12 @@ Route::prefix('blogs')
                         ->name('comments.destroy');
                 });
 
-            // Likes and bookmarks
-            Route::post('/likes/toggle', [BlogLikeController::class, 'toggle'])
+            // Likes and bookmarks (use blog id in URL like API)
+            Route::post('/{blog}/likes/toggle', [BlogLikeController::class, 'toggle'])
                 ->middleware('throttle:60,1')
                 ->name('likes.toggle');
 
-            Route::post('/bookmarks/toggle', [BlogBookmarkController::class, 'toggle'])
+            Route::post('/{blog}/bookmarks/toggle', [BlogBookmarkController::class, 'toggle'])
                 ->middleware('throttle:60,1')
                 ->name('bookmarks.toggle');
         });

@@ -28,13 +28,14 @@ export class BookmarkButton {
         // Optimistic UI update
         btn.prop('disabled', true);
 
+        const url = `/blogs/${blogId}/bookmarks/toggle`;
+
         $.ajax({
-            url: '/blogs/bookmarks/toggle',
+            url: url,
             method: 'POST',
             dataType: 'json',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                blog_id: blogId
+                _token: $('meta[name="csrf-token"]').attr('content')
             },
             success: (response) => {
                 if (response.success) {
