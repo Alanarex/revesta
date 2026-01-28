@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Blog;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class BookmarkService
 {
@@ -12,23 +13,35 @@ class BookmarkService
      */
     public function toggleBookmark(User $user, Blog $blog): array
     {
-        $existingBookmark = $blog->bookmarks()
+        // Attempt to delete an existing bookmark first; if none deleted, insert.
+        // Use DB queries to avoid hydrating models and extra selects.
+        $deleted = DB::table('blog_bookmarks')
+            ->where('blog_id', $blog->id)
             ->where('user_id', $user->id)
-            ->first();
+            ->delete();
 
-        if ($existingBookmark) {
-            $existingBookmark->delete();
+        if ($deleted) {
             $bookmarked = false;
         } else {
-            $blog->bookmarks()->create([
-                'user_id' => $user->id
+            // Insert if not exists (use insertOrIgnore to avoid unique-constraint race)
+            $inserted = DB::table('blog_bookmarks')->insertOrIgnore([
+                'user_id' => $user->id,
+                'blog_id' => $blog->id,
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
-            $bookmarked = true;
+
+            $bookmarked = $inserted > 0;
         }
+
+        // Return current count — still a single aggregate query.
+        $count = DB::table('blog_bookmarks')
+            ->where('blog_id', $blog->id)
+            ->count();
 
         return [
             'bookmarked' => $bookmarked,
-            'count' => $blog->bookmarks()->count()
+            'count' => $count,
         ];
     }
 

@@ -43,8 +43,6 @@ class BlogCommentController extends Controller
             $validated['parent_id'] ?? null
         );
 
-        $comment->load('user');
-
         // Render the single comment HTML using the existing partial to keep markup
         // consistent with server-rendered comments. Determine the level: top-level
         // comments are level 0; replies are level 1 (client may increase further).

@@ -16,7 +16,14 @@ class BlogRepository
     {
         $query = Blog::select(['id', 'title', 'short_description', 'user_id', 'status', 'published_at', 'created_at', 'updated_at'])
             ->with(['user:id,first_name,last_name,email'])
-            ->withCount(['likes', 'comments'])
+            ->withCount([
+                'likes',
+                'bookmarks',
+                'comments',
+                'comments as direct_comments_count' => function ($q) {
+                    $q->whereNull('parent_id');
+                }
+            ])
             ->published()
             ->searchByTitle($search);
 
@@ -42,7 +49,15 @@ class BlogRepository
     public function getAllBlogs(int $perPage = 20, ?string $search = null, ?int $authorId = null, ?string $status = null, ?string $dateFrom = null, ?string $dateTo = null): LengthAwarePaginator
     {
         $query = Blog::select(['id', 'title', 'short_description', 'user_id', 'status', 'created_at', 'updated_at'])
-            ->with(['user:id,first_name,last_name,email']);
+            ->with(['user:id,first_name,last_name,email'])
+            ->withCount([
+                'likes',
+                'bookmarks',
+                'comments',
+                'comments as direct_comments_count' => function ($q) {
+                    $q->whereNull('parent_id');
+                }
+            ]);
 
         // Apply status filter
         if ($status && in_array($status, ['draft', 'pending', 'published', 'rejected'])) {
@@ -74,6 +89,19 @@ class BlogRepository
 
         if ($dateTo) {
             $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        // If an authenticated user id is provided, preload whether that user bookmarked
+        // or liked each blog to avoid per-row queries in the view.
+        if (auth()->check() && $authUserId = auth()->id()) {
+            $query->withCount([
+                'bookmarks as bookmarked_by_auth' => function ($q) use ($authUserId) {
+                    $q->where('user_id', $authUserId);
+                },
+                'likes as liked_by_auth' => function ($q) use ($authUserId) {
+                    $q->where('user_id', $authUserId);
+                }
+            ]);
         }
 
         return $query->orderBy('created_at', 'desc')
@@ -124,7 +152,14 @@ class BlogRepository
     {
         // Load the blog with basic relations and counts first.
         $blog = Blog::with(['user:id,first_name,last_name,email'])
-            ->withCount(['likes', 'bookmarks', 'comments'])
+            ->withCount([
+                'likes',
+                'bookmarks',
+                'comments',
+                'comments as direct_comments_count' => function ($q) {
+                    $q->whereNull('parent_id');
+                }
+            ])
             ->withCount([
                 'likes as liked_by_auth' => function ($qq) use ($authUserId) {
                     $qq->where('user_id', $authUserId);
