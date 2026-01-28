@@ -2,28 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoadCommentsRequest;
+use App\Http\Requests\LoadRepliesRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Blog;
 use App\Models\BlogComment;
 use App\Services\CommentService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class BlogCommentController extends Controller
 {
+    /**
+     * Blog interactions (comments)
+     *
+     * @group Blogs
+     */
     public function __construct(
         protected CommentService $commentService
-    ) {}
+    ) {
+    }
 
-    public function store(StoreCommentRequest $request, Blog $blog)
+    /**
+     * Store a comment for a blog
+     *
+        * @group Blogs
+        * @authenticated
+     * @bodyParam content string required The text content of the comment. Example: Great article!
+     * @bodyParam parent_id integer nullable Optional parent comment id for replies.
+     */
+    public function store(StoreCommentRequest $request, Blog $blog): JsonResponse
     {
         $validated = $request->validated();
 
         $comment = $this->commentService->createComment(
-            Auth::user(), 
-            $blog, 
-            $validated['content'], 
+            Auth::user(),
+            $blog,
+            $validated['content'],
             $validated['parent_id'] ?? null
         );
 
@@ -48,7 +64,13 @@ class BlogCommentController extends Controller
         ]);
     }
 
-    public function loadMore(Blog $blog, Request $request)
+    /**
+     * Load more comments (pagination)
+     *
+        * @group Blogs
+        * @authenticated
+     */
+    public function loadMore(Blog $blog, LoadCommentsRequest $request): JsonResponse
     {
         $offset = $request->get('offset', 0);
 
@@ -62,9 +84,11 @@ class BlogCommentController extends Controller
     }
 
     /**
-     * Load more replies for a specific comment (public access).
+     * Load more replies for a specific comment (public access)
+     *
+     * @group Blogs
      */
-    public function loadMoreReplies(Blog $blog, BlogComment $comment, Request $request)
+    public function loadMoreReplies(Blog $blog, BlogComment $comment, LoadRepliesRequest $request): JsonResponse
     {
         $offset = (int) $request->get('offset', 0);
         $limit = (int) $request->get('limit', 2);
@@ -85,7 +109,16 @@ class BlogCommentController extends Controller
         ]);
     }
 
-    public function destroy(BlogComment $comment)
+    /**
+     * Delete a comment
+     *
+     * @authenticated
+     * @group Blogs
+     * @param BlogComment $comment
+     * @return JsonResponse
+     * @bodyParam comment integer required ID of the comment to delete. Example: 456
+     */
+    public function destroy(BlogComment $comment): JsonResponse
     {
         Gate::authorize('delete', $comment);
 

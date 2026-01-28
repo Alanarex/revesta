@@ -6,16 +6,30 @@ use App\Http\Requests\ToggleLikeRequest;
 use App\Models\Blog;
 use App\Models\BlogComment;
 use App\Services\LikeService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BlogLikeController extends Controller
 {
+    /**
+     * Blog interactions (likes)
+     *
+     * @group Blogs
+     */
     public function __construct(
         protected LikeService $likeService
     ) {}
 
-    public function toggle(ToggleLikeRequest $request)
+    /**
+     * Toggle like for a blog or comment
+     *
+        * @group Blogs
+        * @authenticated
+     * @bodyParam likeable_id integer required ID of the resource to like/unlike. Example: 123
+     * @bodyParam likeable_type string required Fully-qualified model class name. Example: App\\Models\\Blog
+     */
+    public function toggle(ToggleLikeRequest $request): JsonResponse
     {
         $validated = $request->validated();
 

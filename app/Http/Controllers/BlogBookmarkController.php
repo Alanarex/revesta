@@ -5,16 +5,28 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ToggleBookmarkRequest;
 use App\Models\Blog;
 use App\Services\BookmarkService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class BlogBookmarkController extends Controller
 {
+    /**
+     * Blog interactions (bookmarks)
+     *
+     * @group Blogs
+     */
     public function __construct(
         protected BookmarkService $bookmarkService
     ) {}
 
-    public function toggle(ToggleBookmarkRequest $request)
+    /**
+     * Toggle bookmark for a blog
+     *
+        * @group Blogs
+        * @authenticated
+     * @bodyParam blog_id integer required ID of the blog to toggle bookmark for. Example: 42
+     */
+    public function toggle(ToggleBookmarkRequest $request): JsonResponse
     {
         $validated = $request->validated();
 

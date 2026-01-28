@@ -3,21 +3,25 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AuthController extends Controller
 {
     /**
-     * Login using Passport OAuth2 Password Grant
-     * This is just a proxy to /oauth/token
+        * Login using Passport OAuth2 Password Grant
+        * This is just a proxy to /oauth/token
+        *
+        * @group Authentication
+        * @bodyParam email string required The user's email. Example: admin@gmail.com
+        * @bodyParam password string required The user's password. Example: password
+        * @return \Illuminate\Http\Response
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request): JsonResponse|SymfonyResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
 
         $client = config('passport.password_client');
 
@@ -52,9 +56,12 @@ class AuthController extends Controller
 
 
     /**
-     * Get authenticated user
+        * Get authenticated user
+        *
+        * @group Authentication
+        * @authenticated
      */
-    public function me(Request $request)
+    public function me(Request $request): JsonResponse
     {
         return response()->json([
             'user' => $request->user(),
@@ -62,9 +69,13 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout = revoke only current access token
+        * Logout = revoke only current access token
+        *
+        * @group Authentication
+        * @authenticated
+        * @response 204
      */
-    public function logout(Request $request)
+    public function logout(Request $request): SymfonyResponse
     {
         $token = $request->user()->token();
 

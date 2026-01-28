@@ -27,4 +27,15 @@ class ShowBlogRequest extends FormRequest
             //
         ];
     }
+
+    /**
+     * Provide body parameter definitions for API documentation.
+     * No body parameters expected for show request, but Scribe looks for this method.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [];
+    }
 }
