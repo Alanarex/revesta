@@ -45,4 +45,21 @@ class ToggleBookmarkRequest extends FormRequest
             'blog_id.exists' => 'Le blog n\'existe pas.',
         ];
     }
+
+    /**
+     * Provide body parameter definitions for API documentation.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'blog_id' => [
+                'description' => 'ID of the blog to toggle bookmark for.',
+                'type' => 'integer',
+                'required' => true,
+                'example' => 42,
+            ],
+        ];
+    }
 }

@@ -58,4 +58,27 @@ class ToggleLikeRequest extends FormRequest
             'likeable_type.in' => 'Type d\'élément invalide.',
         ];
     }
+
+    /**
+     * Provide body parameter definitions for API documentation.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'likeable_id' => [
+                'description' => 'ID of the resource to like/unlike.',
+                'type' => 'integer',
+                'required' => true,
+                'example' => 123,
+            ],
+            'likeable_type' => [
+                'description' => 'Fully-qualified model class name of the likeable resource.',
+                'type' => 'string',
+                'required' => true,
+                'example' => 'App\\Models\\Blog',
+            ],
+        ];
+    }
 }

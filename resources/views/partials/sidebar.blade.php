@@ -11,15 +11,22 @@
             'title' => 'Blogs',
             'route' => route('admin.blogs.index'),
             'icon' => 'bi-newspaper',
-            'active' => request()->routeIs('admin.blogs.index'),
+            'active' => request()->routeIs('admin.blogs.*'),
             'enabled' => Gate::allows('manage', App\Models\Blog::class),
         ],
         [
             'title' => 'Adresses',
             'route' => route('admin.addresses.index'),
             'icon' => 'bi-geo-alt',
-            'active' => request()->routeIs('admin.addresses.index'),
+            'active' => request()->routeIs('admin.addresses.*'),
             'enabled' => Gate::allows('manage', App\Models\Address::class),
+        ],
+        [
+            'title' => 'API Docs',
+            'route' => route('scribe'),
+            'icon' => 'bi-journal-code',
+            'active' => request()->is('scribe.*'),
+            'enabled' => auth()->check() && auth()->user()?->isAdmin(),
         ],
     ];
 @endphp

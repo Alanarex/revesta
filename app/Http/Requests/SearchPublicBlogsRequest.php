@@ -80,4 +80,27 @@ class SearchPublicBlogsRequest extends FormRequest
     {
         return $this->input('page', 1);
     }
+
+    /**
+     * Provide body parameter definitions for API documentation.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'search' => [
+                'description' => 'Optional search term to filter public blogs.',
+                'type' => 'string',
+                'required' => false,
+                'example' => 'housing',
+            ],
+            'page' => [
+                'description' => 'Page number for pagination.',
+                'type' => 'integer',
+                'required' => false,
+                'example' => 1,
+            ],
+        ];
+    }
 }

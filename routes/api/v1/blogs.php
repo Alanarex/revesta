@@ -54,12 +54,12 @@ Route::prefix('blogs')
                 Route::delete('/comments/{comment}', 'destroy')
                     ->middleware('throttle:10,1')
                     ->name('comments.destroy');
-
-                // Load more comments
-                Route::get('/{blog}/comments/load-more', 'loadMore')
-                    ->name('comments.loadMore');
             });
         });
+
+        // Load more comments
+        Route::get('/{blog}/comments/load-more', [BlogCommentController::class, 'loadMore'])
+            ->name('comments.loadMore');
 
         // Guest-accessible comment replies
         Route::get('/{blog}/comments/{comment}/replies/load-more', [BlogCommentController::class, 'loadMoreReplies'])

@@ -42,4 +42,27 @@ class StoreCommentRequest extends FormRequest
             'parent_id.exists' => 'Le commentaire parent n\'existe pas.',
         ];
     }
+
+    /**
+     * Provide body parameter definitions for API documentation.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'content' => [
+                'description' => 'The text content of the comment.',
+                'type' => 'string',
+                'required' => true,
+                'example' => 'Great article — thanks for sharing!',
+            ],
+            'parent_id' => [
+                'description' => 'Optional parent comment ID for nested replies.',
+                'type' => 'integer',
+                'required' => false,
+                'example' => null,
+            ],
+        ];
+    }
 }
