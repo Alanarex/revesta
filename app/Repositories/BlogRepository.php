@@ -135,6 +135,39 @@ class BlogRepository
     }
 
     /**
+     * Get user's published blogs with optional civil_status filter and optionally include bookmarked blogs
+     * Bookmarked blogs are included only if $includeBookmarked is true (useful when viewing own profile).
+     */
+    public function getUserPublishedBlogsWithFilter(int $userId, ?string $civilStatus = null, bool $includeBookmarked = false): Collection
+    {
+        $query = Blog::select(['id', 'title', 'short_description', 'user_id', 'status', 'published_at', 'created_at', 'updated_at'])
+            ->with(['user:id,first_name,last_name,email,civil_status'])
+            ->withCount(['likes', 'comments'])
+            ->where('status', 'published');
+
+        // If civil status filter provided, join user filter
+        if ($civilStatus && $civilStatus !== 'all') {
+            $query->whereHas('user', function ($q) use ($civilStatus) {
+                $q->where('civil_status', $civilStatus);
+            });
+        }
+
+        // If we want only blogs by the profile user
+        $query->where(function ($q) use ($userId, $includeBookmarked) {
+            $q->where('user_id', $userId);
+
+            // include bookmarked blogs by this user
+            if ($includeBookmarked) {
+                $q->orWhereIn('id', function ($sub) use ($userId) {
+                    $sub->select('blog_id')->from('blog_bookmarks')->where('user_id', $userId);
+                });
+            }
+        });
+
+        return $query->orderBy('published_at', 'desc')->get()->unique('id')->values();
+    }
+
+    /**
      * Get user's draft blogs.
      */
     public function getUserDraftBlogs(int $userId): Collection
