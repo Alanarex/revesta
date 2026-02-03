@@ -29,7 +29,6 @@ use App\Services\BookmarkService;
 use App\Services\CommentService;
 use App\Services\LikeService;
 use App\Services\NotificationService;
-use App\Services\ProfileService;
 use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
@@ -101,10 +100,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(NotificationService::class, function ($app) {
             return new NotificationService($app->make(NotificationRepository::class));
-        });
-
-        $this->app->singleton(ProfileService::class, function ($app) {
-            return new ProfileService($app->make(UserRepository::class));
         });
     }
 
