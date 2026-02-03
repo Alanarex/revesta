@@ -49,9 +49,9 @@ Route::prefix('blogs')
             Route::post('/{blog}/bookmarks/toggle', [BlogBookmarkController::class, 'toggle'])
                 ->middleware('throttle:60,1')
                 ->name('bookmarks.toggle');
-        });
 
-        // Guest-accessible comment replies
-        Route::get('/{blog}/comments/{comment}/replies/load-more', [BlogCommentController::class, 'loadMoreReplies'])
-            ->name('comments.loadMoreReplies');
+            // Guest-accessible comment replies
+            Route::get('/{blog}/comments/{comment}/replies/load-more', [BlogCommentController::class, 'loadMoreReplies'])
+                ->name('comments.loadMoreReplies');
+        });
     });
