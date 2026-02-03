@@ -7,15 +7,40 @@ $success: #4CAF50;
 $warning: #ffc107;
 $danger: #ff0707;
 $white: #EAEAEA;
+$light-grey: #f7f7f7;
+
+@function hex-to-rgb($color) {
+    @return red($color) green($color) blue($color);
+}
 
 :root {
-    --primary: #9CC41B;
-    --secondary: #0f1a13;
-    --dark: #1A1A1D;
-    --navbar: #0A2342;
-    --light: #F5E8B7;
-    --success: #4CAF50;
-    --warning: #ffc107;
-    --danger: #ff0707;
-    --white: #EAEAEA;
+    --primary: #{$primary};
+    --primary-rgb: #{hex-to-rgb($primary)};
+
+    --secondary: #{$secondary};
+    --secondary-rgb: #{hex-to-rgb($secondary)};
+
+    --dark: #{$dark};
+    --dark-rgb: #{hex-to-rgb($dark)};
+
+    --navbar: #{$navbar};
+    --navbar-rgb: #{hex-to-rgb($navbar)};
+
+    --light: #{$light};
+    --light-rgb: #{hex-to-rgb($light)};
+
+    --success: #{$success};
+    --success-rgb: #{hex-to-rgb($success)};
+
+    --warning: #{$warning};
+    --warning-rgb: #{hex-to-rgb($warning)};
+
+    --danger: #{$danger};
+    --danger-rgb: #{hex-to-rgb($danger)};
+
+    --white: #{$white};
+    --white-rgb: #{hex-to-rgb($white)};
+
+    --light-grey: #{$light-grey};
+    --light-grey-rgb: #{hex-to-rgb($light-grey)};
 }
