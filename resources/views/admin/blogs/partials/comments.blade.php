@@ -7,7 +7,7 @@
                 // a lightweight placeholder (no DB query).
                 $commentUser = $comment->relationLoaded('user') ? $comment->user : null;
             @endphp
-            <a href="{{ route('profile.show', ['userId' => $comment->user_id]) }}" class="text-decoration-none">
+            <a href="{{ route('users.show', ['user' => $comment->user_id]) }}" class="text-decoration-none">
                 <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                     style="width: 40px; height: 40px; font-size: 14px; font-weight: bold;">
                     {{ $commentUser ? $commentUser->initials : strtoupper(substr((string) $comment->user_id, 0, 1)) }}
@@ -16,7 +16,7 @@
             <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="flex-grow-1">
-                        <a href="{{ route('profile.show', ['userId' => $comment->user_id]) }}"
+                        <a href="{{ route('users.show', ['user' => $comment->user_id]) }}"
                             class="text-decoration-none">
                             <h6 class="mb-1">{{ $commentUser ? $commentUser->full_name : __('Utilisateur') }}
                             </h6>

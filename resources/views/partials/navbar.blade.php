@@ -21,8 +21,8 @@
                     <hr class="dropdown-divider">
                 </li>
                 <li>
-                    <a href="{{ route('profile.edit') }}" class="dropdown-item">
-                        <i class="fas fa-user me-2"></i> Profil
+                    <a href="{{ route('users.show', auth()->id()) }}" class="dropdown-item">
+                        <i class="fa-solid fa-user-pen me-2"></i>Mon profil
                     </a>
                 </li>
 

@@ -34,14 +34,14 @@
                 <p class="lead text-muted mb-4">{{ $blog->short_description }}</p>
 
                 <div class="d-flex align-items-center mb-4">
-                    <a href="{{ route('profile.show', ['userId' => $blog->user_id]) }}" class="text-decoration-none">
+                    <a href="{{ route('users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                             style="width: 50px; height: 50px; font-size: 20px; font-weight: bold;">
                             {{ $blog->user->initials }}
                         </div>
                     </a>
                     <div>
-                        <a href="{{ route('profile.show', ['userId' => $blog->user_id]) }}" class="text-decoration-none">
+                        <a href="{{ route('users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
                             <h6 class="mb-0">{{ $blog->user->full_name }}</h6>
                         </a>
                         <small class="text-muted">{{ $blog->time_ago }}</small>
