@@ -6,23 +6,34 @@ use App\Models\User;
 
 class UserPolicy
 {
-    public function admin(User $user): bool
+    /**
+     * Alias for admin checks used by Gate::allows('manage', User::class)
+     */
+    public function manage(User $user): bool
     {
         return $user->isAdmin();
     }
-    
-    public function update(User $user, User $model): bool
+
+    public function update(User $user, ?User $model = null): bool
     {
-        return $user->id === $model->id;
+        return $user->isAdmin();
     }
 
-    public function updatePassword(User $user, User $model): bool
+    public function updatePassword(User $user, ?User $model = null): bool
     {
-        return $user->id === $model->id;
+        if (is_null($model)) {
+            return $user->isAdmin();
+        }
+
+        return $user->id === $model->id || $user->isAdmin();
     }
 
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, ?User $model = null): bool
     {
-        return $user->id === $model->id;
+        if (is_null($model)) {
+            return $user->isAdmin();
+        }
+
+        return $user->id === $model->id || $user->isAdmin();
     }
 }

@@ -43,12 +43,24 @@ class BlogService
     }
 
     /**
-     * Get user's blogs for profile.
+    * Get user's blogs.
      */
     public function getUserBlogs(int $userId): array
     {
+        // Backwards-compatible: simple passthrough to repository. New callers may pass filter params.
         return [
             'published' => $this->blogRepository->getUserPublishedBlogs($userId),
+            'drafts' => $this->blogRepository->getUserDraftBlogs($userId)
+        ];
+    }
+
+    /**
+     * Get user's blogs with optional civil_status filter and optionally include bookmarked blogs.
+     */
+    public function getUserBlogsWithFilter(int $userId, ?string $civilStatus = null, bool $includeBookmarked = false): array
+    {
+        return [
+            'published' => $this->blogRepository->getUserPublishedBlogsWithFilter($userId, $civilStatus, $includeBookmarked),
             'drafts' => $this->blogRepository->getUserDraftBlogs($userId)
         ];
     }

@@ -28,3 +28,11 @@
 @import "./partials/sidebar";
 @import "./partials/pagination";
 @import "./components/quill";
+
+/* Datatable styles */
+@import "./partials/datatable";
+
+.app-main {
+   padding: 10px;
+    background-color: var(--light-grey);
+}

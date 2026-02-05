@@ -24,17 +24,17 @@ class WebAuthSecurityTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_profile_xss_payload_is_escaped_in_view(): void
+    public function test_user_xss_payload_is_escaped_in_view(): void
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)->post('/profile', $this->withCsrfToken([
+        $this->actingAs($user)->patch(route('users.update', $user), $this->withCsrfToken([
             'first_name' => '<script>alert(1)</script>',
             'last_name' => 'Doe',
             'email' => $user->email,
         ]));
 
-        $resp = $this->actingAs($user)->get('/profile');
+        $resp = $this->actingAs($user)->get(route('users.show', $user));
         $resp->assertStatus(200);
 
         $body = $resp->getContent();

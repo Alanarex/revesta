@@ -22,6 +22,13 @@
             'enabled' => Gate::allows('manage', App\Models\Address::class),
         ],
         [
+            'title' => 'Utilisateurs',
+            'route' => route('admin.users.index'),
+            'icon' => 'bi-people',
+            'active' => request()->routeIs('admin.users.*'),
+            'enabled' => Gate::allows('manage', App\Models\User::class),
+        ],
+        [
             'title' => 'API Docs',
             'route' => route('scribe'),
             'icon' => 'bi-journal-code',

@@ -1,0 +1,39 @@
+// Styles for the admin user show page
+
+.card {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 6px 18px rgba(23, 24, 26, 0.04);
+  border: 1px solid rgba(16, 24, 40, 0.04);
+}
+
+.user-avatar-wrapper .rounded-circle {
+  width: 64px;
+  height: 64px;
+  font-size: 20px;
+  line-height: 64px;
+}
+
+.list-group-item {
+  border: none;
+  padding: 0.75rem 1rem;
+}
+
+.card .card-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(16, 24, 40, 0.04);
+  font-weight: 600;
+}
+
+.progress {
+  background-color: #e9ecef;
+}
+
+.progress .progress-bar {
+  background-color: #28a745;
+}
+
+/* Small responsive tweaks */
+@media (max-width: 991px) {
+  .card { margin-bottom: 1rem; }
+}

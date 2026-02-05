@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable implements OAuthenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -104,10 +104,11 @@ class User extends Authenticatable implements OAuthenticatable
     {
         $first = trim((string) $this->first_name);
         $last = trim((string) $this->last_name);
-        $combined = trim($first . ' ' . $last);
+        $combined = trim($first.' '.$last);
         if ($combined !== '') {
             return $combined;
         }
+
         return (string) ($this->name ?? 'User');
     }
 
@@ -119,14 +120,13 @@ class User extends Authenticatable implements OAuthenticatable
     {
         $firstInitial = $this->first_name ? mb_substr($this->first_name, 0, 1) : ($this->name ? mb_substr($this->name, 0, 1) : 'U');
         $lastInitial = $this->last_name ? mb_substr($this->last_name, 0, 1) : '';
-        return mb_strtoupper($firstInitial . $lastInitial);
+
+        return mb_strtoupper($firstInitial.$lastInitial);
     }
 
     /**
      * Convenience helper to check whether the user is an administrator.
      * Relies on the `role` relation and the `roles.name` value.
-     *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -141,5 +141,29 @@ class User extends Authenticatable implements OAuthenticatable
     public function blogBookmarks()
     {
         return $this->hasMany(BlogBookmark::class);
+    }
+
+    /**
+     * Get the blogs authored by the user.
+     */
+    public function blogs()
+    {
+        return $this->hasMany(Blog::class);
+    }
+
+    /**
+     * Get the comments made by the user on blogs.
+     */
+    public function blogComments()
+    {
+        return $this->hasMany(BlogComment::class);
+    }
+
+    /**
+     * Get the simulations belonging to the user.
+     */
+    public function simulations()
+    {
+        return $this->hasMany(Simulation::class);
     }
 }
