@@ -1,4 +1,5 @@
-import { initDatatable } from '../datatable/initDatatable.js';
+import { initDatatable } from '../../components/datatable';
+
 document.addEventListener('DOMContentLoaded', function () {
     initDatatable({
         listMetaName: 'users-list-url',

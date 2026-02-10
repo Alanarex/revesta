@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { initAuthRequiredHandler } from '../../utils/auth-handler';
+import { initAuthRequiredHandler } from '../../utils';
 import * as bootstrap from 'bootstrap';
 
 // Initialize authentication required handler

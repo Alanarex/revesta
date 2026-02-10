@@ -1,4 +1,4 @@
-import { initAuthRequiredHandler } from '../utils/auth-handler';
+import { initAuthRequiredHandler } from '../utils';
 
 // Initialize authentication required handler
 initAuthRequiredHandler();
