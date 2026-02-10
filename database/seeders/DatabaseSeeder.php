@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
                 BlogSeeder::class,
                 SimulationSeeder::class,
                 AidSimulationSeeder::class,
+                NewsletterSeeder::class,
+                NewsletterCampaignSeeder::class,
             ]);
         }
     }
