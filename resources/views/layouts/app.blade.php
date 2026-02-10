@@ -27,6 +27,7 @@
         <main class="app-main">
             <div class="app-content">
                 <div class="container-fluid">
+                    <x-alerts.session />
                     @yield('content')
                 </div>
             </div>
