@@ -1,0 +1,154 @@
+/* ========================================
+   Animations
+   ======================================== */
+@keyframes inputFocus {
+    from {
+        transform: scale(1);
+        font-size: 1rem;
+        filter: drop-shadow(0 0 0px rgba(var(--primary-rgb), 0));
+    }
+
+    to {
+        transform: scale(1.02);
+        font-size: 1.02rem;
+        filter: drop-shadow(0 2px 8px rgba(var(--primary-rgb), 0.2));
+    }
+}
+
+@keyframes inputBlur {
+    from {
+        transform: scale(1.02);
+        font-size: 1.02rem;
+        filter: drop-shadow(0 2px 8px rgba(var(--primary-rgb), 0.2));
+    }
+
+    to {
+        transform: scale(1);
+        font-size: 1rem;
+        filter: drop-shadow(0 0 0px rgba(var(--primary-rgb), 0));
+    }
+}
+
+/* ========================================
+   Standalone Form Control (no icon)
+   ======================================== */
+.form-control {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--light-grey);
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    background-color: white !important;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+    /* Focus State */
+    &:focus {
+        outline: none;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
+        border-color: var(--primary);
+    }
+
+    /* Disabled & Read-only State */
+    &:disabled,
+    &:read-only {
+        background-color: transparent;
+        border-color: var(--light-grey);
+        color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    /* Placeholder */
+    &::placeholder {
+        color: #6c757d;
+        opacity: 0.7;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:focus::placeholder {
+        opacity: 0.5;
+    }
+
+    /* Standalone Input Animation (no icon) */
+    &:not(.input-group .form-control) {
+        &:focus {
+            animation: inputFocus 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        &:not(:focus) {
+            animation: inputBlur 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+    }
+
+    /* Validation: Valid */
+    &.is-valid {
+        border-color: var(--success);
+
+        &:focus {
+            border-color: var(--success);
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
+        }
+    }
+
+    &:not(.input-group .form-control) {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+}
+
+/* ========================================
+   Input Group (with Icon)
+   ======================================== */
+.input-group {
+    border-radius: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Icon Container */
+    .input-group-text {
+        border: 1px solid var(--light-grey);
+        background-color: #f8f9fa;
+        color: #6c757d;
+        font-size: 0.875rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+        i {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    /* Input with Icon Animation */
+    &:has(> .form-control:focus) {
+        animation: inputFocus 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    &:not(:has(> .form-control:focus)) {
+        animation: inputBlur 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* Clear Button */
+    .clear-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 0;
+        background-color: transparent;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10;
+
+        &:hover {
+            color: var(--primary);
+        }
+    }
+
+    /* Restore right border radius for form inputs (Bootstrap removes it for non-first children) */
+    >.form-control {
+        border-top-right-radius: 0.375rem !important;
+        border-bottom-right-radius: 0.375rem !important;
+    }
+}

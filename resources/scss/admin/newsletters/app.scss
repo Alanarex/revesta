@@ -1,0 +1,32 @@
+.newsletter-preview-container {
+    width: 100%;
+    padding: 30px;
+    background-color: transparent;
+
+    .newsletter-preview {
+        max-width: 100%;
+        background-color: white;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+        .newsletter-preview-header {
+            border-bottom: 1px solid #ddd;
+            padding: 20px;
+
+            .newsletter-preview-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .newsletter-preview-date {
+                color: #666;
+            }
+        }
+
+        .newsletter-preview-body {
+            padding: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+    }
+}

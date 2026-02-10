@@ -1,22 +1,56 @@
-/* Quill Editor Styles - Make entire editor area clickable */
-.ql-container {
-    font-family: Arial, sans-serif;
+/* Quill Editor Container Styles */
+.quill-wrapper {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    overflow: hidden;
 }
 
-.ql-editor {
+.ql-toolbar {
+    border-bottom: 1px solid #dee2e6;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0.75rem;
+}
+
+.quill-wrapper .ql-container {
+    border: none;
+    font-family: inherit;
+    font-size: 1rem;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.quill-wrapper .ql-editor {
     min-height: 300px;
+    max-height: 600px;
+    padding: 1rem;
     cursor: text;
+    line-height: 1.6;
+    overflow-y: auto;
+    box-sizing: border-box;
+    width: 100%;
 }
 
-.ql-editor:focus {
+.quill-wrapper .ql-editor:focus {
     outline: none;
+    box-shadow: none;
 }
 
-/* Ensure the editor fills the container height */
-#editor .ql-container {
-    height: auto;
-}
-
-#editor .ql-editor {
-    height: 100%;
+.quill-wrapper .ql-editor.ql-blank::before {
+    font-style: italic;
+    color: #999;
 }
