@@ -35,6 +35,20 @@
             'active' => request()->is('scribe.*'),
             'enabled' => auth()->check() && auth()->user()?->isAdmin(),
         ],
+        [
+            'title' => 'Newsletters',
+            'route' => route('admin.newsletters.index'),
+            'icon' => 'bi-envelope-paper',
+            'active' => request()->routeIs('admin.newsletters.*'),
+            'enabled' => Gate::allows('manage', App\Models\NewsletterCampaign::class),
+        ],
+        [
+            'title' => 'Abonnés Newsletter',
+            'route' => route('admin.newsletter-subscribers.index'),
+            'icon' => 'bi-person-lines-fill',
+            'active' => request()->routeIs('admin.newsletter-subscribers.*'),
+            'enabled' => Gate::allows('manage', App\Models\Newsletter::class),
+        ],
     ];
 @endphp
 

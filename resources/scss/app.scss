@@ -24,15 +24,7 @@
 /* -------------------------------------------------
    5. Your custom overrides
 -------------------------------------------------- */
+@import "./custom.scss";
 @import "./partials/navbar";
 @import "./partials/sidebar";
 @import "./partials/pagination";
-@import "./components/quill";
-
-/* Datatable styles */
-@import "./partials/datatable";
-
-.app-main {
-   padding: 10px;
-    background-color: var(--light-grey);
-}

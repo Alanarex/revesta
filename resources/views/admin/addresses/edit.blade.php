@@ -18,21 +18,7 @@
         @endif
 
         <!-- Breadcrumbs -->
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                @foreach($breadcrumbs as $breadcrumb)
-                    @if(!$loop->last)
-                        <li class="breadcrumb-item">
-                            <a href="{{ $breadcrumb['url'] }}" class="text-decoration-none">
-                                {{ $breadcrumb['label'] }}
-                            </a>
-                        </li>
-                    @else
-                        <li class="breadcrumb-item active">{{ $breadcrumb['label'] }}</li>
-                    @endif
-                @endforeach
-            </ol>
-        </nav>
+        <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
 
         <!-- Form and Related Items -->
         <div class="row">

@@ -17,7 +17,7 @@
         ];
     @endphp
 
-    <x-admin.datatable :title="'Gestion des adresses'" :createRoute="route('admin.addresses.create')" table-id="addressesTable" body-id="addressesTableBody" :columns="$cols" :total-count="$totalCount" />
+    <x-layout.datatable :title="'Gestion des adresses'" :createRoute="route('admin.addresses.create')" table-id="addressesTable" body-id="addressesTableBody" :columns="$cols" :total-count="$totalCount" />
 @endsection
 
 @push('scripts')

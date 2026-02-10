@@ -54,19 +54,23 @@
                     <div class="d-flex gap-4 align-items-center text-muted">
                         @if ($canLike)
                             @php $blogLiked = ($blog->liked_by_auth ?? 0) > 0; @endphp
-                            <button class="btn btn-link p-0 like-btn text-decoration-none text-danger d-flex flex-column align-items-center" data-likeable-id="{{ $blog->id }}"
-                                data-likeable-type="App\Models\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}">
+                            <button
+                                class="btn btn-link p-0 like-btn text-decoration-none text-danger d-flex flex-column align-items-center"
+                                data-likeable-id="{{ $blog->id }}" data-likeable-type="App\Models\Blog"
+                                data-liked="{{ $blogLiked ? 'true' : 'false' }}">
                                 <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart" style="font-size: 1.5rem;"></i>
                                 <span class="likes-count mt-2 small">{{ $blog->likes_count }}</span>
                             </button>
                         @else
-                            <button class="btn btn-link p-0 text-decoration-none text-danger d-flex flex-column align-items-center" @if ($interactionsDisabled) disabled @endif
-                                data-auth-required>
+                            <button
+                                class="btn btn-link p-0 text-decoration-none text-danger d-flex flex-column align-items-center"
+                                @if ($interactionsDisabled) disabled @endif data-auth-required>
                                 <i class="far fa-heart" style="font-size: 1.5rem;"></i>
                                 <span class="mt-2 small">{{ $blog->likes_count }}</span>
                             </button>
                         @endif
-                        <button class="btn btn-link p-0 scroll-to-comments text-decoration-none text-muted d-flex flex-column align-items-center"
+                        <button
+                            class="btn btn-link p-0 scroll-to-comments text-decoration-none text-muted d-flex flex-column align-items-center"
                             @if ($interactionsDisabled) disabled @endif>
                             <i class="fa fa-comment" style="font-size: 1.5rem;"></i>
                             <span class="mt-2 small">{{ $blog->comments_count }}</span>
@@ -92,8 +96,7 @@
                         <!-- More Options Dropdown -->
                         <div class="dropdown">
                             <button class="btn btn-link p-0 text-decoration-none text-muted" type="button"
-                                data-bs-toggle="dropdown" aria-expanded="false"
-                                title="Plus d'options">
+                                data-bs-toggle="dropdown" aria-expanded="false" title="Plus d'options">
                                 <i class="fas fa-ellipsis-v" style="font-size: 1.5rem;"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -104,7 +107,9 @@
                                             <i class="fa fa-copy me-2"></i> Copier le lien
                                         </a>
                                     </li>
-                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                 @endif
 
                                 @if ($canEdit)
@@ -125,7 +130,9 @@
                                 @endif
 
                                 @if ($canApprove || $canReject)
-                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                 @endif
 
                                 @if ($canApprove)
@@ -162,19 +169,23 @@
                     <div class="d-flex gap-4 text-muted">
                         @if ($canLike)
                             @php $blogLiked = ($blog->liked_by_auth ?? 0) > 0; @endphp
-                            <button class="btn btn-link p-0 like-btn text-decoration-none text-danger d-flex flex-column align-items-center" data-likeable-id="{{ $blog->id }}"
-                                data-likeable-type="App\Models\Blog" data-liked="{{ $blogLiked ? 'true' : 'false' }}">
+                            <button
+                                class="btn btn-link p-0 like-btn text-decoration-none text-danger d-flex flex-column align-items-center"
+                                data-likeable-id="{{ $blog->id }}" data-likeable-type="App\Models\Blog"
+                                data-liked="{{ $blogLiked ? 'true' : 'false' }}">
                                 <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart" style="font-size: 1.5rem;"></i>
                                 <span class="likes-count mt-2 small">{{ $blog->likes_count }}</span>
                             </button>
                         @else
-                            <button class="btn btn-link p-0 text-decoration-none text-danger d-flex flex-column align-items-center" @if ($interactionsDisabled) disabled @endif
-                                data-auth-required>
+                            <button
+                                class="btn btn-link p-0 text-decoration-none text-danger d-flex flex-column align-items-center"
+                                @if ($interactionsDisabled) disabled @endif data-auth-required>
                                 <i class="far fa-heart" style="font-size: 1.5rem;"></i>
                                 <span class="mt-2 small">{{ $blog->likes_count }}</span>
                             </button>
                         @endif
-                        <button class="btn btn-link p-0 scroll-to-comments text-decoration-none text-muted d-flex flex-column align-items-center"
+                        <button
+                            class="btn btn-link p-0 scroll-to-comments text-decoration-none text-muted d-flex flex-column align-items-center"
                             @if ($interactionsDisabled) disabled @endif>
                             <i class="fa fa-comment" style="font-size: 1.5rem;"></i>
                             <span class="mt-2 small">{{ $blog->comments_count }}</span>
@@ -224,32 +235,32 @@
                     </div>
                 @endif
 
-    </div>
-    </div>
-@endsection
+            </div>
+        </div>
+    @endsection
 
-@push('scripts')
-    @if ($canLike)
-        @vite('resources/js/blogs/components/like.js')
-    @endif
+    @push('scripts')
+        @if ($canLike)
+            @vite('resources/js/blogs/components/like.js')
+        @endif
 
-    @if ($canBookmark)
-        @vite('resources/js/blogs/components/bookmark.js')
-    @endif
+        @if ($canBookmark)
+            @vite('resources/js/blogs/components/bookmark.js')
+        @endif
 
-    @if ($canShare)
-        @vite('resources/js/blogs/components/share.js')
-    @endif
+        @if ($canShare)
+            @vite('resources/js/blogs/components/share.js')
+        @endif
 
-    @if ($canDelete)
-        @vite('resources/js/blogs/components/delete.js')
-    @endif
+        @if ($canDelete)
+            @vite('resources/js/blogs/components/delete.js')
+        @endif
 
-    @if (!$interactionsDisabled)
-        @vite('resources/js/blogs/components/comments.js')
-    @endif
+        @if (!$interactionsDisabled)
+            @vite('resources/js/blogs/components/comments.js')
+        @endif
 
-    @if ($blog->isDraft() && $canEdit)
-        @vite('resources/js/blogs/pages/edit.js')
-    @endif
-@endpush
+        @if ($blog->isDraft() && $canEdit)
+            @vite('resources/js/blogs/pages/edit.js')
+        @endif
+    @endpush

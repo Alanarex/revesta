@@ -5,7 +5,7 @@
     <div class="main-content">
         <div class="container-fluid">
             <h1 class="display-5 mb-3">{{ $header }}</h1>
-            @include('partials.breadcrumbs')
+            <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
 
             <div class="card">
                 <div class="card-body">

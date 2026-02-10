@@ -17,7 +17,7 @@
         ];
     @endphp
 
-    <x-admin.datatable :title="'Gestion des utilisateurs'" :createRoute="route('admin.users.create')" create-icon="bi-person-add" table-id="usersTable" body-id="tableBody" :columns="$cols" :total-count="$totalCount" />
+    <x-layout.datatable :title="'Gestion des utilisateurs'" :createRoute="route('admin.users.create')" create-icon="bi-person-add" table-id="usersTable" body-id="tableBody" :columns="$cols" :total-count="$totalCount" />
 @endsection
 
 @push('scripts')
