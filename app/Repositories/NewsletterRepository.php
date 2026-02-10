@@ -105,4 +105,50 @@ class NewsletterRepository
 
         return $newsletter->delete();
     }
+
+    /**
+     * Get total count of all subscribers.
+     *
+     * @return int
+     */
+    public function count(): int
+    {
+        return Newsletter::count();
+    }
+
+    /**
+     * Search subscribers with filtering and sorting.
+     *
+     * @param string $search Search term for email
+     * @param string $sort Column to sort by
+     * @param string $direction Sort direction (asc/desc)
+     * @param string $status Filter by status (verified/unverified)
+     * @param int $perPage Results per page
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function search(string $search = '', string $sort = 'created_at', string $direction = 'desc', string $status = '', int $perPage = 15)
+    {
+        $query = Newsletter::query();
+
+        // Filter by search term
+        if (!empty($search)) {
+            $query->where('email', 'like', "%{$search}%");
+        }
+
+        // Filter by status
+        if (!empty($status)) {
+            if ($status === 'verified') {
+                $query->whereNotNull('verified_at');
+            } elseif ($status === 'unverified') {
+                $query->whereNull('verified_at');
+            }
+        }
+
+        // Sort with validation
+        $validColumns = ['id', 'email', 'created_at', 'verified_at'];
+        $sort = in_array($sort, $validColumns) ? $sort : 'created_at';
+        $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
+
+        return $query->orderBy($sort, $direction)->paginate($perPage);
+    }
 }
