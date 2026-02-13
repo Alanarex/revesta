@@ -164,6 +164,22 @@ class User extends Authenticatable implements OAuthenticatable
     }
 
     /**
+     * Get the likes made by the user on blogs and comments.
+     */
+    public function blogLikes()
+    {
+        return $this->hasMany(BlogLike::class);
+    }
+
+    /**
+     * Get all notifications for the user.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
      * Get the simulations belonging to the user.
      */
     public function simulations()
