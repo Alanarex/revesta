@@ -54,6 +54,25 @@ class AddressController extends Controller
         $addresses = $this->addressService->getAllAddresses($perPage, $search, $sort, $direction);
 
         $data = collect($addresses->items())->map(function ($address) {
+            $actions = [
+                [
+                    'type' => 'edit',
+                    'label' => 'Modifier',
+                    'icon' => 'fa-edit',
+                    'route' => route('admin.addresses.edit', $address),
+                    'class' => '',
+                ],
+                [
+                    'type' => 'delete',
+                    'label' => 'Supprimer',
+                    'icon' => 'fa-trash',
+                    'route' => route('admin.addresses.destroy', $address),
+                    'needs_confirm' => true,
+                    'confirm_message' => "Êtes-vous sûr de vouloir supprimer l'adresse {$address->label} ?",
+                    'class' => 'text-danger',
+                ],
+            ];
+
             return [
                 'id' => $address->id,
                 'label' => $address->label,
@@ -61,6 +80,7 @@ class AddressController extends Controller
                 'postal_code' => $address->postal_code,
                 'city' => $address->city,
                 'departement' => $address->departement ?? '-',
+                'actions' => $actions,
             ];
         });
 
@@ -144,14 +164,22 @@ class AddressController extends Controller
     /**
      * Delete the specified address from storage.
      */
-    public function destroy(DeleteAddressRequest $request, Address $address): RedirectResponse
+    public function destroy(DeleteAddressRequest $request, Address $address)
     {
         try {
             $this->addressService->deleteAddress($address);
 
+            if ($request->expectsJson() || $request->isXmlHttpRequest()) {
+                return response()->json(['success' => true, 'message' => 'Adresse supprimée avec succès!']);
+            }
+
             return redirect()->route('admin.addresses.index')
                 ->with('success', 'Adresse supprimée avec succès!');
         } catch (\Exception $e) {
+            if ($request->expectsJson() || $request->isXmlHttpRequest()) {
+                return response()->json(['success' => false, 'message' => 'Erreur lors de la suppression de l\'adresse: ' . $e->getMessage()], 500);
+            }
+
             return redirect()->route('admin.addresses.index')
                 ->with('error', 'Erreur lors de la suppression de l\'adresse: ' . $e->getMessage());
         }

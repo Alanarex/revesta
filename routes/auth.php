@@ -11,5 +11,7 @@
 |
 */
 
-require __DIR__ . '/auth/guest.php';
-require __DIR__ . '/auth/authenticated.php';
+Route::prefix('auth')->group(function () {
+    require __DIR__.'/auth/guest.php';
+    require __DIR__.'/auth/authenticated.php';
+});

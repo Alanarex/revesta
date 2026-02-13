@@ -17,4 +17,12 @@ class PasswordResetLinkRequest extends FormRequest
             'email' => ['required', 'email'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit etre une adresse valide.',
+        ];
+    }
 }

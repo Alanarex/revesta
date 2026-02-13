@@ -2,7 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Models\Blog;
+use App\Models\BlogLike;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserRepository
 {
@@ -100,5 +104,96 @@ class UserRepository
     public function count(): int
     {
         return User::count();
+    }
+
+    /**
+     * Get all simulations for a user (most recent first).
+     */
+    public function getUserSimulations(User $user): Collection
+    {
+        return $user->simulations()->orderByDesc('created_at')->get();
+    }
+
+    /**
+     * Get recent blog comments for a user.
+     */
+    public function getRecentComments(User $user, Carbon $since): Collection
+    {
+        return $user->blogComments()
+            ->where('created_at', '>=', $since)
+            ->with('blog')
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Get recent likes for a user.
+     */
+    public function getRecentLikes(User $user, Carbon $since): Collection
+    {
+        return BlogLike::where('user_id', $user->id)
+            ->where('created_at', '>=', $since)
+            ->with('likeable')
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Get recent bookmarks for a user.
+     */
+    public function getRecentBookmarks(User $user, Carbon $since): Collection
+    {
+        return $user->blogBookmarks()
+            ->where('created_at', '>=', $since)
+            ->with('blog')
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Get recently published blogs for a user.
+     */
+    public function getRecentPublishedBlogs(User $user, Carbon $since): Collection
+    {
+        return Blog::where('user_id', $user->id)
+            ->where('status', Blog::PUBLISHED)
+            ->where('created_at', '>=', $since)
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Get recent simulations for a user.
+     */
+    public function getRecentSimulations(User $user, Carbon $since): Collection
+    {
+        return $user->simulations()
+            ->where('created_at', '>=', $since)
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * Check if user has simulations.
+     */
+    public function hasSimulations(User $user): bool
+    {
+        return $user->simulations()->exists();
+    }
+
+    /**
+     * Check if user has blog comments.
+     */
+    public function hasBlogComments(User $user): bool
+    {
+        return $user->blogComments()->exists();
+    }
+
+    /**
+     * Check if user has blog likes.
+     */
+    public function hasBlogLikes(User $user): bool
+    {
+        return BlogLike::where('user_id', $user->id)->exists();
     }
 }

@@ -34,10 +34,10 @@ class SubscribeNewsletterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'Email is required.',
-            'email.email' => 'Please provide a valid email address.',
-            'email.unique' => 'This email is already subscribed to our newsletter.',
-            'email.max' => 'Email must not exceed 255 characters.',
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'Veuillez fournir une adresse email valide.',
+            'email.unique' => 'Cet email est deja abonne a notre infolettre.',
+            'email.max' => 'L\'email ne doit pas depasser 255 caracteres.',
         ];
     }
 

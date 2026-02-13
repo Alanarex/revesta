@@ -35,9 +35,10 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'Email is required.',
-            'email.email' => 'Email must be a valid address.',
-            'password.required' => 'Password is required.',
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit etre une adresse valide.',
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.string' => 'Le mot de passe doit etre une chaine de caracteres.',
         ];
     }
 

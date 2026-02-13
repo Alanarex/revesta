@@ -6,3 +6,13 @@
     background-color: var(--light-grey);
 }
 
+.card {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
+    background-color: var(--white) !important;
+    border: 0px !important;
+
+    .card-header {
+        border-bottom: 1px solid var(--light-grey) !important;
+        font-weight: 600 !important;
+    }
+}

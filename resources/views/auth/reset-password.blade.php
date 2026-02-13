@@ -15,35 +15,33 @@
 
                 <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-                <x-inputs.text-input 
+                <x-inputs.email-input 
                     name="email" 
                     label="Adresse email"
-                    type="email"
+                    placeholder="exemple@email.com"
                     value="{{ old('email', $request->email) }}"
                     icon="fa-solid fa-envelope"
                     required
                 />
 
-                <x-inputs.text-input 
+                <x-inputs.password-input 
                     name="password" 
                     label="Nouveau mot de passe"
-                    type="password"
+                    placeholder="Au moins 8 caracteres"
                     icon="fa-solid fa-lock"
                     required
                 />
 
-                <x-inputs.text-input 
+                <x-inputs.password-input 
                     name="password_confirmation" 
                     label="Confirmer le mot de passe"
-                    type="password"
+                    placeholder="Confirmez votre mot de passe"
                     icon="fa-solid fa-lock"
                     required
                 />
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">
-                        Réinitialiser
-                    </button>
+                    <x-buttons.button-primary text="Réinitialiser" />
                 </div>
             </form>
         </div>

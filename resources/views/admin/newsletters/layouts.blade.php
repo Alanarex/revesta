@@ -2,8 +2,7 @@
 
 @section('content')
     <div class="container">
-        <x-alerts.session />
-        
+
         @yield('content')
     </div>
 

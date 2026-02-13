@@ -33,6 +33,13 @@ class AuthService
             ]);
         }
 
+        // Check if email is verified
+        if (! $user->hasVerifiedEmail()) {
+            throw ValidationException::withMessages([
+                'email' => 'Votre email n\'a pas ete verifie. Veuillez verifier votre email et definir votre mot de passe.',
+            ]);
+        }
+
         Auth::guard('web')->login($user, $remember);
     }
 

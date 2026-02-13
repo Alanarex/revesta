@@ -25,8 +25,11 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request, RegistrationService $registration): RedirectResponse
     {
-        $registration->registerAndLogin($request->validated());
-
-        return redirect(route('dashboard.index', absolute: false));
+        try {
+            $registration->registerAndLogin($request->validated());
+            return redirect(route('login'))->with('success', 'Inscription reussie! Veuillez verifier votre email et definir votre mot de passe pour vous connecter.');
+        } catch (\Exception $e) {
+            return redirect(route('register'))->withInput()->with('error', 'Erreur lors de l\'inscription: ' . $e->getMessage());
+        }
     }
 }

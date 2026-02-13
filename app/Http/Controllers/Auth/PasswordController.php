@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
@@ -15,16 +16,28 @@ class PasswordController extends Controller
     }
     /**
      * Update the user's password.
+     * Can be called either with /password (own password) or /users/{user}/password (user-scoped)
      */
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, ?User $user = null): RedirectResponse
     {
+        // Determine which user's password to update
+        $targetUser = $user ?? $request->user();
+
+        // For security: only allow updating own password or if admin
+        if ($targetUser->id !== $request->user()->id && !$request->user()->isAdmin()) {
+            abort(403, 'Unauthorized: You can only update your own password.');
+        }
+
         $validated = $request->validateWithBag('updatePassword', [
             'current_password' => ['required', 'current_password'],
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $this->authService->updatePassword($request->user(), $validated['password']);
-
-        return back()->with('status', 'password-updated');
+        try {
+            $this->authService->updatePassword($targetUser, $validated['password']);
+            return back()->with('success', 'Votre mot de passe a ete mis a jour avec succes!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Erreur lors de la mise a jour du mot de passe: ' . $e->getMessage());
+        }
     }
 }

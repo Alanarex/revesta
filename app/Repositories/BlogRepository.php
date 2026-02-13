@@ -109,6 +109,68 @@ class BlogRepository
     }
 
     /**
+     * Get a user's blogs with precomputed tags for filters.
+     * Tags always include the blog status, and include "bookmarked" when
+     * the profile user has bookmarked the blog.
+     */
+    public function getUserBlogsWithTags(int $profileUserId, ?int $authUserId = null, bool $includeBookmarked = true): Collection
+    {
+        $query = Blog::select(['id', 'title', 'short_description', 'user_id', 'status', 'created_at', 'updated_at'])
+            ->with(['user:id,first_name,last_name,email'])
+            ->withCount([
+                'likes',
+                'bookmarks',
+                'comments',
+                'comments as direct_comments_count' => function ($q) {
+                    $q->whereNull('parent_id');
+                }
+            ])
+            ->withCount([
+                'bookmarks as bookmarked_by_profile' => function ($q) use ($profileUserId) {
+                    $q->where('user_id', $profileUserId);
+                }
+            ])
+            ->where(function ($q) use ($profileUserId, $includeBookmarked) {
+                $q->where('user_id', $profileUserId);
+
+                if ($includeBookmarked) {
+                    $q->orWhereIn('id', function ($sub) use ($profileUserId) {
+                        $sub->select('blog_id')->from('blog_bookmarks')->where('user_id', $profileUserId);
+                    });
+                }
+            });
+
+        if ($authUserId) {
+            $query->withCount([
+                'bookmarks as bookmarked_by_auth' => function ($q) use ($authUserId) {
+                    $q->where('user_id', $authUserId);
+                },
+                'likes as liked_by_auth' => function ($q) use ($authUserId) {
+                    $q->where('user_id', $authUserId);
+                }
+            ]);
+        }
+
+        $blogs = $query->orderBy('created_at', 'desc')->get()->unique('id')->values();
+
+        return $blogs->map(function (Blog $blog) use ($profileUserId) {
+            $tags = [];
+
+            if ((int) $blog->user_id === (int) $profileUserId) {
+                $tags[] = $blog->status ?? 'draft';
+            }
+
+            if (($blog->bookmarked_by_profile ?? 0) > 0) {
+                $tags[] = 'bookmarked';
+            }
+
+            $blog->setAttribute('tags', implode(' ', $tags));
+
+            return $blog;
+        });
+    }
+
+    /**
      * Get all authors who have created blogs.
      */
     public function getAllAuthors()

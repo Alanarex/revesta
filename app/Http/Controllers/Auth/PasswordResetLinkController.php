@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\PasswordResetLinkRequest;
 use App\Services\PasswordService;
+use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -28,11 +29,18 @@ class PasswordResetLinkController extends Controller
      */
     public function store(PasswordResetLinkRequest $request): RedirectResponse
     {
-        $status = $this->passwordService->sendResetLink($request->input('email'));
+        try {
+            $status = $this->passwordService->sendResetLink($request->input('email'));
 
-        return $status == \Illuminate\Auth\Passwords\PasswordBroker::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+            if ($status == PasswordBroker::RESET_LINK_SENT) {
+                return back()->with('success', 'Lien de reinitialisation envoye avec succes! Veuillez verifier votre email.');
+            }
+
+            return back()->withInput($request->only('email'))
+                        ->with('error', 'Email non trouve ou erreur lors de l\'envoi du lien.');
+        } catch (\Exception $e) {
+            return back()->withInput($request->only('email'))
+                        ->with('error', 'Erreur lors de l\'envoi du lien de reinitialisation: ' . $e->getMessage());
+        }
     }
 }

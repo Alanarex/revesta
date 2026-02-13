@@ -10,8 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
         perPage: 50,
         sortableColumns: ['id', 'full_name', 'email', 'phone', 'role', 'city'],
         columnMap: ['id', 'full_name', 'email', 'phone', 'role', 'city'],
-        renderRow: function (user, { escapeHtml }) {
+        renderRow: function (user, { escapeHtml, renderActions }) {
             const initials = (user.full_name || '').split(' ').map(s => s.charAt(0)).slice(0, 2).join('').toUpperCase();
+
             return `
                 <tr>
                     <td class="text-center">${escapeHtml(user.id)}</td>
@@ -26,23 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td class="text-center"><span class="badge bg-secondary role-badge">${escapeHtml(user.role || '')}</span></td>
                     <td class="text-center small text-muted">${escapeHtml(user.city || '')}${user.city && user.postal_code ? ' - ' : ''}${escapeHtml(user.postal_code || '')}</td>
                     <td class="text-center dt-actions">
-                        <a href="/admin/users/${user.id}" class="dt-action-btn" data-tooltip="Voir" title="Voir">
-                            <i class="fa fa-eye"></i>
-                        </a>
-                        <a href="/admin/users/${user.id}/edit" class="dt-action-btn" data-tooltip="Modifier" title="Modifier">
-                            <i class="fa fa-edit"></i>
-                        </a>
-                        <button class="dt-action-btn text-danger" data-dt-delete-id="${user.id}" data-dt-label="${escapeHtml(user.full_name)}" data-tooltip="Supprimer" title="Supprimer">
-                            <i class="fa fa-trash"></i>
-                        </button>
+                        ${renderActions(user.actions, escapeHtml, user)}
                     </td>
                 </tr>
             `;
-        },
-        deleteConfig: {
-            deleteUrl: (id) => `/admin/users/${id}`,
-            confirmTitle: 'Supprimer cet utilisateur ?',
-            confirmInfo: (dataset) => dataset.dtLabel || dataset.label || '',
         }
     });
 });

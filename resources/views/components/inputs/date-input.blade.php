@@ -5,6 +5,7 @@
     'required' => false,
     'icon' => null,
     'muted' => '',
+    'readonly' => false,
 ])
 
 <div class="mb-4">
@@ -19,6 +20,7 @@
 
         <input type="date" id="{{ $name }}" name="{{ $name }}" value="{{ old($name, $value) }}"
             {{ $required ? 'required' : '' }}
+            {{ $readonly ? 'readonly' : '' }}
             {{ $attributes->merge(['class' => 'form-control']) }}>
 
         @if ($muted)

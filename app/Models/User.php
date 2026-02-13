@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\Mail\PasswordResetMail;
+use App\Mail\EmailVerificationMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 
@@ -165,5 +169,38 @@ class User extends Authenticatable implements OAuthenticatable
     public function simulations()
     {
         return $this->hasMany(Simulation::class);
+    }
+
+    /**
+     * Send the password reset notification to the user.
+     * Overrides Laravel's default password reset notification with a custom mailable.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $resetUrl = URL::temporarySignedRoute(
+            'password.reset',
+            now()->addMinutes(config('auth.passwords.users.expire', 15)),
+            ['token' => $token]
+        );
+
+        Mail::send(new PasswordResetMail(
+            userName: $this->first_name ?: $this->email,
+            resetUrl: $resetUrl,
+            expirationMinutes: config('auth.passwords.users.expire', 15)
+        ))->to($this->email);
+    }
+
+    /**
+     * Send the email verification notification to the user.
+     * Overrides Laravel's default email verification notification with a custom mailable.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        Mail::send(new EmailVerificationMail($this))->to($this->email);
     }
 }

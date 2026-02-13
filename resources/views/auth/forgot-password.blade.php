@@ -15,30 +15,39 @@
                 enverrons un lien de réinitialisation.
             </p>
 
+            @if (session('success'))
+                <x-forms.alert type="success">
+                    {{ session('success') }}
+                </x-forms.alert>
+            @endif
+
+            @if (session('error'))
+                <x-forms.alert type="error">
+                    {{ session('error') }}
+                </x-forms.alert>
+            @endif
+
             @if (session('status'))
-                <div class="alert alert-success">
+                <x-forms.alert type="success">
                     {{ session('status') }}
-                </div>
+                </x-forms.alert>
             @endif
 
             <form method="POST" action="{{ route('password.email') }}">
                 @csrf
 
-                <!-- Email Address -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">Adresse email</label>
-                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                        name="email" value="{{ old('email') }}" required autofocus>
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.email-input 
+                    name="email" 
+                    label="Adresse email"
+                    placeholder="exemple@email.com"
+                    value="{{ old('email') }}"
+                    icon="fa-solid fa-envelope"
+                    required
+                />
 
                 <!-- Submit -->
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">
-                        Envoyer le lien
-                    </button>
+                    <x-buttons.button-primary text="Envoyer le lien" />
                 </div>
             </form>
         </div>

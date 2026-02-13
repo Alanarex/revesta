@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         perPage: 50,
         sortableColumns: ['id', 'label', 'street', 'postal_code', 'city', 'departement'],
         columnMap: ['id', 'label', 'street', 'postal_code', 'city', 'departement'],
-        renderRow: function (address, { escapeHtml }) {
+        renderRow: function (address, { escapeHtml, renderActions }) {
             return `
                 <tr>
                     <td class="text-center">${escapeHtml(address.id)}</td>
@@ -23,20 +23,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td class="text-center">${escapeHtml(address.city)}</td>
                     <td class="text-center">${escapeHtml(address.departement)}</td>
                     <td class="text-center dt-actions">
-                        <a href="/admin/addresses/${address.id}/edit" class="dt-action-btn" data-tooltip="Modifier" title="Modifier">
-                            <i class="fa fa-edit"></i>
-                        </a>
-                        <button class="dt-action-btn text-danger" data-dt-delete-id="${address.id}" data-dt-label="${escapeHtml(address.label || address.city)}" data-tooltip="Supprimer" title="Supprimer">
-                            <i class="fa fa-trash"></i>
-                        </button>
+                        ${renderActions(address.actions, escapeHtml, address)}
                     </td>
                 </tr>
             `;
-        },
-        deleteConfig: {
-            deleteUrl: (id) => `/admin/addresses/${id}`,
-            confirmTitle: 'Supprimer cette adresse ?',
-            confirmInfo: (dataset) => dataset.dtLabel || dataset.label || '',
         }
     });
 });

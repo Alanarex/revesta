@@ -44,8 +44,86 @@ class NewsletterCampaignController extends Controller
 
         $campaigns = $this->campaignRepository->search($search, $sort, $direction, $perPage);
 
+        $data = collect($campaigns->items())->map(function ($campaign) {
+            $actions = [];
+
+            // All campaigns have a view action
+            $actions[] = [
+                'type' => 'show',
+                'label' => 'Voir',
+                'icon' => 'fa-eye',
+                'route' => route('admin.newsletters.show', $campaign),
+                'class' => '',
+            ];
+
+            // Conditional actions based on campaign status
+            if ($campaign->status === 'draft') {
+                $actions[] = [
+                    'type' => 'edit',
+                    'label' => 'Éditer',
+                    'icon' => 'fa-pencil',
+                    'route' => route('admin.newsletters.edit', $campaign),
+                    'class' => '',
+                ];
+                $actions[] = [
+                    'type' => 'schedule',
+                    'label' => 'Programmer',
+                    'icon' => 'fa-clock',
+                    'id' => $campaign->id,
+                    'route' => route('admin.newsletters.schedule-form', $campaign),
+                    'class' => '',
+                ];
+                $actions[] = [
+                    'type' => 'send',
+                    'label' => 'Envoyer',
+                    'icon' => 'fa-paper-plane',
+                    'route' => route('admin.newsletters.send-now', $campaign),
+                    'needs_confirm' => true,
+                    'confirm_message' => "Êtes-vous sûr de vouloir envoyer la campagne '{$campaign->title}' ?",
+                    'class' => 'text-success',
+                ];
+                $actions[] = [
+                    'type' => 'delete',
+                    'label' => 'Supprimer',
+                    'icon' => 'fa-trash',
+                    'route' => route('admin.newsletters.destroy', $campaign),
+                    'needs_confirm' => true,
+                    'confirm_message' => "Êtes-vous sûr de vouloir supprimer la campagne '{$campaign->title}' ?",
+                    'class' => 'text-danger',
+                ];
+            } elseif ($campaign->status === 'scheduled') {
+                $actions[] = [
+                    'type' => 'edit',
+                    'label' => 'Éditer la programmation',
+                    'icon' => 'fa-pencil',
+                    'route' => route('admin.newsletters.schedule-form', $campaign),
+                    'class' => '',
+                ];
+                $actions[] = [
+                    'type' => 'cancel',
+                    'label' => 'Annuler la programmation',
+                    'icon' => 'fa-x-circle',
+                    'route' => route('admin.newsletters.cancel-schedule', $campaign),
+                    'needs_confirm' => true,
+                    'confirm_message' => "Êtes-vous sûr de vouloir annuler la programmation de '{$campaign->title}' ?",
+                    'class' => 'text-warning',
+                ];
+            }
+
+            return [
+                'id' => $campaign->id,
+                'label' => $campaign->title,
+                'title' => $campaign->title,
+                'status' => $campaign->status,
+                'created_at' => $campaign->created_at,
+                'sent_count' => $campaign->sent_count ?? 0,
+                'scheduled_at' => $campaign->scheduled_at,
+                'actions' => $actions,
+            ];
+        });
+
         return response()->json([
-            'data' => $campaigns->items(),
+            'data' => $data,
             'total' => $campaigns->total(),
             'per_page' => $perPage,
             'current_page' => $campaigns->currentPage(),

@@ -7,6 +7,7 @@
     'options' => [],
     'icon' => null,
     'muted' => '',
+    'readonly' => false,
 ])
 
 <div class="mb-4">
@@ -19,7 +20,8 @@
             <span class="input-group-text"><i class="{{ $icon }}"></i></span>
         @endif
 
-        <select id="{{ $name }}" name="{{ $name }}" {{ $required ? 'required' : '' }}
+        <select id="{{ $name }}" name="{{ $readonly ? '' : $name }}" {{ $required && !$readonly ? 'required' : '' }}
+            {{ $readonly ? 'disabled' : '' }}
             {{ $attributes->merge(['class' => 'form-select']) }}>
             <option value="">{{ $placeholder }}</option>
             @foreach ($options as $optionValue => $optionLabel)
@@ -28,6 +30,10 @@
                 </option>
             @endforeach
         </select>
+
+        @if ($readonly)
+            <input type="hidden" name="{{ $name }}" value="{{ old($name, $value) }}">
+        @endif
 
         @if ($muted)
             <small class="text-muted">{{ $muted }}</small>

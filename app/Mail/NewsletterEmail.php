@@ -2,17 +2,19 @@
 
 namespace App\Mail;
 
+use App\Mail\Concerns\ProvidesEmailLayoutData;
 use App\Models\NewsletterCampaign;
 use App\Models\Newsletter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class NewsletterEmail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, ProvidesEmailLayoutData;
 
     /**
      * Create a new message instance.
@@ -28,10 +30,17 @@ class NewsletterEmail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $replyToAddress = config('mail.reply_to.address');
+
         return new Envelope(
             subject: $this->campaign->title,
-            from: config('mail.from.address') ?? 'noreply@' . config('app.domain', 'example.com'),
-            replyTo: [config('mail.reply_to.address') ?? null],
+            from: new Address(
+                config('mail.from.address'),
+                config('mail.from.name')
+            ),
+            replyTo: $replyToAddress
+                ? [new Address($replyToAddress, config('mail.reply_to.name'))]
+                : [],
         );
     }
 
@@ -42,11 +51,14 @@ class NewsletterEmail extends Mailable
     {
         return new Content(
             view: 'emails.newsletter',
-            with: [
-                'title' => $this->campaign->title,
-                'content' => $this->campaign->content,
-                'unsubscribeUrl' => route('newsletter.unsubscribe', ['email' => $this->subscriber->email]),
-            ],
+            with: array_merge(
+                $this->emailLayoutData(),
+                [
+                    'title' => $this->campaign->title,
+                    'content' => $this->campaign->content,
+                    'unsubscribeUrl' => route('newsletter.unsubscribe', ['email' => $this->subscriber->email]),
+                ]
+            ),
         );
     }
 

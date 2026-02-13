@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Services\PasswordService;
+use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -29,11 +30,18 @@ class NewPasswordController extends Controller
      */
     public function store(ResetPasswordRequest $request): RedirectResponse
     {
-        $status = $this->passwordService->reset($request->only('email', 'password', 'password_confirmation', 'token'));
+        try {
+            $status = $this->passwordService->reset($request->only('email', 'password', 'password_confirmation', 'token'));
 
-        return $status == \Illuminate\Auth\Passwords\PasswordBroker::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+            if ($status == PasswordBroker::PASSWORD_RESET) {
+                return redirect()->route('login')->with('success', 'Votre mot de passe a ete reinitialise avec succes!');
+            }
+
+            return back()->withInput($request->only('email'))
+                        ->with('error', 'Erreur lors de la reinitialisation du mot de passe.');
+        } catch (\Exception $e) {
+            return back()->withInput($request->only('email'))
+                        ->with('error', 'Erreur lors de la reinitialisation du mot de passe: ' . $e->getMessage());
+        }
     }
 }

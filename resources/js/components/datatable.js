@@ -1,3 +1,145 @@
+/**
+ * Generic action renderer for datatables
+ * Renders action links based on action objects
+ * @param {Array} actions - Array of action objects with type, label, icon, etc.
+ * @param {Function} escapeHtml - HTML escaping function
+ * @param {Object} item - The row item being rendered
+ * @returns {string} HTML string of action links
+ */
+export function renderActions(actions, escapeHtml, item = {}) {
+    if (!actions || !Array.isArray(actions)) return '';
+
+    return actions.map(action => {
+        const label = escapeHtml(action.label || '');
+        const icon = escapeHtml(action.icon || '');
+        const cssClass = escapeHtml(action.class || '');
+        const title = `data-tooltip="${label}" title="${label}"`;
+        const itemLabel = escapeHtml(item.label || '');
+        const confirmMessage = escapeHtml(action.confirm_message || itemLabel);
+        
+        // If action needs confirmation, href is #, route goes in data attribute
+        // Otherwise href is the route directly
+        const href = action.needs_confirm ? '#' : (action.route || '#');
+        const dataAttrs = `data-dt-action-type="${action.type}" data-dt-label="${itemLabel}" data-dt-confirm-message="${confirmMessage}"${action.needs_confirm ? ` data-dt-action-route="${action.route}"` : ''}`;
+
+        return `<a href="${href}" class="dt-action-btn ${cssClass}" ${dataAttrs} ${title}>
+            <i class="fa ${icon}"></i>
+        </a>`;
+    }).join('');
+}
+
+/**
+ * Attach confirmation handlers to action buttons
+ * Finds all .dt-action-btn with href="#" and attaches SweetAlert confirmation dialogs
+ * @param {HTMLElement} container - The container element with action buttons
+ * @param {Function} onSuccess - Callback when action succeeds (typically reload table)
+ */
+function attachConfirmationHandlers(container, onSuccess) {
+    if (!container) return;
+
+    container.querySelectorAll('.dt-action-btn[href="#"]').forEach(btn => {
+        btn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            
+            const actionType = this.getAttribute('data-dt-action-type');
+            const confirmMessage = this.getAttribute('data-dt-confirm-message') || 'Confirmer cette action';
+            const url = this.getAttribute('data-dt-action-route');
+
+            if (!url) {
+                console.error('No data-dt-action-route found on action button');
+                return;
+            }
+
+            // Determine button text and loading/success messages based on action type
+            const confirmConfig = {
+                delete: { confirmText: 'Oui, supprimer', loadingText: 'Suppression en cours...', successTitle: 'Supprimé !' },
+                send: { confirmText: 'Oui, envoyer', loadingText: 'Envoi en cours...', successTitle: 'Envoyé !' },
+                approve: { confirmText: 'Oui, vérifier', loadingText: 'Vérification en cours...', successTitle: 'Vérifié !' },
+                cancel: { confirmText: 'Oui, annuler', loadingText: 'Annulation en cours...', successTitle: 'Annulé !' },
+            };
+
+            const config = confirmConfig[actionType] || { 
+                confirmText: 'Confirmer', 
+                loadingText: 'Traitement en cours...', 
+                successTitle: 'Succès !' 
+            };
+
+            // Show SweetAlert confirmation
+            if (typeof Swal === 'undefined') {
+                if (!window.confirm(confirmMessage)) return;
+            } else {
+                const result = await Swal.fire({
+                    title: 'Confirmer',
+                    text: confirmMessage,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: config.confirmText,
+                    cancelButtonText: 'Annuler',
+                    reverseButtons: true
+                });
+
+                if (!result.isConfirmed) return;
+
+                // Show loading
+                Swal.fire({ 
+                    title: config.loadingText, 
+                    allowOutsideClick: false, 
+                    didOpen: () => Swal.showLoading() 
+                });
+            }
+
+            // Send the request
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                    body: new URLSearchParams({ _method: actionType === 'delete' ? 'DELETE' : 'POST' }).toString()
+                });
+
+                let responseData = null;
+                try {
+                    responseData = await response.json();
+                } catch (e) {
+                    // ignore JSON parse errors
+                }
+
+                if (response.ok) {
+                    const message = responseData?.message || '';
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ 
+                            icon: 'success', 
+                            title: config.successTitle, 
+                            text: message, 
+                            timer: 1500, 
+                            showConfirmButton: false 
+                        });
+                    }
+                    if (onSuccess) onSuccess();
+                } else {
+                    const errorMsg = responseData?.message || `Erreur lors de l'opération`;
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ icon: 'error', title: 'Erreur', text: errorMsg });
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+            } catch (err) {
+                console.error('Action error', err);
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'error', title: 'Erreur', text: 'Une erreur est survenue' });
+                } else {
+                    alert('Une erreur est survenue');
+                }
+            }
+        });
+    });
+}
+
 export async function initDatatable(config) {
     const {
         listMetaName,
@@ -15,7 +157,6 @@ export async function initDatatable(config) {
         sortableColumns = [],
         columnMap = null, // optional array mapping header index -> column name
         renderRow,
-        deleteConfig = null, // { deleteUrl: id=>string, confirmTitle, confirmInfo: item=>string }
         injectStyles = true,
         debounceMs = 400,
     } = config;
@@ -91,84 +232,10 @@ export async function initDatatable(config) {
             return;
         }
 
-        tbody.innerHTML = items.map(item => renderRow(item, { escapeHtml })).join('');
+        tbody.innerHTML = items.map(item => renderRow(item, { escapeHtml, renderActions })).join('');
 
-        // attach delete handlers if configured
-        if (deleteConfig && deleteConfig.deleteUrl) {
-            tbody.querySelectorAll('[data-dt-delete-id]').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const id = this.getAttribute('data-dt-delete-id');
-                    const info = deleteConfig.confirmInfo ? deleteConfig.confirmInfo(this.dataset) : id;
-                    const title = deleteConfig.confirmTitle || 'Supprimer ?';
-                            // Prefer SweetAlert2 confirmation when available, otherwise use confirmDelete helper or window.confirm
-                            let doConfirmFunc;
-                            if (typeof Swal !== 'undefined') {
-                                doConfirmFunc = () => Swal.fire({
-                                    title: title || 'Confirmer',
-                                    text: String(info || ''),
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Oui, supprimer',
-                                    cancelButtonText: 'Annuler',
-                                    reverseButtons: true
-                                }).then(r => ({ isConfirmed: !!r.isConfirmed }));
-                            } else if (typeof confirmDelete !== 'undefined') {
-                                doConfirmFunc = () => confirmDelete(title, info);
-                            } else {
-                                doConfirmFunc = () => Promise.resolve(window.confirm(`${title}\n${info}`) ? { isConfirmed: true } : { isConfirmed: false });
-                            }
-
-                            doConfirmFunc().then(result => {
-                        if (result && result.isConfirmed) {
-                            // show loading via simple alert or Swal if available
-                            if (typeof Swal !== 'undefined') {
-                                Swal.fire({ title: 'Suppression en cours...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                            }
-                            // Use POST with method override to support servers that don't accept DELETE verbs
-                            const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
-                            const url = deleteConfig.deleteUrl(id);
-                            fetch(url, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': csrf,
-                                    'Accept': 'application/json',
-                                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                                },
-                                body: new URLSearchParams({ _method: 'DELETE' }).toString()
-                            }).then(async (r) => {
-                                if (r.ok) {
-                                    // successful HTTP response; attempt to parse JSON for message
-                                    let data = null;
-                                    try { data = await r.json(); } catch (e) { data = null; }
-                                    const message = (data && data.message) ? data.message : '';
-                                    if (typeof Swal !== 'undefined') {
-                                        Swal.fire({ icon: 'success', title: 'Supprimé !', text: message || '', timer: 1500, showConfirmButton: false });
-                                    }
-                                    // reload the table to reflect deletion
-                                    loadData(currentPage);
-                                } else {
-                                    // try to extract error message from JSON
-                                    let errMsg = 'Erreur lors de la suppression';
-                                    try { const errData = await r.json(); if (errData && errData.message) errMsg = errData.message; } catch (e) {}
-                                    if (typeof Swal !== 'undefined') {
-                                        Swal.fire({ icon: 'error', title: 'Erreur', text: errMsg });
-                                    } else {
-                                        alert(errMsg);
-                                    }
-                                }
-                            }).catch(err => {
-                                console.error('Delete error', err);
-                                if (typeof Swal !== 'undefined') {
-                                    Swal.fire({ icon: 'error', title: 'Erreur', text: 'Erreur lors de la suppression' });
-                                } else {
-                                    alert('Erreur lors de la suppression');
-                                }
-                            });
-                        }
-                    });
-                });
-            });
-        }
+        // attach confirmation handlers to all action buttons with href="#"
+        attachConfirmationHandlers(tbody, () => loadData(currentPage));
 
         // add sortable headers
         updateSortHeaders();

@@ -1,7 +1,7 @@
 @props([
     'title' => '',
     'createRoute' => null,
-    'createIcon' => 'bi-plus-circle-fill',
+    'createIcon' => 'fa-circle-plus',
     'createLabel' => 'Ajouter',
     'tableId' => 'datatable',
     'bodyId' => 'datatableBody',
@@ -14,17 +14,18 @@
 @endpush
 
 <div class="container-fluid py-4">
+
     <div class="row mb-3 align-items-center admin-datatable-header p-2">
         <div class="col-md-6 h-100">
             <h4 class="admin-dt-title">{{ $title }}</h4>
         </div>
         <div class="col-md-6 h-100">
             <div class="admin-dt-search-row">
-                <x-inputs.text-input name="searchInput" icon="bi bi-search" clearBtn clearBtnId="clearSearch"
+                <x-inputs.text-input name="searchInput" icon="fa fa-search" clearBtn clearBtnId="clearSearch"
                     placeholder="Rechercher..." class="m-0" />
                 @if ($createRoute)
                     <a href="{{ $createRoute }}" class="btn btn-primary btn-md mb-4"><i
-                            class="bi {!! $createIcon !!}"></i> {{ $createLabel }}</a>
+                            class="fa {!! $createIcon !!}"></i> {{ $createLabel }}</a>
                 @endif
             </div>
         </div>

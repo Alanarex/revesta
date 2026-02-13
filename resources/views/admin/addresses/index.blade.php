@@ -5,6 +5,11 @@
 @endpush
 
 @section('content')
+    <!-- Breadcrumbs -->
+    <div class="mb-4">
+        <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
+    </div>
+    
     @php
         $cols = [
             ['label' => 'ID', 'width' => 'width:5%', 'dataSort' => 'id'],

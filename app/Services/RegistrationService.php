@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class RegistrationService
@@ -21,11 +20,13 @@ class RegistrationService
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role_id' => $data['role_id'] ?? null, // Add role if provided
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Send verification email instead of auto-login
+        app(\App\Services\VerificationService::class)->sendVerification($user);
 
         return $user;
     }

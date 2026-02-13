@@ -5,6 +5,11 @@
 @endpush
 
 @section('content')
+    <!-- Breadcrumbs -->
+    <div class="mb-4">
+        <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
+    </div>
+
     @php
         $cols = [
             ['label' => 'Titre', 'width' => 'width:30%', 'dataSort' => 'title'],
@@ -15,7 +20,7 @@
         ];
     @endphp
 
-    <x-layout.datatable :title="'Gestion des newsletters'" :createRoute="route('admin.newsletters.create')" create-icon="fa-envelope-paper" table-id="newslettersTable"
+    <x-layout.datatable :title="'Gestion des newsletters'" :createRoute="route('admin.newsletters.create')" table-id="newslettersTable"
         body-id="tableBody" :columns="$cols" :total-count="$totalCount" />
 @endsection
 

@@ -1,12 +1,5 @@
 // Styles for the admin user show page
 
-.card {
-  background: #ffffff;
-  border-radius: 0.75rem;
-  box-shadow: 0 6px 18px rgba(23, 24, 26, 0.04);
-  border: 1px solid rgba(16, 24, 40, 0.04);
-}
-
 .user-avatar-wrapper .rounded-circle {
   width: 64px;
   height: 64px;
@@ -19,10 +12,31 @@
   padding: 0.75rem 1rem;
 }
 
-.card .card-header {
+#blog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.blog-filter-btn {
   background: transparent;
-  border-bottom: 1px solid rgba(16, 24, 40, 0.04);
-  font-weight: 600;
+  border: 1px solid var(--filter-color, #6c757d);
+  border-radius: 999px;
+  color: var(--filter-color, #6c757d);
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.35rem 0.7rem;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.blog-filter-btn.is-active {
+  background: var(--filter-color, #6c757d);
+  color: #ffffff;
+}
+
+.blog-filter-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.2);
 }
 
 .progress {
@@ -33,7 +47,45 @@
   background-color: #28a745;
 }
 
+/* Constrain blogs and activity columns height */
+#blogs-container,
+#activity-container {
+  max-height: 1200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Smooth scrollbar styling */
+#blogs-container::-webkit-scrollbar,
+#activity-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#blogs-container::-webkit-scrollbar-track,
+#activity-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+#blogs-container::-webkit-scrollbar-thumb,
+#activity-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+#blogs-container::-webkit-scrollbar-thumb:hover,
+#activity-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 /* Small responsive tweaks */
 @media (max-width: 991px) {
   .card { margin-bottom: 1rem; }
+  
+  /* Remove height constraints on mobile for better readability */
+  #blogs-container,
+  #activity-container {
+    max-height: none;
+    overflow-y: visible;
+  }
 }

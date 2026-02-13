@@ -9,6 +9,7 @@ use App\Models\Blog;
 use App\Models\User;
 use App\Repositories\BlogRepository;
 use App\Repositories\NotificationRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class BlogService
 {
@@ -32,6 +33,14 @@ class BlogService
     public function getAllBlogs(int $perPage = 20, ?string $search = null, ?int $authorId = null, ?string $status = null, ?string $dateFrom = null, ?string $dateTo = null)
     {
         return $this->blogRepository->getAllBlogs($perPage, $search, $authorId, $status, $dateFrom, $dateTo);
+    }
+
+    /**
+     * Get a user's blogs with precomputed tags for filters.
+     */
+    public function getUserBlogsWithTags(int $profileUserId, ?int $authUserId = null, bool $includeBookmarked = true): Collection
+    {
+        return $this->blogRepository->getUserBlogsWithTags($profileUserId, $authUserId, $includeBookmarked);
     }
 
     /**

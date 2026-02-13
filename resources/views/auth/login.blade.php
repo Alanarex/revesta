@@ -10,41 +10,49 @@
                     style="max-height: 40px;">
             </div>
 
-            @if (session('status'))
-                <div class="alert alert-success">
-                    {{ session('status') }}
-                </div>
+            @if (session('success'))
+                <x-forms.alert type="success">
+                    {{ session('success') }}
+                </x-forms.alert>
+            @endif
+
+            @if (session('error'))
+                <x-forms.alert type="error">
+                    {{ session('error') }}
+                </x-forms.alert>
+            @endif
+
+            @if (session('info'))
+                <x-forms.alert type="info">
+                    {{ session('info') }}
+                </x-forms.alert>
             @endif
 
             @if (session('status') === 'account-deleted')
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <i class="fa-solid fa-circle-info me-2"></i>{{ __('Your account has been successfully deleted.') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                <x-forms.alert type="info">
+                    {{ __('Your account has been successfully deleted.') }}
+                </x-forms.alert>
             @endif
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
-                <!-- Email -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">{{ __('Email') }}</label>
-                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                        name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.email-input 
+                    name="email" 
+                    label="{{ __('Email') }}"
+                    placeholder="exemple@email.com"
+                    value="{{ old('email') }}"
+                    icon="fa-solid fa-envelope"
+                    required
+                />
 
-                <!-- Password -->
-                <div class="mb-3">
-                    <label for="password" class="form-label">{{ __('Mot de passe') }}</label>
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                        name="password" required autocomplete="current-password">
-                    @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.password-input 
+                    name="password" 
+                    label="{{ __('Mot de passe') }}"
+                    placeholder="Entrez votre mot de passe"
+                    icon="fa-solid fa-lock"
+                    required
+                />
 
                 <!-- Remember Me -->
                 <div class="mb-3 form-check">
@@ -69,9 +77,7 @@
                         @endif
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
-                        {{ __('Se connecter') }}
-                    </button>
+                    <x-buttons.button-primary text="{{ __('Se connecter') }}" />
                 </div>
 
             </form>

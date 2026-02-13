@@ -45,8 +45,45 @@ class NewsletterSubscriberController extends Controller
 
         $subscribers = $this->subscriberRepository->search($search, $sort, $direction, $status, $perPage);
 
+        $data = collect($subscribers->items())->map(function ($subscriber) {
+            $actions = [];
+
+            // Verify button for unverified subscribers
+            if (!$subscriber->verified_at) {
+                $actions[] = [
+                    'type' => 'approve',
+                    'label' => 'Vérifier',
+                    'icon' => 'fa-check-circle',
+                    'route' => route('admin.newsletter-subscribers.verify', $subscriber),
+                    'needs_confirm' => true,
+                    'confirm_message' => "Êtes-vous sûr de vouloir vérifier {$subscriber->email} ?",
+                    'class' => 'text-success',
+                ];
+            }
+
+            // Delete button for all subscribers
+            $actions[] = [
+                'type' => 'delete',
+                'label' => 'Supprimer',
+                'icon' => 'fa-trash',
+                'route' => route('admin.newsletter-subscribers.destroy', $subscriber),
+                'needs_confirm' => true,
+                'confirm_message' => "Êtes-vous sûr de vouloir supprimer {$subscriber->email} ?",
+                'class' => 'text-danger',
+            ];
+
+            return [
+                'id' => $subscriber->id,
+                'label' => $subscriber->email,
+                'email' => $subscriber->email,
+                'verified_at' => $subscriber->verified_at,
+                'subscribed_at' => $subscriber->subscribed_at,
+                'actions' => $actions,
+            ];
+        });
+
         return response()->json([
-            'data' => $subscribers->items(),
+            'data' => $data,
             'total' => $subscribers->total(),
             'per_page' => $perPage,
             'current_page' => $subscribers->currentPage(),
@@ -72,9 +109,16 @@ class NewsletterSubscriberController extends Controller
     /**
      * Delete a subscriber (unsubscribe).
      */
-    public function destroy(DeleteNewsletterSubscriberRequest $request, Newsletter $subscriber): RedirectResponse
+    public function destroy(DeleteNewsletterSubscriberRequest $request, Newsletter $subscriber)
     {
         $result = $this->subscriberService->delete($subscriber->id);
+
+        if ($request->expectsJson() || $request->isXmlHttpRequest()) {
+            if ($result['success']) {
+                return response()->json(['success' => true, 'message' => $result['message']]);
+            }
+            return response()->json(['success' => false, 'message' => $result['message']], 500);
+        }
 
         if ($result['success']) {
             return redirect()->route('admin.newsletter-subscribers.index')

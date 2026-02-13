@@ -1,10 +1,15 @@
-@extends('admin.addresses.layouts')
+@extends('layouts.app')
 
 @push('meta')
     <meta name="users-list-url" content="{{ route('admin.users.list') }}">
 @endpush
 
 @section('content')
+    <!-- Breadcrumbs -->
+    <div class="mb-4">
+        <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
+    </div>
+
     @php
         $cols = [
             ['label' => 'ID', 'width' => 'width:5%', 'dataSort' => 'id'],
@@ -17,7 +22,8 @@
         ];
     @endphp
 
-    <x-layout.datatable :title="'Gestion des utilisateurs'" :createRoute="route('admin.users.create')" create-icon="bi-person-add" table-id="usersTable" body-id="tableBody" :columns="$cols" :total-count="$totalCount" />
+    <x-layout.datatable :title="'Gestion des utilisateurs'" :createRoute="route('admin.users.create')" create-icon="fa-user-plus" table-id="usersTable"
+        body-id="tableBody" :columns="$cols" :total-count="$totalCount" />
 @endsection
 
 @push('scripts')

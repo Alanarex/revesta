@@ -18,6 +18,8 @@
     <main class="container d-flex align-items-center justify-content-center" id="main-content" style="min-height: 100vh;">
         <div class="row justify-content-center w-100">
             <div class="col-md-6">
+                <x-alerts.session />
+
                 @yield('content')
             </div>
         </div>

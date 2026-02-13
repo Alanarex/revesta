@@ -5,6 +5,11 @@
 @endpush
 
 @section('content')
+    <!-- Breadcrumbs -->
+    <div class="mb-4">
+        <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
+    </div>
+
     @php
         $cols = [
             ['label' => 'Email', 'width' => 'width:35%', 'dataSort' => 'email'],
@@ -15,10 +20,10 @@
         ];
     @endphp
 
-    <x-layout.datatable :title="'Abonnés à la newsletter'" table-id="subscribersTable" body-id="tableBody" :columns="$cols" :total-count="$totalCount" />
+    <x-layout.datatable :title="'Abonnés à la newsletter'" table-id="subscribersTable" body-id="tableBody" :columns="$cols"
+        :total-count="$totalCount" />
 @endsection
 
 @push('scripts')
     @vite('resources/js/admin/newsletters/subscribers/datatable.js')
 @endpush
-

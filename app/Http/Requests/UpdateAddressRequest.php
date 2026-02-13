@@ -36,4 +36,33 @@ class UpdateAddressRequest extends FormRequest
             'lng' => 'nullable|numeric|between:-180,180',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'label.string' => 'Le libelle doit etre une chaine de caracteres.',
+            'label.max' => 'Le libelle ne doit pas depasser 255 caracteres.',
+            'street.required' => 'La rue est obligatoire.',
+            'street.string' => 'La rue doit etre une chaine de caracteres.',
+            'street.max' => 'La rue ne doit pas depasser 255 caracteres.',
+            'number.string' => 'Le numero doit etre une chaine de caracteres.',
+            'number.max' => 'Le numero ne doit pas depasser 50 caracteres.',
+            'complement.string' => 'Le complement d\'adresse doit etre une chaine de caracteres.',
+            'complement.max' => 'Le complement ne doit pas depasser 255 caracteres.',
+            'postal_code.required' => 'Le code postal est obligatoire.',
+            'postal_code.string' => 'Le code postal doit etre une chaine de caracteres.',
+            'postal_code.max' => 'Le code postal ne doit pas depasser 10 caracteres.',
+            'city.required' => 'La ville est obligatoire.',
+            'city.string' => 'La ville doit etre une chaine de caracteres.',
+            'city.max' => 'La ville ne doit pas depasser 255 caracteres.',
+            'departement.string' => 'Le departement doit etre une chaine de caracteres.',
+            'departement.max' => 'Le departement ne doit pas depasser 50 caracteres.',
+            'insee_code.string' => 'Le code INSEE doit etre une chaine de caracteres.',
+            'insee_code.max' => 'Le code INSEE ne doit pas depasser 10 caracteres.',
+            'lat.numeric' => 'La latitude doit etre un nombre.',
+            'lat.between' => 'La latitude doit etre entre -90 et 90.',
+            'lng.numeric' => 'La longitude doit etre un nombre.',
+            'lng.between' => 'La longitude doit etre entre -180 et 180.',
+        ];
+    }
 }

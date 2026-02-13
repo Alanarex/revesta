@@ -13,56 +13,48 @@
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
-                <!-- First Name -->
-                <div class="mb-3">
-                    <label for="first_name" class="form-label">Prénom</label>
-                    <input id="first_name" type="text" class="form-control @error('first_name') is-invalid @enderror"
-                        name="first_name" value="{{ old('first_name') }}" required autofocus autocomplete="given-name">
-                    @error('first_name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.text-input 
+                    name="first_name" 
+                    label="Prénom"
+                    placeholder="Jean"
+                    value="{{ old('first_name') }}"
+                    icon="fa-solid fa-user"
+                    required
+                />
 
-                <!-- Last Name -->
-                <div class="mb-3">
-                    <label for="last_name" class="form-label">Nom</label>
-                    <input id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror"
-                        name="last_name" value="{{ old('last_name') }}" required autocomplete="family-name">
-                    @error('last_name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.text-input 
+                    name="last_name" 
+                    label="Nom"
+                    placeholder="Dupont"
+                    value="{{ old('last_name') }}"
+                    icon="fa-solid fa-user"
+                    required
+                />
 
-                <!-- Email -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                        name="email" value="{{ old('email') }}" required autocomplete="username">
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.email-input 
+                    name="email" 
+                    label="Email"
+                    placeholder="exemple@email.com"
+                    value="{{ old('email') }}"
+                    icon="fa-solid fa-envelope"
+                    required
+                />
 
-                <!-- Password -->
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mot de passe</label>
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                        name="password" required autocomplete="new-password">
-                    @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.password-input 
+                    name="password" 
+                    label="Mot de passe"
+                    placeholder="Au moins 8 caracteres"
+                    icon="fa-solid fa-lock"
+                    required
+                />
 
-                <!-- Confirm Password -->
-                <div class="mb-4">
-                    <label for="password_confirmation" class="form-label">Confirmer le mot de passe</label>
-                    <input id="password_confirmation" type="password"
-                        class="form-control @error('password_confirmation') is-invalid @enderror"
-                        name="password_confirmation" required autocomplete="new-password">
-                    @error('password_confirmation')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <x-inputs.password-input 
+                    name="password_confirmation" 
+                    label="Confirmer le mot de passe"
+                    placeholder="Confirmez votre mot de passe"
+                    icon="fa-solid fa-lock"
+                    required
+                />
 
                 <!-- Footer Actions -->
                 <div class="d-flex justify-content-between align-items-center">
@@ -70,9 +62,7 @@
                         Déjà inscrit ?
                     </a>
 
-                    <button type="submit" class="btn btn-primary">
-                        S'inscrire
-                    </button>
+                    <x-buttons.button-primary text="S'inscrire" />
                 </div>
             </form>
         </div>

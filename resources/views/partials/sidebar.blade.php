@@ -3,49 +3,49 @@
         [
             'title' => 'Accueil',
             'route' => route('dashboard.index'),
-            'icon' => 'bi-house',
+            'icon' => 'fa-house',
             'active' => request()->routeIs('dashboard.*'),
             'enabled' => true,
         ],
         [
             'title' => 'Blogs',
             'route' => route('admin.blogs.index'),
-            'icon' => 'bi-newspaper',
+            'icon' => 'fa-newspaper',
             'active' => request()->routeIs('admin.blogs.*'),
             'enabled' => Gate::allows('manage', App\Models\Blog::class),
         ],
         [
             'title' => 'Adresses',
             'route' => route('admin.addresses.index'),
-            'icon' => 'bi-geo-alt',
+            'icon' => 'fa-location-dot',
             'active' => request()->routeIs('admin.addresses.*'),
             'enabled' => Gate::allows('manage', App\Models\Address::class),
         ],
         [
             'title' => 'Utilisateurs',
             'route' => route('admin.users.index'),
-            'icon' => 'bi-people',
+            'icon' => 'fa-users',
             'active' => request()->routeIs('admin.users.*'),
             'enabled' => Gate::allows('manage', App\Models\User::class),
         ],
         [
             'title' => 'API Docs',
-            'route' => route('scribe'),
-            'icon' => 'bi-journal-code',
+            'route' => route(name: 'scribe'),
+            'icon' => 'fa-file-code',
             'active' => request()->is('scribe.*'),
             'enabled' => auth()->check() && auth()->user()?->isAdmin(),
         ],
         [
             'title' => 'Newsletters',
             'route' => route('admin.newsletters.index'),
-            'icon' => 'bi-envelope-paper',
+            'icon' => 'fa-newspaper',
             'active' => request()->routeIs('admin.newsletters.*'),
             'enabled' => Gate::allows('manage', App\Models\NewsletterCampaign::class),
         ],
         [
             'title' => 'Abonnés Newsletter',
             'route' => route('admin.newsletter-subscribers.index'),
-            'icon' => 'bi-person-lines-fill',
+            'icon' => 'fa-user-check',
             'active' => request()->routeIs('admin.newsletter-subscribers.*'),
             'enabled' => Gate::allows('manage', App\Models\Newsletter::class),
         ],
@@ -75,7 +75,7 @@
                         <li class="nav-item my-1">
                             <a href="{{ $item['route'] }}"
                                 class="nav-link {{ !empty($item['active']) && $item['active'] ? 'active' : '' }}">
-                                <i class="nav-icon bi {{ $item['icon'] }}"></i>
+                                <i class="nav-icon fa {{ $item['icon'] }}"></i>
                                 <p>{{ $item['title'] }}</p>
                             </a>
                         </li>

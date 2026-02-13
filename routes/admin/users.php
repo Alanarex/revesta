@@ -40,6 +40,10 @@ Route::controller(UserController::class)
             ->middleware('throttle:20,1')
             ->name('update');
 
+        Route::post('/{user}/reset-password', 'resetPassword')
+            ->middleware('throttle:10,1')
+            ->name('reset-password');
+
         Route::delete('/{user}', 'destroy')
             ->middleware('throttle:10,1')
             ->name('destroy');

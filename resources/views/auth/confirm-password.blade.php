@@ -17,18 +17,16 @@
             <form method="POST" action="{{ route('password.confirm') }}">
                 @csrf
 
-                <x-inputs.text-input 
+                <x-inputs.password-input 
                     name="password" 
                     label="Mot de passe"
-                    type="password"
+                    placeholder="Entrez votre mot de passe"
                     icon="fa-solid fa-lock"
                     required
                 />
 
                 <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        {{ __('Confirm') }}
-                    </button>
+                    <x-buttons.button-primary text="{{ __('Confirm') }}" />
                 </div>
             </form>
         </div>

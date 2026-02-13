@@ -10,6 +10,7 @@
     'clearBtn' => false,
     'clearBtnId' => '',
     'muted' => '',
+    'readonly' => false,
 ])
 
 <div class="mb-4">
@@ -25,11 +26,12 @@
         <input type="text" id="{{ $name }}" name="{{ $name }}" value="{{ old($name, $value) }}"
             placeholder="{{ $placeholder }}" maxlength="{{ $maxlength }}"
             autocomplete="{{ $autocomplete ? 'on' : 'off' }}" {{ $required ? 'required' : '' }}
+            {{ $readonly ? 'readonly' : '' }}
             {{ $attributes->merge(['class' => $clearBtn ? 'form-control pe-5' : 'form-control']) }}>
 
         @if ($clearBtn)
             <button type="button" id="{{ $clearBtnId }}" class="clear-btn">
-                <i class="bi bi-x-lg"></i>
+                <i class="fa fa-x-lg"></i>
             </button>
         @endif
 

@@ -1,0 +1,352 @@
+/* ==================================================
+   REVESTA - Unified Email Styles
+   All email templates use these standardized styles
+   ================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+/* =====================
+   Container & Layout
+   ===================== */
+
+.email-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* =====================
+   Header Section
+   ===================== */
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.header p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* =====================
+   Content Section
+   ===================== */
+
+.content {
+    padding: 40px 30px;
+}
+
+.greeting {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.greeting strong {
+    color: #667eea;
+}
+
+/* =====================
+   Info/Alert Boxes
+   ===================== */
+
+.info-box {
+    background-color: #f0f4ff;
+    border-left: 4px solid #667eea;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #555;
+}
+
+.info-box strong {
+    color: #667eea;
+}
+
+.alert-box {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #856404;
+}
+
+.alert-box strong {
+    color: #856404;
+}
+
+.security-warning {
+    background-color: #ffe5e5;
+    border-left: 4px solid #dc3545;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #721c24;
+}
+
+.security-warning strong {
+    color: #721c24;
+}
+
+.security-warning ul {
+    margin-left: 15px;
+    padding-top: 5px;
+}
+
+.security-warning li {
+    margin-bottom: 5px;
+}
+
+/* =====================
+   Buttons
+   ===================== */
+
+.button-container {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.reset-button,
+.cta-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 14px 40px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.4);
+}
+
+.reset-button:hover,
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.6);
+}
+
+/* =====================
+   Links & Text
+   ===================== */
+
+.link-section {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    word-break: break-all;
+}
+
+.link-section strong {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.link-section a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+/* =====================
+   Divider
+   ===================== */
+
+.divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 30px 0;
+}
+
+/* =====================
+   GDPR/Privacy Section
+   ===================== */
+
+.gdpr-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.8;
+}
+
+.gdpr-section h3 {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.gdpr-section p {
+    margin-bottom: 10px;
+}
+
+.gdpr-section ul {
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+.gdpr-section li {
+    margin-bottom: 6px;
+}
+
+/* =====================
+   Newsletter Specific
+   ===================== */
+
+.newsletter-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.newsletter-body {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #555;
+}
+
+.newsletter-body h2 {
+    font-size: 18px;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.newsletter-body p {
+    margin-bottom: 15px;
+}
+
+.newsletter-body a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.newsletter-body a:hover {
+    text-decoration: underline;
+}
+
+/* =====================
+   Footer Section
+   ===================== */
+
+.footer {
+    background-color: #f5f5f5;
+    border-top: 1px solid #eee;
+    padding: 20px 30px;
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+}
+
+.footer p {
+    margin-bottom: 10px;
+}
+
+.footer-links {
+    margin-top: 10px;
+}
+
+.footer-links a {
+    color: #667eea;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.contact-info {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    font-size: 13px;
+}
+
+.contact-info strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.contact-info a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+/* =====================
+   Mobile Responsiveness
+   ===================== */
+
+@media only screen and (max-width: 600px) {
+    .email-container {
+        border-radius: 0;
+    }
+
+    .header {
+        padding: 30px 15px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .content {
+        padding: 25px 15px;
+    }
+
+    .footer {
+        padding: 15px;
+    }
+
+    .reset-button,
+    .cta-button {
+        padding: 12px 30px;
+        font-size: 14px;
+    }
+
+    .newsletter-title {
+        font-size: 20px;
+    }
+
+    .newsletter-body h2 {
+        font-size: 16px;
+    }
+}

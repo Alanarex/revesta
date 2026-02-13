@@ -52,4 +52,29 @@ class UpdateProfileRequest extends FormRequest
             'bio' => ['nullable', 'string', 'max:500'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'first_name.required' => 'Le prenom est obligatoire.',
+            'first_name.string' => 'Le prenom doit etre une chaine de caracteres.',
+            'first_name.max' => 'Le prenom ne doit pas depasser 255 caracteres.',
+            'last_name.required' => 'Le nom est obligatoire.',
+            'last_name.string' => 'Le nom doit etre une chaine de caracteres.',
+            'last_name.max' => 'Le nom ne doit pas depasser 255 caracteres.',
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit etre une adresse valide.',
+            'email.max' => 'L\'email ne doit pas depasser 255 caracteres.',
+            'email.unique' => 'Cet email est deja utilise.',
+            'phone.string' => 'Le telephone doit etre une chaine de caracteres.',
+            'phone.min' => 'Le telephone doit contenir au moins 6 caracteres.',
+            'phone.max' => 'Le telephone ne doit pas depasser 20 caracteres.',
+            'civil_status.string' => 'Le statut civil doit etre une chaine de caracteres.',
+            'civil_status.in' => 'Le statut civil selectionne est invalide.',
+            'family_status.string' => 'Le statut familial doit etre une chaine de caracteres.',
+            'family_status.in' => 'Le statut familial selectionne est invalide.',
+            'bio.string' => 'La biographie doit etre une chaine de caracteres.',
+            'bio.max' => 'La biographie ne doit pas depasser 500 caracteres.',
+        ];
+    }
 }

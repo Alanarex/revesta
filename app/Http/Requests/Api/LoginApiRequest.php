@@ -18,4 +18,14 @@ class LoginApiRequest extends FormRequest
             'password' => ['required', 'string'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit etre une adresse valide.',
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.string' => 'Le mot de passe doit etre une chaine de caracteres.',
+        ];
+    }
 }

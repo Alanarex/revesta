@@ -20,4 +20,16 @@ class ResetPasswordRequest extends FormRequest
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'token.required' => 'Le jeton de reinitialisation est obligatoire.',
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'L\'email doit etre une adresse valide.',
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caracteres.',
+        ];
+    }
 }
