@@ -1,7 +1,9 @@
 /**
- * Comments Component
- * Handles all comment-related functionality: submit, reply, show/hide replies, load more, delete
+ * Comments Manager - Simplified
+ * Uses existing routes, renders HTML server-side
  */
+import { isElementDisabled } from '../../helper.js';
+
 export class CommentsManager {
     constructor() {
         this.init();
@@ -39,7 +41,7 @@ export class CommentsManager {
         const form = $(e.target);
         const submitBtn = form.find('button[type="submit"]').first();
 
-        if (this.isElementDisabled(form) || this.isElementDisabled(submitBtn)) return;
+        if (isElementDisabled(form) || isElementDisabled(submitBtn)) return;
 
         const blogId = form.data('blog-id');
         const parentId = form.data('parent-id') || null;
@@ -73,7 +75,7 @@ export class CommentsManager {
 
     handleReplyButton(e) {
         const btn = $(e.target).closest('.reply-btn');
-        if (this.isElementDisabled(btn)) return;
+        if (isElementDisabled(btn)) return;
 
         const commentId = btn.data('comment-id');
         const container = btn.closest('.comment-item').find('.reply-form-container').first();
@@ -82,7 +84,7 @@ export class CommentsManager {
             container.hide().empty();
         } else {
             const blogId = $('meta[name="blog-id"]').attr('content') || 'null';
-            
+
             // Get initials from the authenticated user's avatar in the main comment form
             const mainCommentAvatar = $('.comment-form[data-parent-id=""]').closest('.d-flex').find('.bg-primary.text-white.rounded-circle');
             const initials = mainCommentAvatar.length ? mainCommentAvatar.text().trim() : '';
@@ -103,7 +105,7 @@ export class CommentsManager {
                     </form>
                 </div>
             `).show();
-            
+
             // Focus on the reply input after it's been added to the DOM
             setTimeout(() => {
                 container.find('.comment-input').focus();

@@ -3,7 +3,7 @@
  * Handles bookmark toggle functionality for blogs
  */
 
-import { showTooltip } from '../../helper.js';
+import { showTooltip, isElementDisabled } from '../../helper.js';
 
 export class BookmarkButton {
     constructor() {
@@ -19,7 +19,7 @@ export class BookmarkButton {
 
     handleBookmarkToggle(e) {
         const btn = $(e.target).closest('.bookmark-btn');
-        if (this.isElementDisabled(btn)) return;
+        if (isElementDisabled(btn)) return;
 
         const blogId = btn.data('blog-id');
         const currentState = btn.data('bookmarked') === 'true' || btn.data('bookmarked') === true;
@@ -66,13 +66,7 @@ export class BookmarkButton {
         }
     }
 
-    isElementDisabled(jqEl) {
-        if (!jqEl || jqEl.length === 0) return false;
-        const attrDisabled = typeof jqEl.attr('disabled') !== 'undefined' && jqEl.attr('disabled') !== false;
-        const ariaDisabled = jqEl.attr('aria-disabled') === 'true';
-        const dataDisabled = jqEl.data('disabled') === true || jqEl.data('disabled') === 'true';
-        return attrDisabled || ariaDisabled || dataDisabled;
-    }
+
 }
 
 // Initialize when DOM is ready

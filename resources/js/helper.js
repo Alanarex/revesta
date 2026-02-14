@@ -81,11 +81,25 @@ export function confirmDelete(title = 'Êtes-vous sûr?', text = 'Cette action n
     });
 }
 
+/**
+ * Checks if a jQuery element is disabled
+ * @param {jQuery} jqEl - The jQuery element to check
+ * @returns {boolean} True if the element is disabled
+ */
+export function isElementDisabled(jqEl) {
+    if (!jqEl || jqEl.length === 0) return false;
+    const attrDisabled = typeof jqEl.attr('disabled') !== 'undefined' && jqEl.attr('disabled') !== false;
+    const ariaDisabled = jqEl.attr('aria-disabled') === 'true';
+    const dataDisabled = jqEl.data('disabled') === true || jqEl.data('disabled') === 'true';
+    return attrDisabled || ariaDisabled || dataDisabled;
+}
+
 // Make functions globally available when imported
 if (typeof window !== 'undefined') {
     window.helpers = {
         showTooltip,
         hideTooltip,
-        confirmDelete
+        confirmDelete,
+        isElementDisabled
     };
 }

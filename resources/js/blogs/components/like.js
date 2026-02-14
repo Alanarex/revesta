@@ -3,7 +3,7 @@
  * Handles likes for both blogs and comments using polymorphic approach
  */
 
-import { showTooltip } from '../../helper.js';
+import { showTooltip, isElementDisabled } from '../../helper.js';
 
 export class LikeButton {
     constructor() {
@@ -19,7 +19,7 @@ export class LikeButton {
 
     handleLikeToggle(e) {
         const btn = $(e.target).closest('.like-btn');
-        if (this.isElementDisabled(btn)) return;
+        if (isElementDisabled(btn)) return;
 
         const likeableId = btn.data('likeable-id');
         const likeableType = btn.data('likeable-type');
@@ -108,13 +108,7 @@ export class LikeButton {
         }
     }
 
-    isElementDisabled(jqEl) {
-        if (!jqEl || jqEl.length === 0) return false;
-        const attrDisabled = typeof jqEl.attr('disabled') !== 'undefined' && jqEl.attr('disabled') !== false;
-        const ariaDisabled = jqEl.attr('aria-disabled') === 'true';
-        const dataDisabled = jqEl.data('disabled') === true || jqEl.data('disabled') === 'true';
-        return attrDisabled || ariaDisabled || dataDisabled;
-    }
+
 }
 
 // Initialize when DOM is ready

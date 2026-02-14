@@ -3,7 +3,7 @@
  * Handles copying blog links to clipboard
  */
 
-import { showTooltip } from '../../helper.js';
+import { showTooltip, isElementDisabled } from '../../helper.js';
 
 export class ShareButton {
     constructor() {
@@ -19,7 +19,7 @@ export class ShareButton {
 
     handleCopyLink(e) {
         const link = $(e.target).closest('.copy-link');
-        if (this.isElementDisabled(link)) return;
+        if (isElementDisabled(link)) return;
 
         const url = link.data('url');
         if (!url) {
@@ -68,13 +68,7 @@ export class ShareButton {
         return showTooltip(btn, message, isError);
     }
 
-    isElementDisabled(jqEl) {
-        if (!jqEl || jqEl.length === 0) return false;
-        const attrDisabled = typeof jqEl.attr('disabled') !== 'undefined' && jqEl.attr('disabled') !== false;
-        const ariaDisabled = jqEl.attr('aria-disabled') === 'true';
-        const dataDisabled = jqEl.data('disabled') === true || jqEl.data('disabled') === 'true';
-        return attrDisabled || ariaDisabled || dataDisabled;
-    }
+
 }
 
 // Initialize when DOM is ready
