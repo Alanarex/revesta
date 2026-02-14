@@ -169,6 +169,11 @@
         outline: none;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
         border-color: var(--primary);
+        animation: inputFocus 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    &:not(:focus) {
+        animation: inputBlur 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
     /* Disabled State */

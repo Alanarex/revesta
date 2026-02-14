@@ -29,51 +29,62 @@
                 </div>
 
                 <form id="filterForm">
-                    <!-- Search Input -->
-                    <div class="mb-4 pb-4 border-bottom">
-                        <label for="filterSearch" class="form-label">Rechercher</label>
-                        <input type="text" class="form-control" id="filterSearch" name="search"
-                            placeholder="Titre, auteur, contenu..." value="{{ $currentSearch ?? '' }}">
-                        <small class="text-muted">Recherche dans le titre, la description et le contenu</small>
+                    <div class="pb-4 border-bottom">
+                        <x-inputs.text-input
+                            name="filterSearch"
+                            label="Rechercher"
+                            placeholder="Titre, auteur, contenu..."
+                            value="{{ $currentSearch ?? '' }}"
+                            muted="Recherche dans le titre, la description et le contenu"
+                        />
                     </div>
 
-                    <!-- Status Filter -->
-                    <div class="mb-4 pb-4 border-bottom">
-                        <label for="filterStatus" class="form-label">Statut</label>
-                        <select class="form-select" id="filterStatus" name="status">
-                            <option value="">Tous les statuts</option>
-                            <option value="draft" {{ $currentStatus == 'draft' ? 'selected' : '' }}>Brouillon</option>
-                            <option value="pending" {{ $currentStatus == 'pending' ? 'selected' : '' }}>En attente</option>
-                            <option value="published" {{ $currentStatus == 'published' ? 'selected' : '' }}>Publié</option>
-                            <option value="rejected" {{ $currentStatus == 'rejected' ? 'selected' : '' }}>Rejeté</option>
-                        </select>
+                    @php
+                        $statusOptions = [
+                            'draft' => 'Brouillon',
+                            'pending' => 'En attente',
+                            'published' => 'Publié',
+                            'rejected' => 'Rejeté',
+                        ];
+                        $authorsOptions = collect($authors)->filter()->mapWithKeys(function ($author) {
+                            return [$author->id => "{$author->first_name} {$author->last_name}"];
+                        })->toArray();
+                    @endphp
+
+                    <div class="pb-4 border-bottom">
+                        <x-inputs.select-input
+                            name="filterStatus"
+                            label="Statut"
+                            placeholder="Tous les statuts"
+                            value="{{ $currentStatus ?? '' }}"
+                            :options="$statusOptions"
+                        />
                     </div>
 
-                    <!-- Author Filter -->
-                    <div class="mb-4 pb-4 border-bottom">
-                        <label for="filterAuthor" class="form-label">Auteur</label>
-                        <select class="form-select" id="filterAuthor" name="author">
-                            <option value="">Tous les auteurs</option>
-                            @foreach ($authors as $author)
-                                <option value="{{ $author->id }}"
-                                    {{ $currentAuthor == $author->id ? 'selected' : '' }}>
-                                    {{ $author->first_name }} {{ $author->last_name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="pb-4 border-bottom">
+                        <x-inputs.select-input
+                            name="filterAuthor"
+                            label="Auteur"
+                            placeholder="Tous les auteurs"
+                            value="{{ $currentAuthor ?? '' }}"
+                            :options="$authorsOptions"
+                        />
                     </div>
 
-                    <!-- Date Range Filter -->
-                    <div class="mb-4 pb-4 border-bottom">
-                        <label for="filterDateFrom" class="form-label">Date de début</label>
-                        <input type="date" class="form-control" id="filterDateFrom" name="date_from"
-                            value="{{ $currentDateFrom ?? '' }}">
+                    <div class="pb-4 border-bottom">
+                        <x-inputs.date-input
+                            name="filterDateFrom"
+                            label="Date de début"
+                            value="{{ $currentDateFrom ?? '' }}"
+                        />
                     </div>
 
                     <div>
-                        <label for="filterDateTo" class="form-label">Date de fin</label>
-                        <input type="date" class="form-control" id="filterDateTo" name="date_to"
-                            value="{{ $currentDateTo ?? '' }}">
+                        <x-inputs.date-input
+                            name="filterDateTo"
+                            label="Date de fin"
+                            value="{{ $currentDateTo ?? '' }}"
+                        />
                     </div>
                 </form>
             </div>

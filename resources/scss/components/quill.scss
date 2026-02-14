@@ -1,4 +1,15 @@
-/* Quill Editor Container Styles */
+/**
+ * Quill Editor Styles
+ * ├── Base Wrapper
+ * ├── Toolbar
+ * ├── Container & Editor
+ * ├── States (Focus, Blank)
+ * └── Validation (Invalid, Error Message)
+ */
+
+/* ==========================================
+   Base Wrapper
+   ========================================== */
 .quill-wrapper {
     display: block;
     width: 100%;
@@ -9,8 +20,12 @@
     border-bottom-left-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ==========================================
+   Toolbar
+   ========================================== */
 .ql-toolbar {
     border-bottom: 1px solid #dee2e6;
     border-top: none;
@@ -23,6 +38,9 @@
     padding: 0.75rem;
 }
 
+/* ==========================================
+   Container & Editor
+   ========================================== */
 .quill-wrapper .ql-container {
     border: none;
     font-family: inherit;
@@ -43,6 +61,8 @@
     overflow-y: auto;
     box-sizing: border-box;
     width: 100%;
+    background-color: white;
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .quill-wrapper .ql-editor:focus {
@@ -53,4 +73,36 @@
 .quill-wrapper .ql-editor.ql-blank::before {
     font-style: italic;
     color: #999;
+}
+
+/* ==========================================
+   Validation States
+   ========================================== */
+
+/* Invalid State - Matches form-control.is-invalid */
+.quill-wrapper.is-invalid {
+    border: 1.25px solid #ff0707;
+    
+    .ql-toolbar {
+        border-bottom-color: #ff0707;
+    }
+    
+    .ql-editor {
+        background-color: #fffbfb;
+    }
+}
+
+/* Toolbar border red when next sibling (quill-wrapper) is invalid */
+.ql-toolbar:has(+ .quill-wrapper.is-invalid) {
+    border-bottom: 1px solid #ff0707;
+}
+
+/* Error Message - Matches invalid-feedback styling */
+.quill-wrapper ~ .invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ff0707;
 }

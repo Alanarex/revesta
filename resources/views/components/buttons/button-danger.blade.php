@@ -3,6 +3,6 @@
 <button type="{{ $type }}" 
         @if($name) name="{{ $name }}" @endif
         @if($value) value="{{ $value }}" @endif
-        {{ $attributes->merge(['class' => 'btn btn-danger']) }}>
+        {{ $attributes->merge(['class' => 'btn btn-danger text-white']) }}>
     {{ $text }}
 </button>

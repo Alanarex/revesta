@@ -17,7 +17,7 @@
 
     <div class="input-group">
         @if ($icon)
-            <span class="input-group-text"><i class="{{ $icon }}"></i></span>
+            <span class="input-group-text"><i class="fa {{ $icon }}"></i></span>
         @endif
 
         <select id="{{ $name }}" name="{{ $readonly ? '' : $name }}" {{ $required && !$readonly ? 'required' : '' }}

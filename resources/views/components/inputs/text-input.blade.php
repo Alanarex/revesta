@@ -7,8 +7,6 @@
     'maxlength' => 255,
     'autocomplete' => false,
     'icon' => null,
-    'clearBtn' => false,
-    'clearBtnId' => '',
     'muted' => '',
     'readonly' => false,
 ])
@@ -20,30 +18,22 @@
 
     <div class="input-group">
         @if ($icon)
-            <span class="input-group-text"><i class="{{ $icon }}"></i></span>
+            <span class="input-group-text"><i class="fa {{ $icon }}"></i></span>
         @endif
 
         <input type="text" id="{{ $name }}" name="{{ $name }}" value="{{ old($name, $value) }}"
             placeholder="{{ $placeholder }}" maxlength="{{ $maxlength }}"
             autocomplete="{{ $autocomplete ? 'on' : 'off' }}" {{ $required ? 'required' : '' }}
-            {{ $readonly ? 'readonly' : '' }}
-            {{ $attributes->merge(['class' => $clearBtn ? 'form-control pe-5' : 'form-control']) }}>
-
-        @if ($clearBtn)
-            <button type="button" id="{{ $clearBtnId }}" class="clear-btn">
-                <i class="fa fa-x-lg"></i>
-            </button>
-        @endif
-
-        @if ($muted)
-            <small class="text-muted">{{ $muted }}</small>
-        @endif
+            {{ $readonly ? 'readonly' : '' }} {{ $attributes->merge(['class' => 'form-control']) }}>
 
         @error($name)
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
+
+    @if ($muted)
+        <small class="text-muted">{{ $muted }}</small>
+    @endif
 
 </div>
 
