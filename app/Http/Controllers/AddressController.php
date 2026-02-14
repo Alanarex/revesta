@@ -35,7 +35,7 @@ class AddressController extends Controller
             'totalCount' => $totalCount,
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
-                ['label' => 'Adresses', 'url' => route('admin.addresses.index')],
+                ['label' => 'Adresses'],
             ],
         ]);
     }
@@ -102,7 +102,7 @@ class AddressController extends Controller
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Adresses', 'url' => route('admin.addresses.index')],
-                ['label' => 'Créer', 'url' => route('admin.addresses.create')],
+                ['label' => 'Créer'],
             ],
         ]);
     }
@@ -139,7 +139,7 @@ class AddressController extends Controller
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Adresses', 'url' => route('admin.addresses.index')],
                 ['label' => $address->label, 'url' => route('admin.addresses.edit', $address)],
-                ['label' => 'Modifier', 'url' => route('admin.addresses.edit', $address)],
+                ['label' => 'Modifier'],
             ],
         ]);
     }
