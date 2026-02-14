@@ -120,7 +120,8 @@
                     @if ($canDelete && ($isOwner || $isAdmin))
                         <li>
                             <button class="dropdown-item text-danger delete-blog-btn" type="button"
-                                data-blog-id="{{ $blog->id }}">
+                                data-blog-id="{{ $blog->id }}"
+                                data-delete-url="{{ route('admin.blogs.destroy', $blog) }}">
                                 <i class="fa fa-trash me-2"></i> Supprimer
                             </button>
                         </li>

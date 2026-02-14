@@ -14,7 +14,7 @@
     <div id="quill-editor" class="quill-wrapper" data-input-id="{{ $name }}"></div>
 
     <input type="hidden" id="{{ $name }}" name="{{ $name }}" value="{{ old($name, $value) }}"
-        {{ $required ? 'required' : '' }}>
+        data-quill-input="true" {{ $required ? 'required' : '' }}>
 
     @if ($muted)
         <small class="text-muted">{{ $muted }}</small>

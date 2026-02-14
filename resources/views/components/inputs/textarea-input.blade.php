@@ -17,7 +17,7 @@
 
     <div class="input-group">
         @if ($icon)
-            <span class="input-group-text"><i class="{{ $icon }}"></i></span>
+            <span class="input-group-text"><i class="fa {{ $icon }}"></i></span>
         @endif
 
         <textarea id="{{ $name }}" name="{{ $name }}" rows="{{ $rows }}" placeholder="{{ $placeholder }}"
@@ -25,14 +25,14 @@
             {{ $readonly ? 'readonly' : '' }}
             {{ $attributes->merge(['class' => 'form-control']) }}>{{ old($name, $value) }}</textarea>
 
-        @if ($muted)
-            <small class="text-muted">{{ $muted }}</small>
-        @endif
-
         @error($name)
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
+
+    @if ($muted)
+        <small class="text-muted d-block mt-2">{{ $muted }}</small>
+    @endif
 
 </div>
 
