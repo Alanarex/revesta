@@ -9,13 +9,9 @@
                 <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
             </div>
 
-            <div class="mb-4">
-                <h4>Créer une nouvelle campagne newsletter</h4>
-            </div>
-
-            <x-forms.form title="" :action="route('admin.newsletters.store')" method="POST" form-id="newsletterForm">
+            <x-forms.form title="Créer une nouvelle campagne newsletter" :action="route('admin.newsletters.store')" method="POST" form-id="newsletterForm">
                 <x-inputs.text-input name="title" label="Titre" placeholder="Entrez le titre de la campagne"
-                    icon="fa-solid fa-heading" required />
+                    icon="fa-heading" required />
 
                 <x-inputs.quill-input name="content" label="Contenu" required />
 
@@ -30,7 +26,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    @vite('resources/js/admin/newsletters/campaigns/form-handler.js')
-@endpush
