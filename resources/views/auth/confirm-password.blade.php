@@ -21,7 +21,7 @@
                     name="password" 
                     label="Mot de passe"
                     placeholder="Entrez votre mot de passe"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     required
                 />
 

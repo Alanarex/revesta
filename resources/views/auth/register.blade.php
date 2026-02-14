@@ -17,8 +17,8 @@
                     name="first_name" 
                     label="Prénom"
                     placeholder="Jean"
-                    value="{{ old('first_name') }}"
-                    icon="fa-solid fa-user"
+                    value=""
+                    icon="fa-user"
                     required
                 />
 
@@ -26,8 +26,8 @@
                     name="last_name" 
                     label="Nom"
                     placeholder="Dupont"
-                    value="{{ old('last_name') }}"
-                    icon="fa-solid fa-user"
+                    value=""
+                    icon="fa-user"
                     required
                 />
 
@@ -35,8 +35,8 @@
                     name="email" 
                     label="Email"
                     placeholder="exemple@email.com"
-                    value="{{ old('email') }}"
-                    icon="fa-solid fa-envelope"
+                    value=""
+                    icon="fa-envelope"
                     required
                 />
 
@@ -44,7 +44,7 @@
                     name="password" 
                     label="Mot de passe"
                     placeholder="Au moins 8 caracteres"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     required
                 />
 
@@ -52,7 +52,7 @@
                     name="password_confirmation" 
                     label="Confirmer le mot de passe"
                     placeholder="Confirmez votre mot de passe"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     required
                 />
 
