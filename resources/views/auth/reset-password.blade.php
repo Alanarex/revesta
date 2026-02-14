@@ -19,8 +19,8 @@
                     name="email" 
                     label="Adresse email"
                     placeholder="exemple@email.com"
-                    value="{{ old('email', $request->email) }}"
-                    icon="fa-solid fa-envelope"
+                    value="{{ $request->email }}"
+                    icon="fa-envelope"
                     required
                 />
 
@@ -28,7 +28,7 @@
                     name="password" 
                     label="Nouveau mot de passe"
                     placeholder="Au moins 8 caracteres"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     required
                 />
 
@@ -36,7 +36,7 @@
                     name="password_confirmation" 
                     label="Confirmer le mot de passe"
                     placeholder="Confirmez votre mot de passe"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     required
                 />
 

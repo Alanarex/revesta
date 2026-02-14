@@ -41,8 +41,8 @@
                     name="email" 
                     label="{{ __('Email') }}"
                     placeholder="exemple@email.com"
-                    value="{{ old('email') }}"
-                    icon="fa-solid fa-envelope"
+                    value=""
+                    icon="fa-envelope"
                     required
                 />
 
@@ -50,7 +50,7 @@
                     name="password" 
                     label="{{ __('Mot de passe') }}"
                     placeholder="Entrez votre mot de passe"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     required
                 />
 

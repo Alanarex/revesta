@@ -29,7 +29,7 @@
                 <x-inputs.password-input 
                     name="password" 
                     label="{{ __('Mot de passe') }}"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     placeholder="Entrez un mot de passe"
                     muted="Au moins 8 caracteres, incluant des majuscules, minuscules et chiffres."
                     required
@@ -38,7 +38,7 @@
                 <x-inputs.password-input 
                     name="password_confirmation" 
                     label="{{ __('Confirmer le mot de passe') }}"
-                    icon="fa-solid fa-lock"
+                    icon="fa-lock"
                     placeholder="Confirmez votre mot de passe"
                     required
                 />

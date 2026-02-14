@@ -40,8 +40,8 @@
                     name="email" 
                     label="Adresse email"
                     placeholder="exemple@email.com"
-                    value="{{ old('email') }}"
-                    icon="fa-solid fa-envelope"
+                    value=""
+                    icon="fa-envelope"
                     required
                 />
 
