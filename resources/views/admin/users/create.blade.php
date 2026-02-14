@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('admin.users.partials.alerts')
-
-
     <div class="row">
         <div class="col-lg-10 mx-auto">
 
@@ -17,34 +14,34 @@
                 title="Creer un utilisateur">
                 <div class="row">
                     <div class="col">
-                        <x-inputs.text-input label="Prenom" name="first_name" value="{{ old('first_name') }}"
-                            icon="fa-solid fa-user" placeholder="Entrez le prenom" :required="true" />
+                        <x-inputs.text-input label="Prenom" name="first_name" value=""
+                            icon="fa-user" placeholder="Entrez le prenom" :required="true" />
                     </div>
                     <div class="col">
-                        <x-inputs.text-input label="Nom" name="last_name" value="{{ old('last_name') }}"
-                            icon="fa-solid fa-user" placeholder="Entrez le nom" :required="true" />
+                        <x-inputs.text-input label="Nom" name="last_name" value=""
+                            icon="fa-user" placeholder="Entrez le nom" :required="true" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <x-inputs.email-input label="Email" name="email" value="{{ old('email') }}"
-                            icon="fa-solid fa-envelope" placeholder="exemple@email.com" :required="true" />
+                        <x-inputs.email-input label="Email" name="email" value=""
+                            icon="fa-envelope" placeholder="exemple@email.com" :required="true" />
                     </div>
                     <div class="col">
-                        <x-inputs.text-input label="Telephone" name="phone" value="{{ old('phone') }}"
-                            icon="fa-solid fa-phone" placeholder="Numero de telephone" />
+                        <x-inputs.text-input label="Telephone" name="phone" value=""
+                            icon="fa-phone" placeholder="Numero de telephone" />
                     </div>
                 </div>
-                <x-inputs.select-input label="Role" name="role_id" value="{{ old('role_id') }}"
-                    icon="fa-solid fa-user-shield" placeholder="Selectionner un role" :options="$rolesOptions ?? []" :required="true" />
+                <x-inputs.select-input label="Role" name="role_id" value=""
+                    icon="fa-user-shield" placeholder="Selectionner un role" :options="$rolesOptions ?? []" :required="true" />
                 <div class="row">
                     <div class="col-md-6">
-                        <x-inputs.select-input label="Statut Civil" name="civil_status" value="{{ old('civil_status') }}"
-                            icon="fa-solid fa-heart" placeholder="Selectionner le statut civil" :options="$civilStatuses ?? []" />
+                        <x-inputs.select-input label="Statut Civil" name="civil_status" value=""
+                            icon="fa-heart" placeholder="Selectionner le statut civil" :options="$civilStatuses ?? []" />
                     </div>
                     <div class="col-md-6">
                         <x-inputs.select-input label="Statut Familial" name="family_status"
-                            value="{{ old('family_status') }}" icon="fa-solid fa-users"
+                            value="" icon="fa-users"
                             placeholder="Selectionner le statut familial" :options="$familyStatuses ?? []" />
                     </div>
                 </div>
