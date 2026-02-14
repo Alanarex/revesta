@@ -17,7 +17,6 @@ class DashboardController extends Controller
             'breadcrumbs' => [
                 [
                     'label' => 'Accueil',
-                    'url' => route('dashboard.index'),
                 ],
             ],
         ]);

@@ -20,6 +20,84 @@ const DEFAULT_TOOLBAR = [
 
 const quillInstances = new Map();
 
+/**
+ * Validates Quill editor content
+ * Adds is-invalid class and error message if required field is empty
+ */
+function validateQuillEditor({ quill, hiddenInput, editorDiv }) {
+    if (!hiddenInput || !hiddenInput.hasAttribute('required')) {
+        return true;
+    }
+
+    const text = quill.getText().replace(/\n/g, '').trim();
+    const isEmpty = text.length === 0;
+    const errorSelector = `.invalid-feedback[data-input-id="${hiddenInput.id}"]`;
+    const existingError = editorDiv.parentElement.querySelector(errorSelector);
+
+    if (isEmpty) {
+        editorDiv.classList.add('is-invalid');
+
+        const errorDiv = existingError || document.createElement('div');
+        errorDiv.className = 'invalid-feedback d-block';
+        errorDiv.setAttribute('data-input-id', hiddenInput.id);
+        errorDiv.textContent = hiddenInput.getAttribute('data-error-value-missing') || 'Ce champ est obligatoire.';
+        
+        if (!existingError) {
+            editorDiv.insertAdjacentElement('afterend', errorDiv);
+        }
+
+        return false;
+    }
+
+    editorDiv.classList.remove('is-invalid');
+    if (existingError) {
+        existingError.remove();
+    }
+
+    return true;
+}
+
+/**
+ * Validates entire form (both Quill and standard inputs)
+ * Returns true only if all validations pass
+ */
+function validateForm(form, quill, hiddenInput, editorDiv) {
+    const quillIsValid = validateQuillEditor({ quill, hiddenInput, editorDiv });
+    const formIsValid = form.checkValidity();
+    
+    if (!formIsValid || !quillIsValid) {
+        form.reportValidity();
+        return false;
+    }
+    
+    return true;
+}
+
+/**
+ * Sets up form submission listeners
+ */
+function setupFormValidation(form, quill, hiddenInput, editorDiv) {
+    const handleSubmit = (e) => {
+        hiddenInput.value = quill.root.innerHTML;
+        
+        if (!validateForm(form, quill, hiddenInput, editorDiv)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    };
+
+    // Listen to submit event
+    form.addEventListener('submit', handleSubmit);
+
+    // Backup: listen to button clicks (in case submit event doesn't fire)
+    form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach((button) => {
+        button.addEventListener('click', handleSubmit);
+    });
+}
+
+/**
+ * Initializes Quill editor and links it to hidden input
+ */
 function initializeQuill(selector = '.quill-wrapper') {
     const editors = document.querySelectorAll(selector);
     
@@ -37,7 +115,11 @@ function initializeQuill(selector = '.quill-wrapper') {
         }
 
         const inputId = editorDiv.getAttribute('data-input-id');
-        const hiddenInput = inputId ? document.getElementById(inputId) : editorDiv.nextElementSibling?.matches('input[type="hidden"]') ? editorDiv.nextElementSibling : null;
+        const hiddenInput = inputId 
+            ? document.getElementById(inputId) 
+            : editorDiv.nextElementSibling?.matches('input[type="hidden"]') 
+                ? editorDiv.nextElementSibling 
+                : null;
 
         if (!hiddenInput) {
             console.warn('No hidden input found for Quill editor');
@@ -51,42 +133,21 @@ function initializeQuill(selector = '.quill-wrapper') {
             modules: { toolbar: DEFAULT_TOOLBAR }
         });
 
-        // Set initial content
-        const initialContent = hiddenInput.value;
-        if (initialContent && initialContent.trim() !== '') {
-            quill.root.innerHTML = initialContent;
+        // Load initial content
+        if (hiddenInput.value?.trim()) {
+            quill.root.innerHTML = hiddenInput.value;
         }
 
-        // Sync to hidden input on change
+        // Sync HTML to hidden input on text changes
         quill.on('text-change', () => {
             hiddenInput.value = quill.root.innerHTML;
+            validateQuillEditor({ quill, hiddenInput, editorDiv });
         });
 
         // Setup form validation
         const form = hiddenInput.closest('form');
         if (form) {
-            form.addEventListener('submit', function (e) {
-                hiddenInput.value = quill.root.innerHTML;
-                const text = quill.getText().trim();
-
-                // Clear previous error
-                editorDiv.classList.remove('is-invalid');
-                const existingError = editorDiv.nextElementSibling;
-                if (existingError?.classList.contains('invalid-feedback')) {
-                    existingError.remove();
-                }
-
-                // Validate if required
-                if (hiddenInput.hasAttribute('required') && text.length === 0) {
-                    editorDiv.classList.add('is-invalid');
-                    const errorDiv = document.createElement('div');
-                    errorDiv.className = 'invalid-feedback d-block';
-                    errorDiv.textContent = 'Ce champ est obligatoire.';
-                    editorDiv.insertAdjacentElement('afterend', errorDiv);
-                    e.preventDefault();
-                    return false;
-                }
-            });
+            setupFormValidation(form, quill, hiddenInput, editorDiv);
         }
 
         quillInstances.set(editorDiv, quill);
@@ -102,3 +163,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for manual use
 export { initializeQuill, quillInstances };
+

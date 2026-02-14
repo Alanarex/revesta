@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-6 h-100">
             <div class="admin-dt-search-row">
-                <x-inputs.text-input name="searchInput" icon="fa fa-search" clearBtn clearBtnId="clearSearch"
+                <x-inputs.text-input name="searchInput" icon="fa-search"
                     placeholder="Rechercher..." class="m-0" />
                 @if ($createRoute)
                     <a href="{{ $createRoute }}" class="btn btn-primary btn-md mb-4"><i

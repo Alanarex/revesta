@@ -1,13 +1,11 @@
 @props([
     'label' => '',
-    'name' => 'name',
-    'value' => '',
+    'name' => 'password',
     'placeholder' => '',
     'required' => false,
     'autocomplete' => false,
     'icon' => null,
-    'clearBtn' => false,
-    'clearBtnId' => '',
+    'confirmTarget' => null,
     'muted' => '',
     'readonly' => false,
 ])
@@ -19,20 +17,14 @@
 
     <div class="input-group">
         @if ($icon)
-            <span class="input-group-text"><i class="{{ $icon }}"></i></span>
+            <span class="input-group-text"><i class="fa {{ $icon }}"></i></span>
         @endif
 
         <input type="password" id="{{ $name }}" name="{{ $name }}" value=""
-            placeholder="{{ $placeholder }}"
-            autocomplete="{{ $autocomplete ? 'on' : 'off' }}" {{ $required ? 'required' : '' }}
-            {{ $readonly ? 'readonly' : '' }}
-            {{ $attributes->merge(['class' => $clearBtn ? 'form-control pe-5' : 'form-control']) }}>
-
-        @if ($clearBtn)
-            <button type="button" id="{{ $clearBtnId }}" class="clear-btn">
-                <i class="fa fa-x-lg"></i>
-            </button>
-        @endif
+            placeholder="{{ $placeholder }}" autocomplete="{{ $autocomplete ? 'on' : 'off' }}"
+            {{ $required ? 'required' : '' }} {{ $readonly ? 'readonly' : '' }}
+            {{ $confirmTarget ? "data-confirm-target=\"$confirmTarget\"" : '' }}
+            {{ $attributes->merge(['class' => 'form-control']) }}>
 
         @if ($muted)
             <small class="text-muted">{{ $muted }}</small>
@@ -41,9 +33,7 @@
         @error($name)
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
-
 </div>
 
 @pushOnce('styles')

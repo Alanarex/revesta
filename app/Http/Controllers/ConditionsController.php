@@ -60,7 +60,6 @@ class ConditionsController extends Controller
                 ],
                 [
                     'label' => 'Conditions',
-                    'url' => route('admin.conditions.index'),
                 ],
             ],
         ]);

@@ -15,7 +15,7 @@
 
     <div class="input-group">
         @if ($icon)
-            <span class="input-group-text"><i class="{{ $icon }}"></i></span>
+            <span class="input-group-text"><i class="fa {{ $icon }}"></i></span>
         @endif
 
         <input type="time" id="{{ $name }}" name="{{ $name }}" value="{{ old($name, $value) }}"

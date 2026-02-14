@@ -28,4 +28,4 @@ window.DataTable = DataTable;
 
 /* -------------------- Custom helper JS -------------------- */
 import './helper.js';           // Your own helper functions
-import './validation.js';       // Global French/custom browser validation messages
+import './validation.js';
