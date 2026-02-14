@@ -61,7 +61,7 @@ class BlogController extends Controller
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Administration', 'url' => '#'],
-                ['label' => 'Gestion des blogs', 'url' => route('admin.blogs.index')],
+                ['label' => 'Gestion des blogs'],
             ],
         ]);
     }
@@ -81,6 +81,9 @@ class BlogController extends Controller
         $canApprove = Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
         $canReject = Auth::check() && auth()->user()->isAdmin() && $blog->isPending();
 
+        // Prepare status alert
+        $statusAlert = $this->prepareStatusAlert($blog, $canEdit);
+
         return view('admin.blogs.show', [
             'blog' => $blog,
             'title' => $blog->title,
@@ -93,11 +96,13 @@ class BlogController extends Controller
             'canApprove' => $canApprove,
             'canReject' => $canReject,
             'interactionsDisabled' => $interactionsDisabled,
+            'statusAlert' => $statusAlert,
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
-                ['label' => $blog->title, 'url' => route('admin.blogs.show', $blog)],
+                ['label' => $blog->title],
             ],
+
         ]);
     }
 
@@ -105,10 +110,12 @@ class BlogController extends Controller
     {
         return view('admin.blogs.create', [
             'title' => 'Créer un blog',
+            'action' => route('admin.blogs.store'),
+            'method' => 'POST',
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
-                ['label' => 'Créer', 'url' => route('admin.blogs.create')],
+                ['label' => 'Créer'],
             ],
         ]);
     }
@@ -141,11 +148,13 @@ class BlogController extends Controller
         return view('admin.blogs.edit', [
             'blog' => $blog,
             'title' => 'Modifier le blog',
+            'action' => route('admin.blogs.update', $blog),
+            'method' => 'PUT',
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
                 ['label' => 'Blogs', 'url' => route('admin.blogs.index')],
                 ['label' => $blog->title, 'url' => route('admin.blogs.show', $blog)],
-                ['label' => 'Modifier', 'url' => route('admin.blogs.edit', $blog)],
+                ['label' => 'Modifier'],
             ],
         ]);
     }
@@ -224,5 +233,50 @@ class BlogController extends Controller
             'success' => true,
             'message' => 'Blog refusé!'
         ]);
+    }
+
+    /**
+     * Prepare the status alert data for the blog show view
+     * 
+     * @param Blog $blog
+     * @param bool $canEdit
+     * @return array|null
+     */
+    private function prepareStatusAlert(Blog $blog, bool $canEdit): ?array
+    {
+        if ($blog->isPublished()) {
+            return null;
+        }
+
+        if ($blog->isDraft()) {
+            return [
+                'type' => 'info',
+                'message' => 'Ce blog est un brouillon.',
+                'action' => $canEdit ? [
+                    'label' => 'Soumettre pour approbation',
+                    'url' => route('admin.blogs.publish', $blog),
+                    'csrfToken' => csrf_token(),
+                ] : null,
+            ];
+        }
+
+        if ($blog->isPending()) {
+            return [
+                'type' => 'info',
+                'message' => 'Ce blog est en attente d\'approbation par les administrateurs.',
+                'action' => null,
+            ];
+        }
+
+        if ($blog->isRejected()) {
+            return [
+                'type' => 'danger',
+                'message' => 'Ce blog a été rejeté.',
+                'reason' => $blog->rejection_reason,
+                'action' => null,
+            ];
+        }
+
+        return null;
     }
 }

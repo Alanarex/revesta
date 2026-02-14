@@ -180,6 +180,7 @@ class BlogRepository
             ->distinct()
             ->get()
             ->pluck('user')
+            ->filter() // Remove null values (soft-deleted users)
             ->sortBy('first_name');
     }
 
