@@ -138,11 +138,11 @@ class AdminBlogsFilters {
 
     getFilterData() {
         return {
-            search: $('#filterSearch').val().trim(),
-            status: $('#filterStatus').val(),
-            author: $('#filterAuthor').val(),
-            date_from: $('#filterDateFrom').val(),
-            date_to: $('#filterDateTo').val(),
+            search: ($('#filterSearch').val() || '').trim(),
+            status: $('#filterStatus').val() || '',
+            author: $('#filterAuthor').val() || '',
+            date_from: $('#filterDateFrom').val() || '',
+            date_to: $('#filterDateTo').val() || '',
         };
     }
 

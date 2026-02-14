@@ -17,6 +17,7 @@ export class DeleteButton {
     handleDelete(e) {
         const btn = $(e.target).closest('.delete-blog-btn');
         const blogId = btn.data('blog-id');
+        const deleteUrl = btn.data('delete-url');
         const isAdmin = $('body').data('is-admin') === true;
 
         Swal.fire({
@@ -31,14 +32,14 @@ export class DeleteButton {
             cancelButtonText: 'Annuler'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.performDelete(blogId, result.value);
+                this.performDelete(deleteUrl, result.value);
             }
         });
     }
 
-    performDelete(blogId, reason = null) {
+    performDelete(deleteUrl, reason = null) {
         $.ajax({
-            url: `/blogs/${blogId}`,
+            url: deleteUrl,
             method: 'DELETE',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
@@ -51,7 +52,7 @@ export class DeleteButton {
                         title: response.message,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = '/blogs';
+                        window.location.href = '/admin/blogs';
                     });
                 }
             },

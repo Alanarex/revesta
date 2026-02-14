@@ -53,41 +53,6 @@ $(function () {
         });
     }
 
-    // Initialize form validation (excluding content/quill)
-    $('#blogForm').validate({
-        rules: {
-            title: {
-                required: true,
-                maxlength: 255
-            },
-            short_description: {
-                required: true,
-                maxlength: 500
-            }
-        },
-        messages: {
-            title: {
-                required: 'Le titre est obligatoire.',
-                maxlength: 'Le titre ne peut pas dépasser 255 caractères.'
-            },
-            short_description: {
-                required: 'La description courte est obligatoire.',
-                maxlength: 'La description courte ne peut pas dépasser 500 caractères.'
-            }
-        },
-        errorElement: 'div',
-        errorClass: 'invalid-feedback d-block',
-        highlight: function (element) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function (element) {
-            $(element).removeClass('is-invalid');
-        },
-        errorPlacement: function (error, element) {
-            element.after(error);
-        }
-    });
-
     // Custom Quill content validation on submit
     $('#blogForm').on('submit', function () {
         if (!quill) return;
