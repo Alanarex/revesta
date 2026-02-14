@@ -184,6 +184,14 @@ class UserController extends Controller
         $isAdmin = auth()->check() && (auth()->user()->role && auth()->user()->role->name === 'admin');
         $rolesOptions = $isAdmin ? $this->roleService->getRolesForSelect() : [];
 
+        // Calculate permissions and routes
+        $canEdit = auth()->check() && ($isViewingOwn || $isAdmin);
+        $updateRoute = $isAdmin && !$isViewingOwn ? route('admin.users.update', $user) : route('users.update', $user);
+        $resetRoute = $isAdmin && !$isViewingOwn
+            ? route('admin.users.reset-password', $user)
+            : route('users.reset-password', $user);
+        $destroyRoute = $isAdmin && !$isViewingOwn ? route('admin.users.destroy', $user) : route('users.destroy', $user);
+
         // Load blogs with type-safe helper
         ['blogsList' => $blogsList] = $this->loadUserBlogs($loaded, $isViewingOwn);
 
@@ -193,14 +201,25 @@ class UserController extends Controller
         // Calculate profile score via service
         $profileScore = $this->userService->calculateProfileScore($loaded);
 
+        // Load user config options
+        $civilStatuses = config('users.civil_statuses');
+        $familyStatuses = config('users.family_statuses');
+
         return view('admin.users.show', [
             'user' => $loaded,
             'isViewingOwn' => $isViewingOwn,
+            'isAdmin' => $isAdmin,
+            'canEdit' => $canEdit,
+            'updateRoute' => $updateRoute,
+            'resetRoute' => $resetRoute,
+            'destroyRoute' => $destroyRoute,
             'rolesOptions' => $rolesOptions,
             'blogsList' => $blogsList,
             'simulations' => $simulations,
             'recentActivity' => $recentActivity,
             'profileScore' => $profileScore,
+            'civilStatuses' => $civilStatuses,
+            'familyStatuses' => $familyStatuses,
             'title' => 'Utilisateur — '.($loaded->full_name ?? $user->full_name),
             'breadcrumbs' => [
                 ['label' => 'Accueil', 'url' => route('dashboard.index')],
