@@ -69,9 +69,9 @@
                     <form method="POST" action="{{ route('admin.newsletters.schedule', $campaign) }}" id="scheduleForm">
                         @csrf
 
-                        <x-inputs.date-input name="scheduled_date" label="Date d'envoi" :value="old('scheduled_date', $campaign->isScheduled() ? $campaign->scheduled_at->format('Y-m-d') : now()->addDay()->format('Y-m-d'))" required />
+                        <x-inputs.date-input name="scheduled_date" label="Date d'envoi" :value="$campaign->isScheduled() ? $campaign->scheduled_at->format('Y-m-d') : now()->addDay()->format('Y-m-d')" required />
 
-                        <x-inputs.time-input name="scheduled_time" label="Heure d'envoi" :value="old('scheduled_time', $campaign->isScheduled() ? $campaign->scheduled_at->format('H:i') : '09:00')" required />
+                        <x-inputs.time-input name="scheduled_time" label="Heure d'envoi" :value="$campaign->isScheduled() ? $campaign->scheduled_at->format('H:i') : '09:00'" required />
 
                         <div class="mb-4 p-3 rounded" style="background-color: #f8f9fa;">
                             <p class="small text-muted mb-2">
