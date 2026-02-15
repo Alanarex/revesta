@@ -14,7 +14,7 @@ class WebAuthSecurityTest extends TestCase
     {
         $user = User::factory()->create(['password' => bcrypt('correct-password')]);
 
-        $resp = $this->post('/login', [
+        $resp = $this->post('/auth/login', [
             'email' => "' OR 1=1 --",
             'password' => 'doesnotmatter',
         ]);
@@ -34,7 +34,7 @@ class WebAuthSecurityTest extends TestCase
             'email' => $user->email,
         ]));
 
-        $resp = $this->actingAs($user)->get(route('users.show', $user));
+        $resp = $this->actingAs($user)->get(route('admin.users.show', $user));
         $resp->assertStatus(200);
 
         $body = $resp->getContent();
@@ -43,7 +43,7 @@ class WebAuthSecurityTest extends TestCase
 
     public function test_state_changing_requests_without_csrf_are_blocked(): void
     {
-        $resp = $this->post('/login', [
+        $resp = $this->post('/auth/login', [
             'email' => 'no-csrf@example.test',
             'password' => 'x',
         ], []);
@@ -58,7 +58,7 @@ class WebAuthSecurityTest extends TestCase
         $user = User::factory()->create(['password' => bcrypt('password')]);
 
         for ($i = 0; $i < 7; $i++) {
-            $resp = $this->post('/login', $this->withCsrfToken([
+            $resp = $this->post('/auth/login', $this->withCsrfToken([
                 'email' => $user->email,
                 'password' => 'wrong',
             ]));
