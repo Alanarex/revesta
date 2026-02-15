@@ -21,6 +21,7 @@ class PasswordResetMail extends Mailable implements ShouldQueue
     public function __construct(
         public string $userName,
         public string $resetUrl,
+        public string $recipientEmail,
         public int $expirationMinutes = 15,
     ) {
     }
@@ -35,6 +36,7 @@ class PasswordResetMail extends Mailable implements ShouldQueue
                 config('mail.from.address'),
                 config('mail.from.name')
             ),
+            to: $this->recipientEmail,
             subject: __('Réinitialisation de votre mot de passe - ') . config('app.name'),
         );
     }

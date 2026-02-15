@@ -28,6 +28,7 @@ class EmailVerificationMail extends Mailable implements ShouldQueue
                 config('mail.from.address'),
                 config('mail.from.name')
             ),
+            to: $this->user->email,
             subject: 'Vérifiez votre adresse email et définissez votre mot de passe',
         );
     }

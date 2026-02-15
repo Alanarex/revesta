@@ -205,8 +205,9 @@ class User extends Authenticatable implements OAuthenticatable
         Mail::send(new PasswordResetMail(
             userName: $this->first_name ?: $this->email,
             resetUrl: $resetUrl,
+            recipientEmail: $this->email,
             expirationMinutes: config('auth.passwords.users.expire', 15)
-        ))->to($this->email);
+        ));
     }
 
     /**
@@ -217,6 +218,6 @@ class User extends Authenticatable implements OAuthenticatable
      */
     public function sendEmailVerificationNotification()
     {
-        Mail::send(new EmailVerificationMail($this))->to($this->email);
+        Mail::send(new EmailVerificationMail($this));
     }
 }

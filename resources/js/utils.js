@@ -42,7 +42,7 @@ export function initAuthRequiredHandler() {
 
         const $element = $(this);
         const message = $element.data('auth-message') || 'Vous devez être connecté pour effectuer cette action.';
-        const loginUrl = $element.data('login-url') || '/login';
+        const loginUrl = $element.data('login-url') || '/auth/login';
 
         Swal.fire({
             title: 'Connexion requise',
