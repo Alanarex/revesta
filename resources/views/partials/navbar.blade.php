@@ -21,7 +21,7 @@
                     <hr class="dropdown-divider">
                 </li>
                 <li>
-                    <a href="{{ route('users.show', auth()->id()) }}" class="dropdown-item">
+                    <a href="{{ route('admin.users.show', auth()->id()) }}" class="dropdown-item">
                         <i class="fa-solid fa-user-pen me-2"></i>Mon profil
                     </a>
                 </li>
