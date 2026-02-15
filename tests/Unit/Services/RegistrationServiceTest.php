@@ -5,12 +5,15 @@ namespace Tests\Unit\Services;
 use Tests\TestCase;
 use App\Services\RegistrationService;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Mail\EmailVerificationMail;
+use Illuminate\Support\Facades\Mail;
 
 class RegistrationServiceTest extends TestCase
 {
     public function test_register_and_login_creates_user_and_logs_in(): void
     {
+        Mail::fake();
+        
         $data = [
             'first_name' => 'Test',
             'last_name' => 'User',
@@ -24,7 +27,10 @@ class RegistrationServiceTest extends TestCase
 
         $this->assertInstanceOf(User::class, $user);
         $this->assertDatabaseHas('users', ['email' => 'reg@example.com']);
-        $this->assertTrue(Auth::check());
-        $this->assertEquals($user->id, Auth::id());
+        
+        // Verify verification email was queued
+        Mail::assertQueued(EmailVerificationMail::class, function ($mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
     }
 }
