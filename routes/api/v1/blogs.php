@@ -35,7 +35,7 @@ Route::prefix('blogs')
         Route::middleware('auth:api')->group(function () {
 
             // Like/Unlike blog
-            Route::post('/{blog}/likes/toggle', [BlogLikeController::class, 'toggle'])
+            Route::post('/{blog}/like/{model}/{modelId}', [BlogLikeController::class, 'like'])
                 ->middleware('throttle:60,1')
                 ->name('likes.toggle');
 

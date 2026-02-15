@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\BlogComment;
 use Illuminate\Database\Eloquent\Collection;
 
-class CommentRepository
+class BlogCommentRepository
 {
     /**
      * Get top-level comments for a blog with pagination.

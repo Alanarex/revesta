@@ -51,7 +51,7 @@ export class CommentsManager {
         if (!content) return;
 
         $.ajax({
-            url: `/blogs/${blogId}/comments`,
+            url: `/admin/blogs/${blogId}/comments`,
             method: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
@@ -59,14 +59,28 @@ export class CommentsManager {
                 parent_id: parentId
             },
             success: (response) => {
-                if (response.success) {
+                if (response.success && response.html) {
                     input.val('');
-                    this.insertComment(response.html, parentId);
+                    this.insertComment(response.html, response.insertType, response.targetId);
+
+                    // If parent count was updated, update the button
+                    if (response.parentRepliesCount !== undefined && response.parentCommentId) {
+                        const $parentItem = $(`.comment-item[data-comment-id="${response.parentCommentId}"]`);
+                        const $showBtn = $parentItem.find('.show-replies-btn').first();
+                        
+                        if ($showBtn.length) {
+                            $showBtn.data('replies-count', response.parentRepliesCount);
+                            
+                            // Update button text if not currently showing replies
+                            if ($showBtn.data('shown') !== 'true') {
+                                $showBtn.html('<i class="fa fa-chevron-down"></i> ' + response.parentRepliesCount + ' réponse(s)');
+                            }
+                        }
+                    }
                 }
             },
             error: (xhr) => {
-                const errorText = xhr.responseJSON?.message || 'Impossible d\'ajouter le commentaire.';
-                const feedback = $('<div class="small text-danger mt-2 comment-feedback">').text(errorText);
+                const feedback = $('<div class="small text-danger mt-2 comment-feedback">').text('Une erreur est survenue. Veuillez réessayer.');
                 form.append(feedback);
                 setTimeout(() => feedback.fadeOut(300, () => feedback.remove()), 3000);
             }
@@ -81,35 +95,30 @@ export class CommentsManager {
         const container = btn.closest('.comment-item').find('.reply-form-container').first();
 
         if (container.is(':visible')) {
-            container.hide().empty();
+            container.hide();
         } else {
-            const blogId = $('meta[name="blog-id"]').attr('content') || 'null';
-
-            // Get initials from the authenticated user's avatar in the main comment form
-            const mainCommentAvatar = $('.comment-form[data-parent-id=""]').closest('.d-flex').find('.bg-primary.text-white.rounded-circle');
-            const initials = mainCommentAvatar.length ? mainCommentAvatar.text().trim() : '';
-
-            container.html(`
-                <div class="d-flex align-items-start">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
-                        style="width: 30px; height: 30px; font-size: 12px; font-weight: bold;">
-                        ${initials}
-                    </div>
-                    <form class="comment-form flex-grow-1" data-blog-id="${blogId}" data-parent-id="${commentId}">
-                        <div class="input-group input-group-sm">
-                            <input type="text" class="form-control comment-input" placeholder="Répondre..." required>
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fa fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            `).show();
-
-            // Focus on the reply input after it's been added to the DOM
-            setTimeout(() => {
+            // If form already cached, just show it
+            if (container.html().trim()) {
+                container.show();
                 container.find('.comment-input').focus();
-            }, 100);
+            } else {
+                // First time - fetch from server and cache
+                const blogId = $('meta[name="blog-id"]').attr('content') || 'null';
+                const url = `/admin/blogs/${blogId}/comments/${commentId}/reply-form`;
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: (response) => {
+                        if (response.success && response.html) {
+                            container.html(response.html).show();
+                            setTimeout(() => {
+                                container.find('.comment-input').focus();
+                            }, 100);
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -117,19 +126,69 @@ export class CommentsManager {
         const btn = $(e.target).closest('.show-replies-btn');
         const commentId = btn.data('comment-id');
         const container = btn.closest('.comment-item').find('.replies-container').first();
-        const shown = btn.data('shown') === 'true';
-
+        const isLoaded = container.data('loaded') === true || container.data('loaded') === 'true';
+        const isShown = btn.data('shown') === 'true';
         const repliesCount = parseInt(btn.data('replies-count'), 10) || 0;
 
-        if (shown) {
-            container.hide();
-            btn.html('<i class="fa fa-chevron-down"></i> ' + repliesCount + ' réponse(s)');
-            btn.data('shown', 'false');
+        // First time showing - fetch replies
+        if (!isLoaded) {
+            this.loadReplies(commentId, 0, btn, container);
         } else {
-            container.show();
-            btn.html('<i class="fa fa-chevron-up"></i> Masquer les réponses');
-            btn.data('shown', 'true');
+            // Already loaded - just toggle visibility
+            if (isShown) {
+                container.hide();
+                btn.html('<i class="fa fa-chevron-down"></i> ' + repliesCount + ' réponse(s)');
+                btn.data('shown', 'false');
+            } else {
+                container.show();
+                btn.html('<i class="fa fa-chevron-up"></i> Masquer les réponses');
+                btn.data('shown', 'true');
+            }
         }
+    }
+
+    loadReplies(commentId, offset, btn, container, isLoadMore = false) {
+        const level = parseInt(btn.data('level') || 1, 10);
+        const blogId = $('meta[name="blog-id"]').attr('content');
+
+        if (!blogId) return;
+
+        const url = `/admin/blogs/${blogId}/comments/${commentId}/replies/load-more`;
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            data: { offset: offset, level: level, limit: 2 },
+            success: (response) => {
+                if (response.success) {
+                    if (!isLoadMore) {
+                        // Initial load - keep connector line
+                        container.html(container.find('div').first());
+                        container.data('loaded', true);
+                    } else {
+                        // Load more - remove old button
+                        container.find('.load-more-replies').remove();
+                    }
+                    
+                    container.append(response.html);
+                    container.show();
+
+                    if (!isLoadMore) {
+                        btn.html('<i class="fa fa-chevron-up"></i> Masquer les réponses');
+                        btn.data('shown', 'true');
+                    }
+                }
+            },
+            error: () => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: 'Une erreur est survenue. Veuillez réessayer.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        });
     }
 
     handleLoadMoreReplies(e) {
@@ -138,82 +197,52 @@ export class CommentsManager {
         const commentId = btn.data('comment-id');
         const offset = parseInt(btn.data('offset') || 0, 10);
         const level = parseInt(btn.data('level') || 1, 10);
-        const blogId = $('meta[name="blog-id"]').attr('content');
+        const container = btn.closest('.comment-item').find('.replies-container').first();
 
-        if (!blogId) return;
+        if (!container.length) return;
 
-        const url = `/blogs/${blogId}/comments/${commentId}/replies/load-more`;
-
-        $.ajax({
-            url: url,
-            method: 'GET',
-            data: { offset: offset, level: level, limit: 2 },
-            success: (response) => {
-                if (response.success) {
-                    const container = btn.closest('.comment-item').find('.replies-container').first();
-                    container.append(response.html);
-                    container.show();
-
-                    const newOffset = offset + 2;
-                    btn.data('offset', newOffset);
-
-                    if (!response.hasMore) {
-                        btn.remove();
-                    }
-
-                    this.updateShowRepliesButton(container, btn);
-                }
-            },
-            error: () => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: 'Impossible de charger les réponses.',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            }
-        });
+        // Create a temporary button-like object for loadReplies
+        const tempBtn = $('<div/>').data('level', level);
+        this.loadReplies(commentId, offset, tempBtn, container, true);
     }
 
     handleDeleteComment(e) {
         const commentId = $(e.target).closest('.delete-comment-btn').data('comment-id');
-        const isAdmin = $('body').data('is-admin') === true;
 
         Swal.fire({
             title: 'Supprimer ce commentaire?',
             text: 'Cette action est irréversible.',
             icon: 'warning',
-            input: isAdmin ? 'textarea' : null,
-            inputPlaceholder: isAdmin ? 'Raison (optionnel)' : null,
             showCancelButton: true,
             confirmButtonText: 'Oui, supprimer',
             confirmButtonColor: '#d33',
             cancelButtonText: 'Annuler'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.performCommentDelete(commentId, result.value);
+                this.performCommentDelete(commentId);
             }
         });
     }
 
-    performCommentDelete(commentId, reason = null) {
+    performCommentDelete(commentId) {
         $.ajax({
-            url: `/blogs/comments/${commentId}`,
+            url: `/admin/blogs/comments/${commentId}`,
             method: 'DELETE',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                reason: reason
+                _token: $('meta[name="csrf-token"]').attr('content')
             },
             success: (response) => {
                 if (response.success) {
                     const $commentItem = $(`.comment-item[data-comment-id="${commentId}"]`);
                     if ($commentItem.length) {
-                        const parentId = $commentItem.data('parent-id');
                         $commentItem.fadeOut(200, function () { $(this).remove(); });
+                    }
 
-                        if (parentId) {
-                            this.updateParentRepliesCount(parentId);
+                    // If server returned updated parent HTML, replace the parent
+                    if (response.updatedParentHtml && response.parentCommentId) {
+                        const $parentItem = $(`.comment-item[data-comment-id="${response.parentCommentId}"]`);
+                        if ($parentItem.length) {
+                            $parentItem.replaceWith(response.updatedParentHtml);
                         }
                     }
                 }
@@ -221,65 +250,25 @@ export class CommentsManager {
         });
     }
 
-    insertComment(html, parentId) {
-        if (!parentId) {
-            // Top-level comment
+    insertComment(html, insertType, targetId) {
+        if (insertType === 'top-level') {
+            // Insert at top of comments list
             const commentsList = $('#comments-list');
             if (commentsList.length) {
                 commentsList.prepend(html);
             }
-        } else {
-            // Reply
-            const parentItem = $(`.comment-item[data-comment-id="${parentId}"]`);
+        } else if (insertType === 'reply' && targetId) {
+            // Insert in parent's replies container
+            const parentItem = $(`.comment-item[data-comment-id="${targetId}"]`);
             const repliesContainer = parentItem.find('.replies-container').first();
-
+            
             if (repliesContainer.length) {
                 repliesContainer.append(html);
                 repliesContainer.show();
-                this.updateParentRepliesCount(parentId);
             }
         }
     }
 
-    updateParentRepliesCount(parentId) {
-        const $parentItem = $(`.comment-item[data-comment-id="${parentId}"]`);
-        if ($parentItem.length) {
-            const $showBtn = $parentItem.find('.show-replies-btn').first();
-            if ($showBtn.length) {
-                const prev = parseInt($showBtn.data('replies-count') || 0, 10);
-                const now = Math.max(0, prev - 1);
-                $showBtn.data('replies-count', now);
-
-                if ($showBtn.data('shown') === 'true') {
-                    $showBtn.html('<i class="fa fa-chevron-up"></i> Masquer les réponses');
-                } else {
-                    $showBtn.html('<i class="fa fa-chevron-down"></i> ' + now + ' réponse(s)');
-                }
-            }
-        }
-    }
-
-    updateShowRepliesButton(container, btn) {
-        const totalReplies = container.find('.comment-item').length;
-        const showBtn = btn.closest('.comment-item').find('.show-replies-btn').first();
-
-        if (showBtn.length) {
-            showBtn.data('replies-count', totalReplies);
-
-            if (showBtn.data('shown') !== 'true') {
-                showBtn.html('<i class="fa fa-chevron-up"></i> Masquer les réponses');
-                showBtn.data('shown', 'true');
-            }
-        }
-    }
-
-    isElementDisabled(jqEl) {
-        if (!jqEl || jqEl.length === 0) return false;
-        const attrDisabled = typeof jqEl.attr('disabled') !== 'undefined' && jqEl.attr('disabled') !== false;
-        const ariaDisabled = jqEl.attr('aria-disabled') === 'true';
-        const dataDisabled = jqEl.data('disabled') === true || jqEl.data('disabled') === 'true';
-        return attrDisabled || ariaDisabled || dataDisabled;
-    }
 }
 
 // Initialize when DOM is ready

@@ -5,13 +5,13 @@ namespace App\Services;
 use App\Models\Blog;
 use App\Models\BlogComment;
 use App\Models\User;
-use App\Repositories\CommentRepository;
+use App\Repositories\BlogCommentRepository;
 use App\Repositories\NotificationRepository;
 
 class CommentService
 {
     public function __construct(
-        protected CommentRepository $commentRepository,
+        protected BlogCommentRepository $blogCommentRepository,
         protected NotificationRepository $notificationRepository
     ) {}
 
@@ -20,8 +20,8 @@ class CommentService
      */
     public function getComments(int $blogId, int $offset = 0, int $limit = 5): array
     {
-        $comments = $this->commentRepository->getTopLevelComments($blogId, $offset, $limit);
-        $total = $this->commentRepository->countTopLevelComments($blogId);
+        $comments = $this->blogCommentRepository->getTopLevelComments($blogId, $offset, $limit);
+        $total = $this->blogCommentRepository->countTopLevelComments($blogId);
 
         return [
             'comments' => $comments,
@@ -35,9 +35,9 @@ class CommentService
      */
     public function getReplies(int $parentId, int $offset = 0, int $limit = 5): array
     {
-        $replies = $this->commentRepository->getReplies($parentId, $offset, $limit);
+        $replies = $this->blogCommentRepository->getReplies($parentId, $offset, $limit);
         // total replies count (we can count directly)
-        $total = $this->commentRepository->getRepliesCount ?? null;
+        $total = $this->blogCommentRepository->getRepliesCount ?? null;
 
         // If repository doesn't provide a count helper, compute from model
         if ($total === null) {
@@ -56,7 +56,7 @@ class CommentService
      */
     public function createComment(User $user, Blog $blog, string $content, ?int $parentId = null): BlogComment
     {
-        $comment = $this->commentRepository->create([
+        $comment = $this->blogCommentRepository->create([
             'blog_id' => $blog->id,
             'user_id' => $user->id,
             'parent_id' => $parentId,
@@ -85,7 +85,7 @@ class CommentService
 
         // If it's a reply, notify the parent comment author
         if ($parentId) {
-            $parentComment = $this->commentRepository->find($parentId);
+            $parentComment = $this->blogCommentRepository->find($parentId);
             if ($parentComment && $parentComment->user_id !== $user->id && $parentComment->user_id !== $blog->user_id) {
                 $this->notificationRepository->create([
                     'user_id' => $parentComment->user_id,
@@ -106,6 +106,6 @@ class CommentService
      */
     public function deleteComment(BlogComment $comment): bool
     {
-        return $this->commentRepository->delete($comment);
+        return $this->blogCommentRepository->delete($comment);
     }
 }

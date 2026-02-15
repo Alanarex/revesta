@@ -20,7 +20,9 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\UserRepository;
 use App\Repositories\AddressRepository;
 use App\Repositories\BlogRepository;
-use App\Repositories\CommentRepository;
+use App\Repositories\BlogCommentRepository;
+use App\Repositories\BlogLikeRepository;
+use App\Repositories\BlogBookmarkRepository;
 use App\Repositories\NotificationRepository;
 
 use App\Services\AuthService;
@@ -73,8 +75,8 @@ class AppServiceProvider extends ServiceProvider
             return new BlogRepository();
         });
 
-        $this->app->singleton(CommentRepository::class, function ($app) {
-            return new CommentRepository();
+        $this->app->singleton(BlogCommentRepository::class, function ($app) {
+            return new BlogCommentRepository();
         });
 
         $this->app->singleton(NotificationRepository::class, function ($app) {
@@ -91,15 +93,15 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(BookmarkService::class, function ($app) {
-            return new BookmarkService();
+            return new BookmarkService($app->make(BlogBookmarkRepository::class));
         });
 
         $this->app->singleton(CommentService::class, function ($app) {
-            return new CommentService($app->make(CommentRepository::class), $app->make(NotificationRepository::class));
+            return new CommentService($app->make(BlogCommentRepository::class), $app->make(NotificationRepository::class));
         });
 
         $this->app->singleton(LikeService::class, function ($app) {
-            return new LikeService();
+            return new LikeService($app->make(BlogLikeRepository::class));
         });
 
         $this->app->singleton(NotificationService::class, function ($app) {

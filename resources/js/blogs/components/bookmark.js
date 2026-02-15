@@ -22,13 +22,11 @@ export class BookmarkButton {
         if (isElementDisabled(btn)) return;
 
         const blogId = btn.data('blog-id');
-        const currentState = btn.data('bookmarked') === 'true' || btn.data('bookmarked') === true;
-        const icon = btn.find('i');
 
         // Optimistic UI update
         btn.prop('disabled', true);
 
-        const url = `/blogs/${blogId}/bookmarks/toggle`;
+        const url = `/admin/blogs/${blogId}/bookmarks/toggle`;
 
         $.ajax({
             url: url,
@@ -39,17 +37,16 @@ export class BookmarkButton {
             },
             success: (response) => {
                 if (response.success) {
-                    this.updateBookmarkUI(btn, !currentState);
-                    const message = !currentState ? 'Signet ajouté' : 'Signet supprimé';
+                    this.updateBookmarkUI(btn, response.is_filled);
+                    const message = response.is_filled ? 'Signet ajouté' : 'Signet supprimé';
                     showTooltip(btn, message);
                 } else {
-                    showTooltip(btn, 'Erreur: ' + (response.message || 'Action échouée'), true);
+                    showTooltip(btn, 'Une erreur est survenue. Veuillez réessayer.', true);
                 }
                 btn.prop('disabled', false);
             },
             error: (xhr) => {
-                const errorMsg = xhr.responseJSON?.message || 'Une erreur est survenue';
-                showTooltip(btn, errorMsg, true);
+                showTooltip(btn, 'Une erreur est survenue. Veuillez réessayer.', true);
                 btn.prop('disabled', false);
             }
         });

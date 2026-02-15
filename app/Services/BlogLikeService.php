@@ -6,16 +6,16 @@ use App\Models\User;
 use App\Repositories\BlogLikeRepository;
 use Illuminate\Database\Eloquent\Model;
 
-class LikeService
+class BlogLikeService
 {
     public function __construct(
         protected BlogLikeRepository $blogLikeRepository
     ) {}
 
     /**
-     * Like or unlike a likeable model (Blog or BlogComment).
+     * Toggle like on a likeable model (Blog or BlogComment).
      */
-    public function like(User $user, Model $likeable): array
+    public function toggleLike(User $user, Model $likeable): array
     {
         return $this->blogLikeRepository->toggle($user, $likeable);
     }

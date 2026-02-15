@@ -60,7 +60,7 @@ export class DeleteButton {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erreur',
-                    text: xhr.responseJSON?.message || 'Une erreur est survenue',
+                    text: 'Une erreur est survenue. Veuillez r\u00e9essayer.',
                     timer: 3000
                 });
             }

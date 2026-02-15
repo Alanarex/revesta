@@ -4,45 +4,20 @@ namespace App\Services;
 
 use App\Models\Blog;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\BlogBookmarkRepository;
 
 class BookmarkService
 {
+    public function __construct(
+        protected BlogBookmarkRepository $blogBookmarkRepository
+    ) {}
+
     /**
      * Toggle bookmark on a blog.
      */
     public function toggleBookmark(User $user, Blog $blog): array
     {
-        // Attempt to delete an existing bookmark first; if none deleted, insert.
-        // Use DB queries to avoid hydrating models and extra selects.
-        $deleted = DB::table('blog_bookmarks')
-            ->where('blog_id', $blog->id)
-            ->where('user_id', $user->id)
-            ->delete();
-
-        if ($deleted) {
-            $bookmarked = false;
-        } else {
-            // Insert if not exists (use insertOrIgnore to avoid unique-constraint race)
-            $inserted = DB::table('blog_bookmarks')->insertOrIgnore([
-                'user_id' => $user->id,
-                'blog_id' => $blog->id,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            $bookmarked = $inserted > 0;
-        }
-
-        // Return current count — still a single aggregate query.
-        $count = DB::table('blog_bookmarks')
-            ->where('blog_id', $blog->id)
-            ->count();
-
-        return [
-            'bookmarked' => $bookmarked,
-            'count' => $count,
-        ];
+        return $this->blogBookmarkRepository->toggle($user, $blog);
     }
 
     /**
@@ -50,9 +25,7 @@ class BookmarkService
      */
     public function hasBookmarked(User $user, Blog $blog): bool
     {
-        return $blog->bookmarks()
-            ->where('user_id', $user->id)
-            ->exists();
+        return $this->blogBookmarkRepository->hasBookmarked($user, $blog);
     }
 
     /**
@@ -60,10 +33,6 @@ class BookmarkService
      */
     public function getUserBookmarks(User $user)
     {
-        return $user->blogBookmarks()
-            ->with(['blog.user', 'blog.likes', 'blog.comments'])
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->pluck('blog');
+        return $this->blogBookmarkRepository->getUserBookmarks($user);
     }
 }

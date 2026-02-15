@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\BlogBookmarkController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BlogCommentController;
+use App\Http\Controllers\BlogLikeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,6 +61,40 @@ Route::controller(BlogController::class)
 
         Route::post('/{blog}/reject')
             ->name('reject');
+    });
+
+Route::controller(BlogCommentController::class)
+    ->prefix('blogs')
+    ->name('blogs.comments.')
+    ->group(function () {
+        Route::post('/{blog}/comments', 'store')
+            ->middleware('throttle:20,1')
+            ->name('store');
+
+        Route::get('/{blog}/comments/{comment}/reply-form', 'replyForm')
+            ->middleware('throttle:60,1')
+            ->name('replyForm');
+
+        Route::get('/{blog}/comments/{comment}/replies/load-more', 'loadMoreReplies')
+            ->middleware('throttle:60,1')
+            ->name('loadMoreReplies');
+
+        Route::delete('/comments/{comment}', 'destroy')
+            ->middleware('throttle:10,1')
+            ->name('destroy');
+    });
+
+// Likes and bookmarks routes grouped under blogs prefix
+Route::prefix('blogs')
+    ->name('blogs.')
+    ->group(function () {
+        Route::post('/{blog}/like/{model}/{modelId}', [BlogLikeController::class, 'like'])
+            ->middleware('throttle:60,1')
+            ->name('like');
+
+        Route::post('/{blog}/bookmarks/toggle', [BlogBookmarkController::class, 'toggle'])
+            ->middleware('throttle:60,1')
+            ->name('bookmarks.toggle');
     });
 
 

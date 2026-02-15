@@ -25,30 +25,27 @@ export class LikeButton {
         const likeableType = btn.data('likeable-type');
         const blogId = btn.data('blog-id') || $('meta[name="blog-id"]').attr('content');
 
-        // Determine entity type for better error messages
-        const isBlog = likeableType.includes('Blog') && !likeableType.includes('Comment');
-        const isComment = likeableType.includes('BlogComment');
-        const entityName = isBlog ? 'blog' : (isComment ? 'commentaire' : 'élément');
+        // Determine model name for API route
+        const modelName = likeableType.includes('BlogComment') ? 'BlogComment' : 'Blog';
 
-        const url = `/blogs/${blogId}/likes/toggle`;
+        const url = `/admin/blogs/${blogId}/like/${modelName}/${likeableId}`;
 
         $.ajax({
             url: url,
             method: 'POST',
             data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                likeable_id: likeableId,
-                likeable_type: likeableType
+                _token: $('meta[name="csrf-token"]').attr('content')
             },
             success: (response) => {
                 if (response.success) {
-                    this.updateLikeUI(btn, response.liked, response.likes_count);
-                    this.syncLikeButtons(likeableId, likeableType, response.liked, response.likes_count, btn);
+                    this.updateLikeUI(btn, response.is_filled, response.likes_count);
+                    this.syncLikeButtons(likeableId, likeableType, response.is_filled, response.likes_count, btn);
+                } else {
+                    showTooltip(btn, 'Une erreur est survenue. Veuillez réessayer.', true);
                 }
             },
             error: (xhr) => {
-                const errorMsg = xhr.responseJSON?.message || `Erreur lors du like du ${entityName}`;
-                showTooltip(btn, errorMsg, true);
+                showTooltip(btn, 'Une erreur est survenue. Veuillez réessayer.', true);
             }
         });
     }
@@ -74,16 +71,13 @@ export class LikeButton {
 
     syncLikeButtons(likeableId, likeableType, isLiked, likesCount, clickedBtn) {
         try {
-            // Normalize the likeable type to handle both single and double backslashes
-            const normalizedType = likeableType.replace(/\\\\/g, '\\');
-
-            // Find other buttons for the same item (check both formats)
+            // Find other buttons for the same item
             $(`.like-btn[data-likeable-id="${likeableId}"]`).not(clickedBtn).each(function () {
                 const $other = $(this);
-                const otherType = ($other.data('likeable-type') || '').replace(/\\\\/g, '\\');
-                
-                // Only sync if types match (after normalization)
-                if (otherType === normalizedType) {
+                const otherType = $other.data('likeable-type');
+
+                // Only sync if types match
+                if (otherType === likeableType) {
                     const $otherIcon = $other.find('i').first();
                     const $otherCount = $other.find('.likes-count').first();
 
@@ -107,8 +101,6 @@ export class LikeButton {
             // Non-fatal error, continue silently
         }
     }
-
-
 }
 
 // Initialize when DOM is ready

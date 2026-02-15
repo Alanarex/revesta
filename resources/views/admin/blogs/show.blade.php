@@ -9,9 +9,8 @@
 
             {{-- Status Alert --}}
             @if ($statusAlert)
-                <div class="alert alert-{{ $statusAlert['type'] === 'danger' ? 'danger' : 'info' }}">
-                    <i class="fa fa-{{ $statusAlert['type'] === 'danger' ? 'exclamation-triangle' : 'info-circle' }}"></i>
-                    <span>{{ $statusAlert['message'] }}</span>
+                <x-forms.alert :type="$statusAlert['type'] ?? 'info'" :title="null" :dismissible="false">
+                    {{ $statusAlert['message'] }}
 
                     @if ($statusAlert['action'])
                         <a href="#" class="publish-draft-link ms-2 text-primary" data-blog-id="{{ $blog->id }}"
@@ -26,7 +25,7 @@
                             <strong>Raison :</strong> {{ $statusAlert['reason'] }}
                         </div>
                     @endif
-                </div>
+                </x-forms.alert>
             @endif
 
             <!-- Breadcrumbs -->
@@ -61,7 +60,7 @@
                         @php $blogLiked = ($blog->liked_by_auth ?? 0) > 0; @endphp
                         <button
                             class="btn btn-link p-0 like-btn text-decoration-none text-danger d-flex flex-column align-items-center"
-                            data-likeable-id="{{ $blog->id }}" data-likeable-type="App\Models\Blog"
+                            data-likeable-id="{{ $blog->id }}" data-likeable-type="Blog"
                             data-liked="{{ $blogLiked ? 'true' : 'false' }}">
                             <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart" style="font-size: 1.5rem;"></i>
                             <span class="likes-count mt-2 small">{{ $blog->likes_count }}</span>
@@ -176,7 +175,7 @@
                         @php $blogLiked = ($blog->liked_by_auth ?? 0) > 0; @endphp
                         <button
                             class="btn btn-link p-0 like-btn text-decoration-none text-danger d-flex flex-column align-items-center"
-                            data-likeable-id="{{ $blog->id }}" data-likeable-type="App\Models\Blog"
+                            data-likeable-id="{{ $blog->id }}" data-likeable-type="Blog"
                             data-liked="{{ $blogLiked ? 'true' : 'false' }}">
                             <i class="{{ $blogLiked ? 'fas' : 'far' }} fa-heart" style="font-size: 1.5rem;"></i>
                             <span class="likes-count mt-2 small">{{ $blog->likes_count }}</span>
@@ -201,38 +200,26 @@
             <div class="mt-4" id="comments-section">
                 <h4 class="mb-4">Commentaires</h4>
                 @if ($interactionsDisabled)
-                    <div class="alert alert-warning">
-                        <i class="fa fa-info-circle"></i>
+                    <x-forms.alert type="warning" :dismissible="false">
                         Les commentaires sont désactivés pour ce blog.
-                    </div>
+                    </x-forms.alert>
                 @else
                     @if ($canComment)
-                        <div class="d-flex align-items-start mb-4">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                                style="width: 40px; height: 40px; font-size: 16px; font-weight: bold;">
-                                {{ Auth::user()->initials }}
-                            </div>
-                            <div class="flex-grow-1">
-                                <form class="comment-form" data-blog-id="{{ $blog->id }}" data-parent-id="">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control comment-input"
-                                            placeholder="Ajouter un commentaire..." required>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fa fa-paper-plane"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        @include('admin.blogs.partials.comments.form', [
+                            'blogId' => $blog->id,
+                            'parentId' => '',
+                            'placeholder' => 'Ajouter un commentaire...',
+                            'showAvatar' => true,
+                            'userInitials' => Auth::user()->initials,
+                        ])
                     @else
-                        <div class="alert alert-info">
-                            <i class="fa fa-info-circle"></i>
+                        <x-forms.alert type="info" :dismissible="false">
                             <a href="{{ route('login') }}">Connectez-vous</a> pour commenter.
-                        </div>
+                        </x-forms.alert>
                     @endif
 
                     <div id="comments-list">
-                        @include('admin.blogs.partials.comments', [
+                        @include('admin.blogs.partials.comments.list', [
                             'comments' => $blog->comments,
                             'level' => 0,
                         ])
