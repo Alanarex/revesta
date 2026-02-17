@@ -7,7 +7,6 @@
     <div class="row">
         <div class="col-lg-10 mx-auto">
 
-<<<<<<< Updated upstream
             {{-- Status Alert --}}
             @if ($statusAlert)
                 <x-forms.alert :type="$statusAlert['type'] ?? 'info'" :title="null" :dismissible="false">
@@ -18,15 +17,12 @@
                             data-publish-url="{{ $statusAlert['action']['url'] }}"
                             data-csrf-token="{{ $statusAlert['action']['csrfToken'] }}">
                             <small>{{ $statusAlert['action']['label'] }}</small>
-=======
-<<<<<<< Updated upstream
                 <div class="d-flex align-items-center mb-4">
                     <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                             style="width: 50px; height: 50px; font-size: 20px; font-weight: bold;">
                             {{ $blog->user->initials }}
                         </div>
-=======
             <!-- Breadcrumbs -->
             <div class="mb-4">
                 <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
