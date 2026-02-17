@@ -83,11 +83,11 @@ class AddressListingEndpointTest extends TestCase
         $address1 = Address::factory()->create();
         $address2 = Address::factory()->create();
 
-        $response = $this->actingAs($this->user)->getJson(route('admin.addresses.list', ['search' => $address1->id]));
+        $response = $this->actingAs($this->user)->getJson(route('admin.addresses.list', ['search' => $address1->label]));
 
         $response->assertStatus(200);
         $this->assertEquals(1, $response->json('total'));
-        $this->assertEquals($address1->id, $response->json('data.0.id'));
+        $this->assertEquals($address1->label, $response->json('data.0.label'));
     }
 
     /**

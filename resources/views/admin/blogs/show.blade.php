@@ -7,6 +7,7 @@
     <div class="row">
         <div class="col-lg-10 mx-auto">
 
+<<<<<<< Updated upstream
             {{-- Status Alert --}}
             @if ($statusAlert)
                 <x-forms.alert :type="$statusAlert['type'] ?? 'info'" :title="null" :dismissible="false">
@@ -17,6 +18,38 @@
                             data-publish-url="{{ $statusAlert['action']['url'] }}"
                             data-csrf-token="{{ $statusAlert['action']['csrfToken'] }}">
                             <small>{{ $statusAlert['action']['label'] }}</small>
+=======
+<<<<<<< Updated upstream
+                <div class="d-flex align-items-center mb-4">
+                    <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                            style="width: 50px; height: 50px; font-size: 20px; font-weight: bold;">
+                            {{ $blog->user->initials }}
+                        </div>
+=======
+            <!-- Breadcrumbs -->
+            <div class="mb-4">
+                <x-layout.breadcrumbs :breadcrumbs="$breadcrumbs ?? []" />
+            </div>
+
+            <meta name="blog-id" content="{{ $blog->id }}">
+            <h1 class="mb-3">{{ $blog->title }}</h1>
+            <p class="lead text-muted mb-4">{{ $blog->short_description }}</p>
+
+            <div class="d-flex align-items-center mb-4">
+                <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                        style="width: 50px; height: 50px; font-size: 20px; font-weight: bold;">
+                        {{ $blog->user->initials }}
+                    </div>
+                </a>
+                <div>
+                    <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
+                        <h6 class="mb-0">{{ $blog->user->full_name }}</h6>
+                    </a>
+                    <div>
+                        <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
+                            <h6 class="mb-0">{{ $blog->user->full_name }}</h6>
                         </a>
                     @endif
 
@@ -38,14 +71,14 @@
             <p class="lead text-muted mb-4">{{ $blog->short_description }}</p>
 
             <div class="d-flex align-items-center mb-4">
-                <a href="{{ route('users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
+                <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
                     <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                         style="width: 50px; height: 50px; font-size: 20px; font-weight: bold;">
                         {{ $blog->user->initials }}
                     </div>
                 </a>
                 <div>
-                    <a href="{{ route('users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
+                    <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}" class="text-decoration-none">
                         <h6 class="mb-0">{{ $blog->user->full_name }}</h6>
                     </a>
                     <small class="text-muted">{{ $blog->time_ago }}</small>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Blog;
+use App\Models\BlogComment;
 use App\Models\User;
 use App\Mail\EmailVerificationMail;
 use App\Repositories\UserRepository;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class UserService
 {
@@ -62,7 +64,8 @@ class UserService
     public function setPassword(User $user, string $password): User
     {
         // relying on model cast 'password' => 'hashed' to hash automatically
-        return $this->updateUser($user, ['password' => $password]);
+        $user = $this->updateUser($user, ['password' => $password, 'email_verified_at' => null]);
+        return $user;
     }
 
     /**
@@ -71,6 +74,53 @@ class UserService
     public function sendEmailVerification(User $user): void
     {
         Mail::send(new EmailVerificationMail($user));
+    }
+
+    /**
+     * Format user data for API list response.
+     */
+    public function formatUserForList(User $user, bool $isAdmin = false): array
+    {
+        $actions = [];
+
+        if ($isAdmin) {
+            $actions[] = [
+                'type' => 'edit',
+                'label' => 'Modifier',
+                'icon' => 'fa-edit',
+                'route' => route('admin.users.show', $user),
+                'class' => '',
+            ];
+            $actions[] = [
+                'type' => 'delete',
+                'label' => 'Supprimer',
+                'icon' => 'fa-trash',
+                'route' => route('admin.users.destroy', $user),
+                'needs_confirm' => true,
+                'confirm_message' => "Êtes-vous sûr de vouloir supprimer {$user->full_name} ?",
+                'class' => 'text-danger',
+            ];
+        } else {
+            $actions[] = [
+                'type' => 'show',
+                'label' => 'Voir',
+                'icon' => 'fa-eye',
+                'route' => route('admin.users.show', $user),
+                'class' => '',
+            ];
+        }
+
+        return [
+            'id' => $user->id,
+            'label' => $user->full_name ?? '-',
+            'full_name' => $user->full_name ?? '-',
+            'email' => $user->email ?? '-',
+            'phone' => $user->phone ?? '-',
+            'role' => $user->role?->name ?? '-',
+            'city' => $user->city ?? ($user->address?->city ?? ''),
+            'postal_code' => $user->postal_code ?? ($user->address?->postal_code ?? ''),
+            'actions' => $actions,
+        ];
     }
 
     /**
@@ -121,9 +171,12 @@ class UserService
 
         $recentComments = $this->userRepository->getRecentComments($user, $oneWeekAgo);
         foreach ($recentComments as $comment) {
+            $blogTitle = $comment->blog?->title ?? 'Blog';
+            $snippet = Str::limit($comment->content ?? '', 80);
+
             $recentActivity->push([
                 'type' => 'comment',
-                'label' => 'Commented: '.\Illuminate\Support\Str::limit($comment->body ?? '', 80),
+                'label' => 'Commenté sur '. $blogTitle .' : '. ($snippet ?: '(pas de message)'),
                 'url' => $comment->blog ? route('admin.blogs.show', $comment->blog) : '#',
                 'created_at' => $comment->created_at,
             ]);
@@ -131,13 +184,27 @@ class UserService
 
         $recentLikes = $this->userRepository->getRecentLikes($user, $oneWeekAgo);
         foreach ($recentLikes as $like) {
-            $label = 'Liked';
+            $label = 'A aimé';
             $url = '#';
+            $likeable = $like->likeable;
 
-            if ($like->likeable_type === Blog::class) {
-                $blog = $like->likeable;
-                $label .= ': '.($blog->title ?? 'Blog');
-                $url = $blog ? route('admin.blogs.show', $blog) : '#';
+            if ($likeable) {
+                // Direct blog like
+                if ($likeable instanceof Blog) {
+                    $label .= ': '.($likeable->title ?? 'Blog');
+                    $url = $likeable ? route('admin.blogs.show', $likeable) : '#';
+                }
+
+                // Like on a comment or other entity that references a blog
+                elseif ($likeable instanceof BlogComment && $likeable->blog) {
+                    $label .= ': '.($likeable->blog->title ?? 'Blog');
+                    $url = $likeable->blog ? route('admin.blogs.show', $likeable->blog) : '#';
+                }
+
+                // Fallback: use title property if present
+                elseif (isset($likeable->title)) {
+                    $label .= ': '.($likeable->title);
+                }
             }
 
             $recentActivity->push([
@@ -152,7 +219,7 @@ class UserService
         foreach ($recentBookmarks as $bookmark) {
             $recentActivity->push([
                 'type' => 'bookmark',
-                'label' => 'Bookmarked: '.($bookmark->blog?->title ?? 'Blog'),
+                'label' => 'Ajouté aux favoris : '.($bookmark->blog?->title ?? 'Blog'),
                 'url' => $bookmark->blog ? route('admin.blogs.show', $bookmark->blog) : '#',
                 'created_at' => $bookmark->created_at,
             ]);
@@ -162,7 +229,7 @@ class UserService
         foreach ($recentPublished as $published) {
             $recentActivity->push([
                 'type' => 'published',
-                'label' => 'Published: '.($published->title ?? 'Blog'),
+                'label' => 'Publié : '.($published->title ?? 'Blog'),
                 'url' => route('admin.blogs.show', $published),
                 'created_at' => $published->created_at,
             ]);
@@ -172,7 +239,7 @@ class UserService
         foreach ($recentSimulations as $simulation) {
             $recentActivity->push([
                 'type' => 'simulation',
-                'label' => 'Simulation: '.($simulation->title ?? 'Simulation'),
+                'label' => 'Simulation : '.($simulation->title ?? 'Simulation'),
                 'url' => '#',
                 'created_at' => $simulation->created_at,
             ]);

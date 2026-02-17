@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\ProvidesEmailLayoutData;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -11,19 +12,15 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PasswordResetMail extends Mailable implements ShouldQueue
+class PasswordChangedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels, ProvidesEmailLayoutData;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(
-        public string $userName,
-        public string $resetUrl,
-        public string $recipientEmail,
-        public int $expirationMinutes = 15,
-    ) {
+    public function __construct(public User $user)
+    {
     }
 
     /**
@@ -36,8 +33,8 @@ class PasswordResetMail extends Mailable implements ShouldQueue
                 config('mail.from.address'),
                 config('mail.from.name')
             ),
-            to: [new Address($this->recipientEmail)],
-            subject: __('Réinitialisation de votre mot de passe - ') . config('app.name'),
+            to: [new Address($this->user->email)],
+            subject: __('Confirmations de changement de mot de passe - ') . config('app.name'),
         );
     }
 
@@ -47,25 +44,14 @@ class PasswordResetMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.password-reset',
+            view: 'emails.password-changed',
             with: array_merge(
                 $this->emailLayoutData(),
                 [
-                    'userName' => $this->userName,
-                    'resetUrl' => $this->resetUrl,
-                    'expirationMinutes' => $this->expirationMinutes,
+                    'userName' => $this->user->first_name,
+                    'userEmail' => $this->user->email,
                 ]
             ),
         );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }

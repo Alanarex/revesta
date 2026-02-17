@@ -30,18 +30,22 @@ class UserControllerTest extends TestCase
     private User $admin;
     private User $regularUser;
     private Role $adminRole;
+    private Role $userRole;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->adminRole = Role::firstOrCreate(
-            ['name' => 'admin'],
-            ['display_name' => 'Administrator']
-        );
-
+        // Create admin user via helper (ensures admin role exists)
         $this->admin = $this->createAdminUser();
-        $this->regularUser = User::factory()->create();
+        $this->adminRole = $this->admin->role()->first();
+
+        // Ensure a regular 'user' role exists and create a regular user
+        $this->userRole = Role::firstOrCreate(
+            ['name' => 'user'],
+            ['display_name' => 'User']
+        );
+        $this->regularUser = User::factory()->create(['role_id' => $this->userRole->id]);
     }
 
     // ============================================================================
@@ -537,10 +541,9 @@ class UserControllerTest extends TestCase
      */
     public function test_show_prevents_user_from_viewing_others()
     {
-        $user1 = User::factory()->create();
         $user2 = User::factory()->create();
 
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($this->regularUser)
             ->get(route('admin.users.show', $user2));
 
         $response->assertStatus(403);
@@ -616,8 +619,9 @@ class UserControllerTest extends TestCase
             'bio' => 'Updated bio',
         ]);
 
-        $response->assertStatus(200)
-            ->assertJson(['success' => true]);
+        $response->assertStatus(302)
+            ->assertRedirect(route('admin.users.show', $user))
+            ->assertSessionHas('success');
 
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
@@ -640,7 +644,10 @@ class UserControllerTest extends TestCase
             'role_id' => $user->role_id,
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(302)
+            ->assertRedirect(route('admin.users.show', $user))
+            ->assertSessionHas('success');
+
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'first_name' => 'Updated',
@@ -652,7 +659,7 @@ class UserControllerTest extends TestCase
      */
     public function test_update_prevents_user_from_updating_others()
     {
-        $user1 = User::factory()->create();
+        $user1 = $this->regularUser;
         $user2 = User::factory()->create();
 
         $response = $this->actingAs($user1)->putCsrf(route('admin.users.update', $user2), [
@@ -671,6 +678,7 @@ class UserControllerTest extends TestCase
     public function test_update_prevents_privilege_escalation()
     {
         $user = User::factory()->create();
+        $originalRole = $user->role_id;
 
         $response = $this->actingAs($user)->putCsrf(route('admin.users.update', $user), [
             'first_name' => $user->first_name,
@@ -679,7 +687,14 @@ class UserControllerTest extends TestCase
             'role_id' => $this->adminRole->id,
         ]);
 
-        $response->assertStatus(403);
+        // Role change should be ignored for regular users updating themselves;
+        // request should succeed and the role_id should remain unchanged.
+        $response->assertStatus(302)
+            ->assertRedirect(route('admin.users.show', $user))
+            ->assertSessionHas('success');
+
+        $user->refresh();
+        $this->assertEquals($originalRole, $user->role_id);
     }
 
     /**
@@ -714,7 +729,7 @@ class UserControllerTest extends TestCase
             'role_id' => $user->role_id,
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(302);
     }
 
     // ============================================================================
@@ -765,10 +780,9 @@ class UserControllerTest extends TestCase
      */
     public function test_destroy_prevents_user_from_deleting_others()
     {
-        $user1 = User::factory()->create();
         $user2 = User::factory()->create();
 
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($this->regularUser)
             ->deleteCsrf(route('admin.users.destroy', $user2));
 
         $response->assertStatus(403);
@@ -815,9 +829,7 @@ class UserControllerTest extends TestCase
      */
     public function test_reset_password_requires_authentication()
     {
-        $this->post(route('admin.users.reset-password', $this->regularUser), [
-            'password' => 'newpassword123',
-        ])->assertRedirect(route('login'));
+        $this->post(route('admin.users.reset-password', $this->regularUser))->assertRedirect(route('login'));
     }
 
     /**
@@ -825,19 +837,22 @@ class UserControllerTest extends TestCase
      */
     public function test_reset_password_allows_admin()
     {
-        $user = User::factory()->create();
-        $oldPassword = $user->password;
+        Mail::fake();
+
+        $user = User::factory()->create(['email_verified_at' => now()]);
 
         $response = $this->actingAs($this->admin)
-            ->postCsrf(route('admin.users.reset-password', $user), [
-                'password' => 'newpassword123',
-            ]);
+            ->postCsrf(route('admin.users.reset-password', $user));
 
         $response->assertStatus(200)
             ->assertJson(['success' => true]);
 
         $user->refresh();
-        $this->assertNotEquals($oldPassword, $user->password);
+        $this->assertFalse($user->hasVerifiedEmail());
+
+        Mail::assertQueued(\App\Mail\PasswordResetMail::class, function ($mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
     }
 
     /**
@@ -845,17 +860,19 @@ class UserControllerTest extends TestCase
      */
     public function test_reset_password_allows_user_to_reset_own()
     {
-        $user = User::factory()->create();
-        $oldPassword = $user->password;
+        Mail::fake();
+
+        $user = User::factory()->create(['email_verified_at' => now()]);
 
         $response = $this->actingAs($user)
-            ->postCsrf(route('admin.users.reset-password', $user), [
-                'password' => 'newpassword123',
-            ]);
+            ->postCsrf(route('admin.users.reset-password', $user));
 
-        $response->assertStatus(200);
+        $response->assertStatus(403);
+
         $user->refresh();
-        $this->assertNotEquals($oldPassword, $user->password);
+        $this->assertTrue($user->hasVerifiedEmail());
+
+        Mail::assertNothingQueued();
     }
 
     /**
@@ -863,18 +880,20 @@ class UserControllerTest extends TestCase
      */
     public function test_reset_password_prevents_user_from_resetting_others()
     {
-        $user1 = User::factory()->create();
-        $user2 = User::factory()->create();
-        $oldPassword = $user2->password;
+        Mail::fake();
+
+        $user1 = $this->regularUser;
+        $user2 = User::factory()->create(['email_verified_at' => now()]);
 
         $response = $this->actingAs($user1)
-            ->postCsrf(route('admin.users.reset-password', $user2), [
-                'password' => 'newpassword123',
-            ]);
+            ->postCsrf(route('admin.users.reset-password', $user2));
 
         $response->assertStatus(403);
+
         $user2->refresh();
-        $this->assertEquals($oldPassword, $user2->password);
+        $this->assertTrue($user2->hasVerifiedEmail());
+
+        Mail::assertNothingQueued();
     }
 
     /**
@@ -886,9 +905,7 @@ class UserControllerTest extends TestCase
         $this->assertTrue($user->hasVerifiedEmail());
 
         $this->actingAs($this->admin)
-            ->postCsrf(route('admin.users.reset-password', $user), [
-                'password' => 'newpassword123',
-            ]);
+            ->postCsrf(route('admin.users.reset-password', $user));
 
         $user->refresh();
         $this->assertFalse($user->hasVerifiedEmail());

@@ -6,14 +6,20 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\IndexUserRequest;
+use App\Http\Requests\ResetUserPasswordRequest;
+use App\Http\Requests\ShowUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\ToggleUserActiveRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Mail\PasswordResetMail;
 use App\Models\User;
 use App\Services\BlogService;
 use App\Services\RoleService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -43,63 +49,20 @@ class UserController extends Controller
         $search = $request->get('search', '');
         $sort = $request->get('sort', 'last_name');
         $direction = $request->get('direction', 'asc');
-        $page = (int) $request->get('page', 1);
         $perPage = (int) $request->get('per_page', 50);
 
         $users = $this->userService->getAllUsers($perPage, $search, $sort, $direction);
-        $currentUser = auth()->user();
-        $isAdmin = $currentUser && method_exists($currentUser, 'isAdmin') && $currentUser->isAdmin();
+        $isAdmin = auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
 
-        $data = collect($users->items())->map(function ($user) use ($isAdmin) {
-            $actions = [];
-
-            if ($isAdmin) {
-                // Admin users see Edit and Delete actions
-                $actions[] = [
-                    'type' => 'edit',
-                    'label' => 'Modifier',
-                    'icon' => 'fa-edit',
-                    'route' => route('admin.users.show', $user),
-                    'class' => '',
-                ];
-                $actions[] = [
-                    'type' => 'delete',
-                    'label' => 'Supprimer',
-                    'icon' => 'fa-trash',
-                    'route' => route('admin.users.destroy', $user),
-                    'needs_confirm' => true,
-                    'confirm_message' => "Êtes-vous sûr de vouloir supprimer {$user->full_name} ?",
-                    'class' => 'text-danger',
-                ];
-            } else {
-                // Non-admin users see only Show action
-                $actions[] = [
-                    'type' => 'show',
-                    'label' => 'Voir',
-                    'icon' => 'fa-eye',
-                    'route' => route('admin.users.show', $user),
-                    'class' => '',
-                ];
-            }
-
-            return [
-                'id' => $user->id,
-                'label' => $user->full_name ?? '-',
-                'full_name' => $user->full_name ?? '-',
-                'email' => $user->email ?? '-',
-                'phone' => $user->phone ?? '-',
-                'role' => $user->role?->name ?? '-',
-                'city' => $user->city ?? ($user->address?->city ?? ''),
-                'postal_code' => $user->postal_code ?? ($user->address?->postal_code ?? ''),
-                'actions' => $actions,
-            ];
-        });
+        $data = collect($users->items())->map(
+            fn($user) => $this->userService->formatUserForList($user, $isAdmin)
+        );
 
         return response()->json([
             'data' => $data,
             'total' => $users->total(),
             'per_page' => $perPage,
-            'current_page' => $page,
+            'current_page' => $users->currentPage(),
         ]);
     }
 
@@ -148,11 +111,7 @@ class UserController extends Controller
             $data = $request->validated();
             $this->userService->updateUser($user, $data);
 
-            if ($request->expectsJson()) {
-                return response()->json(['success' => true, 'message' => 'Utilisateur mis à jour avec succès!']);
-            }
-
-            return redirect()->back()->with('success', 'Utilisateur mis à jour avec succès!');
+            return redirect()->route('admin.users.show', $user)->with('success', 'Utilisateur mis à jour avec succès!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Erreur lors de la mise à jour: '.$e->getMessage());
         }
@@ -177,20 +136,19 @@ class UserController extends Controller
         }
     }
 
-    public function show(User $user): View
+    public function show(ShowUserRequest $request, User $user): View
     {
-        $loaded = $this->userService->findUserWithRelations($user->id) ?? $user->load('role', 'address');
         $isViewingOwn = auth()->check() && auth()->id() === $user->id;
-        $isAdmin = auth()->check() && (auth()->user()->role && auth()->user()->role->name === 'admin');
-        $rolesOptions = $isAdmin ? $this->roleService->getRolesForSelect() : [];
+        $isAdmin = auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
+        $loaded = $this->userService->findUserWithRelations($user->id) ?? $user->load('role', 'address');
 
         // Calculate permissions and routes
         $canEdit = auth()->check() && ($isViewingOwn || $isAdmin);
-        $updateRoute = $isAdmin && !$isViewingOwn ? route('admin.users.update', $user) : route('users.update', $user);
+        $updateRoute = $isAdmin && !$isViewingOwn ? route('admin.users.update', $user) : route('admin.users.update', $user);
         $resetRoute = $isAdmin && !$isViewingOwn
             ? route('admin.users.reset-password', $user)
-            : route('users.reset-password', $user);
-        $destroyRoute = $isAdmin && !$isViewingOwn ? route('admin.users.destroy', $user) : route('users.destroy', $user);
+            : route('admin.users.reset-password', $user);
+        $destroyRoute = $isAdmin && !$isViewingOwn ? route('admin.users.destroy', $user) : route('admin.users.destroy', $user);
 
         // Load blogs with type-safe helper
         ['blogsList' => $blogsList] = $this->loadUserBlogs($loaded, $isViewingOwn);
@@ -204,6 +162,9 @@ class UserController extends Controller
         // Load user config options
         $civilStatuses = config('users.civil_statuses');
         $familyStatuses = config('users.family_statuses');
+
+        // Roles options available only to admins
+        $rolesOptions = $isAdmin ? $this->roleService->getRolesForSelect() : [];
 
         return view('admin.users.show', [
             'user' => $loaded,
@@ -236,6 +197,7 @@ class UserController extends Controller
      */
     private function loadUserBlogs(User $user, bool $isViewingOwn): array
     {
+        // Load blogs based on context
         try {
             if ($isViewingOwn) {
                 $blogsList = $this->blogService->getUserBlogsWithTags(
@@ -253,11 +215,10 @@ class UserController extends Controller
         } catch (\Throwable) {
             $blogsList = collect();
         }
-
         return ['blogsList' => $blogsList];
     }
 
-    public function toggleActivate(\App\Http\Requests\ToggleUserActiveRequest $request, User $user)
+    public function toggleActivate(ToggleUserActiveRequest $request, User $user)
     {
         try {
             $wasTrashed = $user->trashed();
@@ -272,16 +233,23 @@ class UserController extends Controller
         }
     }
 
-    public function resetPassword(\App\Http\Requests\ResetUserPasswordRequest $request, User $user)
+    public function resetPassword(ResetUserPasswordRequest $request, User $user)
     {
         try {
-            $data = $request->validated();
-            $this->userService->setPassword($user, $data['password']);
+            // Unverify email and force refresh
+            $user = $this->userService->updateUser($user, ['email_verified_at' => null]);
             
-            // Set user as unverified when password is reset
-            $user->update(['email_verified_at' => null]);
+            // Generate password reset token and send email
+            $token = Password::createToken($user);
+            $resetUrl = route('password.reset', ['token' => $token, 'email' => $user->email]);
+            
+            Mail::queue(new PasswordResetMail(
+                userName: $user->first_name,
+                resetUrl: $resetUrl,
+                recipientEmail: $user->email,
+            ));
 
-            return response()->json(['success' => true, 'message' => 'Mot de passe mis à jour. L\'utilisateur doit reverifier son email pour se connecter.']);
+            return response()->json(['success' => true, 'message' => 'Un email de reinitialisation de mot de passe a été envoyé à ' . $user->email]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }

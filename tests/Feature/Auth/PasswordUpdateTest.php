@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Mail\PasswordChangedMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class PasswordUpdateTest extends TestCase
@@ -13,6 +15,8 @@ class PasswordUpdateTest extends TestCase
 
     public function test_password_can_be_updated(): void
     {
+        Mail::fake();
+        
         $user = User::factory()->create();
 
         $response = $this
@@ -31,8 +35,24 @@ class PasswordUpdateTest extends TestCase
         $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
     }
 
-    public function test_correct_password_must_be_provided_to_update_password(): void
+    public function test_password_update_sends_notification_email(): void
     {
+        Mail::fake();
+        
+        $user = User::factory()->create();
+
+        $this
+            ->actingAs($user)
+            ->from(route('password.update'))
+            ->put(route('password.update'), [
+                'current_password' => 'password',
+                'password' => 'new-password',
+                'password_confirmation' => 'new-password',
+            ]);
+
+        Mail::assertQueued(PasswordChangedMail::class, function ($mail) use ($user) {
+            return $mail->user->id === $user->id;
+        });
         $user = User::factory()->create();
 
         $response = $this

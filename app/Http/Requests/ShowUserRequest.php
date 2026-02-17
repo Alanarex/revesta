@@ -5,11 +5,11 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class ToggleUserActiveRequest extends FormRequest
+class ShowUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows('toggleActive', $this->route('user'));
+        return Gate::allows('view', $this->route('user'));
     }
 
     public function rules(): array

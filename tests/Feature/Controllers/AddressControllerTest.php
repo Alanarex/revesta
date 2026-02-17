@@ -206,7 +206,7 @@ class AddressControllerTest extends TestCase
 
         $response = $this->actingAs($this->user)->get(route('admin.addresses.edit', $address));
 
-        $response->assertSee('Détails de l\'adresse');
+        $response->assertSee('Modifier l\'adresse');
         $response->assertSee($address->id);
     }
 

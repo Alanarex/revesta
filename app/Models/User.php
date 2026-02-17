@@ -33,6 +33,8 @@ class User extends Authenticatable implements OAuthenticatable
         'family_status',
         'cookies_accepted',
         'bio',
+        'email_verified_at',
+        'role_id',
     ];
 
     /**

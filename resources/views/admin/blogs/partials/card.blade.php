@@ -20,14 +20,14 @@
     <!-- Author Section -->
     <div class="d-flex align-items-center gap-2 mb-2">
         @if ($canAuthor)
-            <a href="{{ route('users.show', ['user' => $blog->user_id]) }}"
+            <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}"
                 class="text-decoration-none flex-shrink-0">
                 <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
                     style="width: 24px; height: 24px; font-size: 11px; font-weight: bold;">
                     {{ optional($blog->user)->initials ?? '-' }}
                 </div>
             </a>
-            <a href="{{ route('users.show', ['user' => $blog->user_id]) }}"
+            <a href="{{ route('admin.users.show', ['user' => $blog->user_id]) }}"
                 class="text-decoration-none">
                 <small class="text-muted">par <strong>{{ optional($blog->user)->full_name ?? 'Utilisateur' }}</strong></small>
             </a>

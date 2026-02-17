@@ -21,11 +21,22 @@ class UpdateUserRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'.($userId ? ','.$userId : '')],
             'phone' => ['nullable', 'string', 'max:50'],
-            'role_id' => ['required', 'integer', 'exists:roles,id'],
+            'role_id' => auth()->user()->isAdmin() ? ['required', 'integer', 'exists:roles,id'] : ['nullable', 'integer', 'exists:roles,id'],
             'bio' => ['nullable', 'string', 'max:5000'],
             'civil_status' => ['nullable', 'string', 'in:'.implode(',', array_keys(config('users.civil_statuses')))],
             'family_status' => ['nullable', 'string', 'in:'.implode(',', array_keys(config('users.family_statuses')))],
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        $data = parent::validated($key, $default);
+        
+        if (!auth()->user()->isAdmin() && isset($data['role_id'])) {
+            unset($data['role_id']);
+        }
+
+        return $data;
     }
 
     public function messages(): array

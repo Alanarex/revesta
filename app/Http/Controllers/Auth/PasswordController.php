@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordChangedMail;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use App\Services\AuthService;
 
@@ -35,6 +37,10 @@ class PasswordController extends Controller
 
         try {
             $this->authService->updatePassword($targetUser, $validated['password']);
+            
+            // Send password changed notification email
+            Mail::queue(new PasswordChangedMail($targetUser));
+            
             return back()->with('success', 'Votre mot de passe a ete mis a jour avec succes!');
         } catch (\Exception $e) {
             return back()->with('error', 'Erreur lors de la mise a jour du mot de passe: ' . $e->getMessage());

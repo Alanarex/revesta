@@ -5,7 +5,7 @@
 
 <div class="comment-item mb-3" data-comment-id="{{ $comment->id }}" style="margin-left: {{ $level * 30 }}px;">
     <div class="d-flex align-items-start">
-        <a href="{{ route('users.show', ['user' => $comment->user_id]) }}" class="text-decoration-none">
+        <a href="{{ route('admin.users.show', ['user' => $comment->user_id]) }}" class="text-decoration-none">
             <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                 style="width: 40px; height: 40px; font-size: 14px; font-weight: bold;">
                 {{ $commentUser ? $commentUser->initials : 'U' }}
@@ -14,7 +14,7 @@
         <div class="flex-grow-1">
             <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
-                    <a href="{{ route('users.show', ['user' => $comment->user_id]) }}" class="text-decoration-none">
+                    <a href="{{ route('admin.users.show', ['user' => $comment->user_id]) }}" class="text-decoration-none">
                         <h6 class="mb-1">{{ $commentUser ? $commentUser->full_name : __('Utilisateur') }}</h6>
                     </a>
                     <p class="mb-2">{{ $comment->content }}</p>

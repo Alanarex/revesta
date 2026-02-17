@@ -19,12 +19,7 @@ class UserPolicy
         return $user->isAdmin();
     }
 
-    public function update(User $user, ?User $model = null): bool
-    {
-        return $user->isAdmin();
-    }
-
-    public function updatePassword(User $user, ?User $model = null): bool
+    public function view(User $user, ?User $model = null): bool
     {
         if (is_null($model)) {
             return $user->isAdmin();
@@ -33,7 +28,40 @@ class UserPolicy
         return $user->id === $model->id || $user->isAdmin();
     }
 
+    public function update(User $user, ?User $model = null): bool
+    {
+        if (is_null($model)) {
+            return $user->isAdmin();
+        }
+
+        return $user->id === $model->id || $user->isAdmin();
+    }
+
+    public function resetPassword(User $user, ?User $model = null): bool
+    {
+        // Only admin can reset passwords
+        if (!$user->isAdmin()) {
+            return false;
+        }
+
+        // Admin cannot reset their own password
+        if ($model && $user->id === $model->id) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function delete(User $user, ?User $model = null): bool
+    {
+        if (is_null($model)) {
+            return $user->isAdmin();
+        }
+
+        return $user->id === $model->id || $user->isAdmin();
+    }
+
+    public function toggleActive(User $user, ?User $model = null): bool
     {
         if (is_null($model)) {
             return $user->isAdmin();
