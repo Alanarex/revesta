@@ -39,17 +39,7 @@ class UserPolicy
 
     public function resetPassword(User $user, ?User $model = null): bool
     {
-        // Only admin can reset passwords
-        if (!$user->isAdmin()) {
-            return false;
-        }
-
-        // Admin cannot reset their own password
-        if ($model && $user->id === $model->id) {
-            return false;
-        }
-
-        return true;
+        return $user->isAdmin() && $user->id !== $model->id;
     }
 
     public function delete(User $user, ?User $model = null): bool
