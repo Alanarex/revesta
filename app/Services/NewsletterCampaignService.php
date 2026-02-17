@@ -158,27 +158,15 @@ class NewsletterCampaignService
         }
 
         try {
-            // Get all verified subscribers
-            $subscribers = Newsletter::whereNotNull('verified_at')
-                ->whereNull('deleted_at')
-                ->select('id', 'email')
-                ->get();
-
-            if ($subscribers->isEmpty()) {
-                return ['success' => false, 'message' => 'Aucun abonné vérifié trouvé.'];
-            }
-
-            // TODO: Send emails using mail service
-            // For now, just mark as sent
-            $this->campaignRepository->markAsSent($id, $subscribers->count());
+            // Dispatch a job to send the campaign in the background
+            \App\Jobs\SendNewsletterCampaignJob::dispatch($campaign->id);
 
             return [
                 'success' => true,
-                'message' => "Campagne envoyée à {$subscribers->count()} abonnés.",
-                'sent_count' => $subscribers->count(),
+                'message' => 'Campagne en cours d\'envoi en tâche de fond.',
             ];
         } catch (\Exception $e) {
-            return ['success' => false, 'message' => 'Erreur lors de l\'envoi de la campagne.'];
+            return ['success' => false, 'message' => 'Erreur lors de la planification de l\'envoi de la campagne.'];
         }
     }
 
