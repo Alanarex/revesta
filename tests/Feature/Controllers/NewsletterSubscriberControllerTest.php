@@ -47,6 +47,6 @@ class NewsletterSubscriberControllerTest extends TestCase
         $response = $this->actingAs($admin)->deleteCsrf(route('admin.newsletter-subscribers.destroy', $sub), [], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200)->assertJson(['success' => true]);
-        $this->assertDatabaseMissing('newsletters', ['id' => $sub->id]);
+        $this->assertSoftDeleted('newsletters', ['id' => $sub->id]);
     }
 }
