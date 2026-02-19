@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Security;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class WebAuthSecurityTest extends TestCase
 {

@@ -2,21 +2,17 @@
 
 namespace App\Services;
 
-use App\Repositories\NewsletterRepository;
 use App\Models\Newsletter;
+use App\Repositories\NewsletterRepository;
 
 class NewsletterSubscriberService
 {
     public function __construct(
         protected NewsletterRepository $repository
-    ) {
-    }
+    ) {}
 
     /**
      * Verify a subscriber.
-     *
-     * @param int $id
-     * @return array
      */
     public function verify(int $id): array
     {
@@ -38,9 +34,6 @@ class NewsletterSubscriberService
 
     /**
      * Delete/unsubscribe a subscriber.
-     *
-     * @param int $id
-     * @return array
      */
     public function delete(int $id): array
     {

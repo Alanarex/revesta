@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteNewsletterSubscriberRequest;
 use App\Http\Requests\ManageNewsletterSubscriberRequest;
 use App\Http\Requests\VerifyNewsletterSubscriberRequest;
-use App\Http\Requests\DeleteNewsletterSubscriberRequest;
 use App\Models\Newsletter;
 use App\Repositories\NewsletterRepository;
 use App\Services\NewsletterSubscriberService;
@@ -17,8 +17,7 @@ class NewsletterSubscriberController extends Controller
     public function __construct(
         protected NewsletterSubscriberService $subscriberService,
         protected NewsletterRepository $subscriberRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Display subscribers list (datatable index).
@@ -49,7 +48,7 @@ class NewsletterSubscriberController extends Controller
             $actions = [];
 
             // Verify button for unverified subscribers
-            if (!$subscriber->verified_at) {
+            if (! $subscriber->verified_at) {
                 $actions[] = [
                     'type' => 'approve',
                     'label' => 'Vérifier',
@@ -117,6 +116,7 @@ class NewsletterSubscriberController extends Controller
             if ($result['success']) {
                 return response()->json(['success' => true, 'message' => $result['message']]);
             }
+
             return response()->json(['success' => false, 'message' => $result['message']], 500);
         }
 

@@ -2,22 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
         $this->command->info('Creating random users...');
-        
+
         $randomUserCount = 10;
         $users = User::factory()->count($randomUserCount)->create([
             'bio' => fake()->sentence(),
         ]);
-        
+
         // Attach addresses via polymorphic relationship
         foreach ($users as $user) {
             if ($user->address_id) {
@@ -28,8 +26,8 @@ class UserSeeder extends Seeder
                 ]);
             }
         }
-        
-        $this->command->info('✅ Created ' . $randomUserCount . ' random users.');
+
+        $this->command->info('✅ Created '.$randomUserCount.' random users.');
 
     }
 }

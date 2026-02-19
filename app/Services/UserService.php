@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
+use App\Mail\EmailVerificationMail;
 use App\Models\Blog;
 use App\Models\BlogComment;
 use App\Models\User;
-use App\Mail\EmailVerificationMail;
 use App\Repositories\UserRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -65,6 +65,7 @@ class UserService
     {
         // relying on model cast 'password' => 'hashed' to hash automatically
         $user = $this->updateUser($user, ['password' => $password, 'email_verified_at' => null]);
+
         return $user;
     }
 
@@ -147,7 +148,7 @@ class UserService
     public function calculateProfileScore(User $user): int
     {
         try {
-            $allInfo = !empty($user->first_name) && !empty($user->last_name) && !empty($user->email) && !empty($user->phone);
+            $allInfo = ! empty($user->first_name) && ! empty($user->last_name) && ! empty($user->email) && ! empty($user->phone);
             $hasAddress = (bool) $user->address;
             $hasSimulation = $this->userRepository->hasSimulations($user);
             $hasCommented = $this->userRepository->hasBlogComments($user);
@@ -176,7 +177,7 @@ class UserService
 
             $recentActivity->push([
                 'type' => 'comment',
-                'label' => 'Commenté sur '. $blogTitle .' : '. ($snippet ?: '(pas de message)'),
+                'label' => 'Commenté sur '.$blogTitle.' : '.($snippet ?: '(pas de message)'),
                 'url' => $comment->blog ? route('admin.blogs.show', $comment->blog) : '#',
                 'created_at' => $comment->created_at,
             ]);

@@ -10,9 +10,6 @@ class NewsletterCampaignRepository
 {
     /**
      * Get all campaigns with pagination.
-     *
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function getAll(int $perPage = 20): LengthAwarePaginator
     {
@@ -24,9 +21,6 @@ class NewsletterCampaignRepository
 
     /**
      * Get all drafts.
-     *
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function getDrafts(int $perPage = 20): LengthAwarePaginator
     {
@@ -38,9 +32,6 @@ class NewsletterCampaignRepository
 
     /**
      * Get all sent campaigns.
-     *
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function getSent(int $perPage = 20): LengthAwarePaginator
     {
@@ -53,8 +44,6 @@ class NewsletterCampaignRepository
 
     /**
      * Get all scheduled campaigns.
-     *
-     * @return Collection
      */
     public function getScheduled(): Collection
     {
@@ -67,8 +56,7 @@ class NewsletterCampaignRepository
     /**
      * Create a new campaign.
      *
-     * @param array<string, mixed> $data
-     * @return NewsletterCampaign
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): NewsletterCampaign
     {
@@ -78,9 +66,7 @@ class NewsletterCampaignRepository
     /**
      * Update a campaign.
      *
-     * @param int $id
-     * @param array<string, mixed> $data
-     * @return bool
+     * @param  array<string, mixed>  $data
      */
     public function update(int $id, array $data): bool
     {
@@ -89,9 +75,6 @@ class NewsletterCampaignRepository
 
     /**
      * Find a campaign by ID.
-     *
-     * @param int $id
-     * @return NewsletterCampaign|null
      */
     public function find(int $id): ?NewsletterCampaign
     {
@@ -100,22 +83,16 @@ class NewsletterCampaignRepository
 
     /**
      * Delete a campaign (soft delete).
-     *
-     * @param int $id
-     * @return bool
      */
     public function delete(int $id): bool
     {
         $campaign = NewsletterCampaign::findOrFail($id);
+
         return $campaign->delete();
     }
 
     /**
      * Mark campaign as sent.
-     *
-     * @param int $id
-     * @param int $sentCount
-     * @return bool
      */
     public function markAsSent(int $id, int $sentCount = 0): bool
     {
@@ -128,10 +105,6 @@ class NewsletterCampaignRepository
 
     /**
      * Mark campaign as scheduled.
-     *
-     * @param int $id
-     * @param \DateTime $scheduledAt
-     * @return bool
      */
     public function markAsScheduled(int $id, \DateTime $scheduledAt): bool
     {
@@ -143,8 +116,6 @@ class NewsletterCampaignRepository
 
     /**
      * Get total count of all campaigns.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -154,10 +125,10 @@ class NewsletterCampaignRepository
     /**
      * Search campaigns with filtering and sorting.
      *
-     * @param string $search Search term for title
-     * @param string $sort Column to sort by
-     * @param string $direction Sort direction (asc/desc)
-     * @param int $perPage Results per page
+     * @param  string  $search  Search term for title
+     * @param  string  $sort  Column to sort by
+     * @param  string  $direction  Sort direction (asc/desc)
+     * @param  int  $perPage  Results per page
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function search(string $search = '', string $sort = 'created_at', string $direction = 'desc', int $perPage = 15)
@@ -165,7 +136,7 @@ class NewsletterCampaignRepository
         $query = NewsletterCampaign::query();
 
         // Filter by search term
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where('title', 'like', "%{$search}%");
         }
 

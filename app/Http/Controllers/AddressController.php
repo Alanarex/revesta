@@ -11,17 +11,14 @@ use App\Http\Requests\UpdateAddressRequest;
 use App\Models\Address;
 use App\Services\AddressService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\View\View;
 
 class AddressController extends Controller
 {
     public function __construct(
         protected AddressService $addressService
-    ) {
-    }
+    ) {}
 
     /**
      * Display a datatable of all addresses.
@@ -76,7 +73,7 @@ class AddressController extends Controller
             return [
                 'id' => $address->id,
                 'label' => $address->label,
-                'street' => ($address->number ?? '-') . ' ' . $address->street,
+                'street' => ($address->number ?? '-').' '.$address->street,
                 'postal_code' => $address->postal_code,
                 'city' => $address->city,
                 'departement' => $address->departement ?? '-',
@@ -120,7 +117,7 @@ class AddressController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Erreur lors de la création de l\'adresse: ' . $e->getMessage());
+                ->with('error', 'Erreur lors de la création de l\'adresse: '.$e->getMessage());
         }
     }
 
@@ -131,7 +128,7 @@ class AddressController extends Controller
     {
         // Load related users and housings
         $address->load(['users', 'housings']);
-        
+
         return view('admin.addresses.edit', [
             'address' => $address,
             'title' => 'Modifier l\'adresse',
@@ -157,7 +154,7 @@ class AddressController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Erreur lors de la mise à jour de l\'adresse: ' . $e->getMessage());
+                ->with('error', 'Erreur lors de la mise à jour de l\'adresse: '.$e->getMessage());
         }
     }
 
@@ -177,11 +174,11 @@ class AddressController extends Controller
                 ->with('success', 'Adresse supprimée avec succès!');
         } catch (\Exception $e) {
             if ($request->expectsJson() || $request->isXmlHttpRequest()) {
-                return response()->json(['success' => false, 'message' => 'Erreur lors de la suppression de l\'adresse: ' . $e->getMessage()], 500);
+                return response()->json(['success' => false, 'message' => 'Erreur lors de la suppression de l\'adresse: '.$e->getMessage()], 500);
             }
 
             return redirect()->route('admin.addresses.index')
-                ->with('error', 'Erreur lors de la suppression de l\'adresse: ' . $e->getMessage());
+                ->with('error', 'Erreur lors de la suppression de l\'adresse: '.$e->getMessage());
         }
     }
 }

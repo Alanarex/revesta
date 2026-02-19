@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Auth\Events\Verified;
 use App\Models\User;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class VerificationService
 {
@@ -23,6 +23,7 @@ class VerificationService
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
+
             return true;
         }
 

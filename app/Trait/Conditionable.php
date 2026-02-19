@@ -2,7 +2,4 @@
 
 namespace App\Trait;
 
-trait Conditionable
-{
-    
-}
+trait Conditionable {}

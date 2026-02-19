@@ -8,7 +8,6 @@ use App\Models\Condition;
 use App\Models\FiscalIncomeRange;
 use App\Models\Housing;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class ConditionsController extends Controller
 {
@@ -23,31 +22,32 @@ class ConditionsController extends Controller
             ->orderBy('aid_id')
             ->get()
             ->groupBy('aid_id');
+
         // dd($conditionsGrouped);
-            return view('conditions.index', [
+        return view('conditions.index', [
             'conditionsGrouped' => $conditionsGrouped,
             'models' => [
                 'user' => [
                     'label' => 'Utilisateur',
                     'attributes' => User::getFilterableAttributes(),
-                    'types' => User::getFilterableAttributeTypes()
+                    'types' => User::getFilterableAttributeTypes(),
                 ],
                 'housing' => [
                     'label' => 'Logement',
                     'attributes' => Housing::getFilterableAttributes(),
-                    'types' => Housing::getFilterableAttributeTypes()
+                    'types' => Housing::getFilterableAttributeTypes(),
                 ],
                 'address' => [
                     'label' => 'Adresse',
                     'attributes' => Address::getFilterableAttributes(),
-                    'types' => Address::getFilterableAttributeTypes()
+                    'types' => Address::getFilterableAttributeTypes(),
                 ],
                 'fiscal_income' => [
                     'label' => 'Revenu fiscal',
                     'attributes' => FiscalIncomeRange::getFilterableAttributes(),
                     'types' => FiscalIncomeRange::getFilterableAttributeTypes(),
-                    'options' => FiscalIncomeRange::optionsForSelect()
-                ]
+                    'options' => FiscalIncomeRange::optionsForSelect(),
+                ],
             ],
             'operators' => ['=', '!=', '<', '<=', '>', '>='],
             'types' => ['Valeur', 'Intervalle'],
@@ -63,13 +63,13 @@ class ConditionsController extends Controller
                 ],
             ],
         ]);
-        
+
     }
 
     /**
      * Update the conditions.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateConditionsRequest $request)
@@ -81,5 +81,4 @@ class ConditionsController extends Controller
 
         return redirect()->route('admin.conditions.index')->with('success', 'Conditions mises à jour.');
     }
-
 }

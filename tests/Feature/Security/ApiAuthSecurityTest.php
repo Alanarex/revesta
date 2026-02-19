@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Security;
 
-use Tests\TestCase;
 use App\Models\User;
 use Carbon\Carbon;
+use Tests\TestCase;
 
 class ApiAuthSecurityTest extends TestCase
 {

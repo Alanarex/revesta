@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreNewsletterCampaignRequest;
-use App\Http\Requests\ScheduleNewsletterCampaignRequest;
 use App\Http\Requests\ManageNewsletterCampaignRequest;
+use App\Http\Requests\ScheduleNewsletterCampaignRequest;
+use App\Http\Requests\StoreNewsletterCampaignRequest;
 use App\Models\NewsletterCampaign;
 use App\Repositories\NewsletterCampaignRepository;
 use App\Services\NewsletterCampaignService;
@@ -17,8 +17,7 @@ class NewsletterCampaignController extends Controller
     public function __construct(
         protected NewsletterCampaignService $campaignService,
         protected NewsletterCampaignRepository $campaignRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Display newsletters dashboard (datatable index).
@@ -156,7 +155,7 @@ class NewsletterCampaignController extends Controller
             $request->validated('content')
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return back()->withErrors(['error' => $result['message']]);
         }
 
@@ -176,6 +175,7 @@ class NewsletterCampaignController extends Controller
                     ->route('admin.newsletters.index')
                     ->with('success', $publishResult['message']);
             }
+
             return back()->withErrors(['error' => $publishResult['message']]);
         }
 
@@ -190,7 +190,7 @@ class NewsletterCampaignController extends Controller
      */
     public function edit(ManageNewsletterCampaignRequest $request, NewsletterCampaign $campaign): View
     {
-        if (!$campaign->isDraft()) {
+        if (! $campaign->isDraft()) {
             abort(403, 'Seules les campagnes brouillon peuvent être modifiées.');
         }
 
@@ -226,7 +226,7 @@ class NewsletterCampaignController extends Controller
      */
     public function update(StoreNewsletterCampaignRequest $request, NewsletterCampaign $campaign): RedirectResponse
     {
-        if (!$campaign->isDraft()) {
+        if (! $campaign->isDraft()) {
             abort(403, 'Seules les campagnes brouillon peuvent être mises à jour.');
         }
 
@@ -236,7 +236,7 @@ class NewsletterCampaignController extends Controller
             $request->validated('content')
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return back()->withErrors(['error' => $result['message']]);
         }
 
@@ -256,6 +256,7 @@ class NewsletterCampaignController extends Controller
                     ->route('admin.newsletters.index')
                     ->with('success', $publishResult['message']);
             }
+
             return back()->withErrors(['error' => $publishResult['message']]);
         }
 
@@ -286,7 +287,7 @@ class NewsletterCampaignController extends Controller
      */
     public function sendNow(ManageNewsletterCampaignRequest $request, NewsletterCampaign $campaign): RedirectResponse
     {
-        if (!$campaign->isDraft()) {
+        if (! $campaign->isDraft()) {
             abort(403, 'Seules les campagnes brouillon peuvent être envoyées.');
         }
 
@@ -306,7 +307,7 @@ class NewsletterCampaignController extends Controller
      */
     public function scheduleForm(ManageNewsletterCampaignRequest $request, NewsletterCampaign $campaign): View
     {
-        if (!$campaign->isDraft() && !$campaign->isScheduled()) {
+        if (! $campaign->isDraft() && ! $campaign->isScheduled()) {
             abort(403, 'Seules les campagnes brouillon ou programmées peuvent être programmées.');
         }
 
@@ -343,7 +344,7 @@ class NewsletterCampaignController extends Controller
             return back()->withErrors(['error' => $result['message']]);
         }
 
-        if (!$campaign->isDraft() && !$campaign->isScheduled()) {
+        if (! $campaign->isDraft() && ! $campaign->isScheduled()) {
             abort(403, 'Seules les campagnes brouillon ou programmées peuvent être programmées.');
         }
 
@@ -357,6 +358,4 @@ class NewsletterCampaignController extends Controller
 
         return back()->withErrors(['error' => $result['message']]);
     }
-
 }
-

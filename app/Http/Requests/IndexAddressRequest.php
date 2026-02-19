@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Address;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use App\Models\Address;
 
 class IndexAddressRequest extends FormRequest
 {

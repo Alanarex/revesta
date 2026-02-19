@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class AidSimulation extends Pivot
 {
     use HasFactory;
+
     protected $table = 'aid_simulation';
 
     protected $fillable = [

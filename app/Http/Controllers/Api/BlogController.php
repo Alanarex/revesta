@@ -21,15 +21,12 @@ class BlogController extends Controller
      */
     public function __construct(
         protected BlogService $blogService
-    ) {
-    }
+    ) {}
 
     /**
      * Get list of published blogs with likes and comments count
-     * 
-     * @param SearchPublicBlogsRequest $request
+     *
      * @group Blogs
-     * @return BlogCollection
      */
     public function index(SearchPublicBlogsRequest $request): BlogCollection
     {
@@ -43,11 +40,8 @@ class BlogController extends Controller
 
     /**
      * Get a single blog with comments, likes, and bookmarks
-     * 
-     * @param ShowBlogRequest $request
-     * @param Blog $blog
+     *
      * @group Blogs
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show(ShowBlogRequest $request, Blog $blog): JsonResponse
     {
@@ -56,7 +50,7 @@ class BlogController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'blog' => new BlogResource($blog)
+                'blog' => new BlogResource($blog),
             ],
         ]);
     }

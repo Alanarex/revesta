@@ -11,7 +11,7 @@ class AddressFactory extends Factory
         $street = $this->faker->streetName;
         $number = $this->faker->buildingNumber;
         $city = $this->faker->city;
-        
+
         return [
             'label' => "{$number} {$street}, {$city}",
             'street' => $street,

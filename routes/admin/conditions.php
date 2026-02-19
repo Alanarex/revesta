@@ -25,4 +25,3 @@ Route::controller(ConditionsController::class)
         Route::post('/update', 'update')
             ->name('update');
     });
-

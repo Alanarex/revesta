@@ -2,20 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Condition;
 use App\Models\Aid;
+use App\Models\Condition;
+use Illuminate\Database\Seeder;
 
 class ConditionSeeder extends Seeder
 {
     public function run()
     {
         $this->command->info('Creating conditions for aids...');
-        
+
         $aids = Aid::all();
-        
+
         if ($aids->isEmpty()) {
             $this->command->warn('No aids found! Please run AidSeeder first.');
+
             return;
         }
 
@@ -27,7 +28,7 @@ class ConditionSeeder extends Seeder
             ]);
             $totalConditions += $count;
         }
-        
-        $this->command->info('✅ Created ' . $totalConditions . ' conditions.');
+
+        $this->command->info('✅ Created '.$totalConditions.' conditions.');
     }
 }

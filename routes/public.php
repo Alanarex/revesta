@@ -1,6 +1,5 @@
 <?php
 
-
 /*
 |--------------------------------------------------------------------------
 | Public Route Loader
@@ -12,7 +11,6 @@
 |
 */
 
-foreach (glob(__DIR__ . '/public/*.php') as $filename) {
+foreach (glob(__DIR__.'/public/*.php') as $filename) {
     require $filename;
 }
-

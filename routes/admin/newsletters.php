@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\NewsletterSubscriberController;
 use App\Http\Controllers\NewsletterCampaignController;
+use App\Http\Controllers\NewsletterSubscriberController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('newsletter-subscribers')

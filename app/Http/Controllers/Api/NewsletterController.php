@@ -17,8 +17,7 @@ class NewsletterController extends Controller
      */
     public function __construct(
         protected NewsletterService $newsletterService
-    ) {
-    }
+    ) {}
 
     /**
      * Subscribe email to newsletter
@@ -26,30 +25,29 @@ class NewsletterController extends Controller
      * Subscribe a new email address to the newsletter. The endpoint will validate the email format
      * and ensure it hasn't been previously subscribed. Rate limited to prevent abuse.
      *
-     * @param SubscribeNewsletterRequest $request
      * @group Newsletter
-    * @response status=200 {
-    *   "success": true,
-    *   "message": "Successfully subscribed to newsletter.",
-    *   "data": {
-    *     "id": 1,
-    *     "email": "test@example.com",
-    *     "ip_address": "192.168.1.1",
-    *     "subscribed_at": "2026-02-03T14:30:00.000000Z",
-    *     "verified_at": null,
-    *     "created_at": "2026-02-03T14:30:00.000000Z",
-    *     "updated_at": "2026-02-03T14:30:00.000000Z"
-    *   }
-    * }
-    * @response status=422 {
-    *   "message": "The email field must be a valid email.",
-    *   "errors": {
-    *     "email": [
-    *       "The email field must be a valid email."
-    *     ]
-    *   }
-    * }
-     * @return JsonResponse
+     *
+     * @response status=200 {
+     *   "success": true,
+     *   "message": "Successfully subscribed to newsletter.",
+     *   "data": {
+     *     "id": 1,
+     *     "email": "test@example.com",
+     *     "ip_address": "192.168.1.1",
+     *     "subscribed_at": "2026-02-03T14:30:00.000000Z",
+     *     "verified_at": null,
+     *     "created_at": "2026-02-03T14:30:00.000000Z",
+     *     "updated_at": "2026-02-03T14:30:00.000000Z"
+     *   }
+     * }
+     * @response status=422 {
+     *   "message": "The email field must be a valid email.",
+     *   "errors": {
+     *     "email": [
+     *       "The email field must be a valid email."
+     *     ]
+     *   }
+     * }
      */
     public function subscribe(SubscribeNewsletterRequest $request): JsonResponse
     {
@@ -69,9 +67,7 @@ class NewsletterController extends Controller
      *
      * Verify a newsletter subscription using the email address.
      *
-     * @param Request $request
      * @group Newsletter
-     * @return JsonResponse
      */
     public function verify(Request $request): JsonResponse
     {
@@ -92,9 +88,7 @@ class NewsletterController extends Controller
      *
      * Remove an email address from the newsletter subscription list.
      *
-     * @param Request $request
      * @group Newsletter
-     * @return JsonResponse
      */
     public function unsubscribe(Request $request): JsonResponse
     {

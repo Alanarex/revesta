@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Services\NotificationService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
@@ -16,20 +15,20 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = Auth::user()->notifications()->paginate(20);
-        
+
         return response()->json([
             'success' => true,
-            'notifications' => $notifications
+            'notifications' => $notifications,
         ]);
     }
 
     public function unreadCount()
     {
         $count = $this->notificationService->getUnreadCount(Auth::user());
-        
+
         return response()->json([
             'success' => true,
-            'count' => $count
+            'count' => $count,
         ]);
     }
 
@@ -42,7 +41,7 @@ class NotificationController extends Controller
         $this->notificationService->markAsRead($notification);
 
         return response()->json([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -52,7 +51,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Toutes les notifications ont été marquées comme lues!'
+            'message' => 'Toutes les notifications ont été marquées comme lues!',
         ]);
     }
 }

@@ -31,8 +31,8 @@ class UpdateUserRequest extends FormRequest
     public function validated($key = null, $default = null)
     {
         $data = parent::validated($key, $default);
-        
-        if (!auth()->user()->isAdmin() && isset($data['role_id'])) {
+
+        if (! auth()->user()->isAdmin() && isset($data['role_id'])) {
             unset($data['role_id']);
         }
 

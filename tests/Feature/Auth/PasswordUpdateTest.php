@@ -16,7 +16,7 @@ class PasswordUpdateTest extends TestCase
     public function test_password_can_be_updated(): void
     {
         Mail::fake();
-        
+
         $user = User::factory()->create();
 
         $response = $this
@@ -38,7 +38,7 @@ class PasswordUpdateTest extends TestCase
     public function test_password_update_sends_notification_email(): void
     {
         Mail::fake();
-        
+
         $user = User::factory()->create();
 
         $this

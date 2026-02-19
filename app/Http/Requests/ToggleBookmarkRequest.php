@@ -12,14 +12,14 @@ class ToggleBookmarkRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return false;
         }
 
         // Use the route-bound blog model only (ID is passed in the URL as {blog})
         $blog = $this->route('blog');
 
-        if (!$blog || !($blog instanceof Blog)) {
+        if (! $blog || ! ($blog instanceof Blog)) {
             return false;
         }
 

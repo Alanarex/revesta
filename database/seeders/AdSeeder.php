@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Ad;
+use Illuminate\Database\Seeder;
 
 class AdSeeder extends Seeder
 {
     public function run()
     {
         $this->command->info('Creating advertisements...');
-        
+
         $count = 10;
         Ad::factory()->count($count)->create();
-        
-        $this->command->info('✅ Created ' . $count . ' advertisements.');
+
+        $this->command->info('✅ Created '.$count.' advertisements.');
     }
 }

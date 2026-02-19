@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\BlogLike;
 use App\Models\Blog;
+use App\Models\BlogLike;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

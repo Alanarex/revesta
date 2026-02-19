@@ -3,19 +3,19 @@
 namespace Tests\Unit\Services;
 
 use App\Models\Address;
-use App\Services\AddressService;
 use App\Repositories\AddressRepository;
-use Tests\TestCase;
+use App\Services\AddressService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * AddressService Unit Tests
- * 
+ *
  * Tests the address service business logic including:
  * - Label generation from address components
  * - Address creation and updates
  * - Label regeneration security (prevents manual label manipulation)
- * 
+ *
  * SAFE TO RUN: RefreshDatabase uses in-memory SQLite database (:memory:)
  * configured in phpunit.xml. This does NOT affect your local database.
  */
@@ -24,6 +24,7 @@ class AddressServiceTest extends TestCase
     use RefreshDatabase;
 
     private AddressService $addressService;
+
     private AddressRepository $addressRepository;
 
     protected function setUp(): void

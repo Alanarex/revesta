@@ -2,21 +2,22 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Simulation;
 use App\Models\Aid;
+use App\Models\Simulation;
+use Illuminate\Database\Seeder;
 
 class AidSimulationSeeder extends Seeder
 {
     public function run()
     {
         $this->command->info('Creating aid-simulation associations...');
-        
+
         $simulations = Simulation::all();
         $aids = Aid::all();
 
         if ($simulations->isEmpty() || $aids->isEmpty()) {
             $this->command->warn('No simulations or aids found.');
+
             return;
         }
 
@@ -28,7 +29,7 @@ class AidSimulationSeeder extends Seeder
             );
             $totalAssociations += 2;
         }
-        
-        $this->command->info('✅ Created ' . $totalAssociations . ' aid-simulation associations.');
+
+        $this->command->info('✅ Created '.$totalAssociations.' aid-simulation associations.');
     }
 }

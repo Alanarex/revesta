@@ -21,14 +21,15 @@ class BlogCommentController extends Controller
      */
     public function __construct(
         protected CommentService $commentService
-    ) {
-    }
+    ) {}
 
     /**
      * Store a comment for a blog
      *
      * @group Blogs
+     *
      * @authenticated
+     *
      * @bodyParam content string required The text content of the comment. Example: Great article!
      * @bodyParam parent_id integer nullable Optional parent comment id for replies.
      */
@@ -74,12 +75,12 @@ class BlogCommentController extends Controller
             \Log::error('Comment creation failed', [
                 'user_id' => Auth::id(),
                 'blog_id' => $blog->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue'
+                'message' => 'Une erreur est survenue',
             ], 500);
         }
     }
@@ -88,6 +89,7 @@ class BlogCommentController extends Controller
      * Render reply form for a comment
      *
      * @group Blogs
+     *
      * @authenticated
      */
     public function replyForm(Blog $blog, BlogComment $comment): JsonResponse
@@ -102,7 +104,7 @@ class BlogCommentController extends Controller
 
         return response()->json([
             'success' => true,
-            'html' => $html
+            'html' => $html,
         ]);
     }
 
@@ -110,6 +112,7 @@ class BlogCommentController extends Controller
      * Load more comments (pagination)
      *
      * @group Blogs
+     *
      * @authenticated
      */
     public function loadMore(Blog $blog, LoadCommentsRequest $request): JsonResponse
@@ -121,7 +124,7 @@ class BlogCommentController extends Controller
         return response()->json([
             'success' => true,
             'comments' => $result['comments'],
-            'hasMore' => $result['hasMore']
+            'hasMore' => $result['hasMore'],
         ]);
     }
 
@@ -142,7 +145,7 @@ class BlogCommentController extends Controller
             // Render replies
             $html = view('admin.blogs.partials.comments.list', [
                 'comments' => $result['replies'],
-                'level' => $level
+                'level' => $level,
             ])->render();
 
             // Append load-more button if there are more replies
@@ -163,12 +166,12 @@ class BlogCommentController extends Controller
                 'user_id' => Auth::id(),
                 'comment_id' => $comment->id ?? null,
                 'blog_id' => $blog->id ?? null,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue'
+                'message' => 'Une erreur est survenue',
             ], 500);
         }
     }
@@ -177,9 +180,9 @@ class BlogCommentController extends Controller
      * Delete a comment
      *
      * @authenticated
+     *
      * @group Blogs
-     * @param BlogComment $comment
-     * @return JsonResponse
+     *
      * @bodyParam comment integer required ID of the comment to delete. Example: 456
      */
     public function destroy(BlogComment $comment): JsonResponse
@@ -199,14 +202,14 @@ class BlogCommentController extends Controller
 
             $response = [
                 'success' => true,
-                'message' => 'Commentaire supprimé!'
+                'message' => 'Commentaire supprimé!',
             ];
 
             // If this was a reply, return updated parent HTML with new count
             if ($parentComment) {
                 $parentComment->load(['user', 'likes', 'replies.user', 'replies.likes']);
                 $parentComment->loadCount('replies');
-                
+
                 $parentHtml = view('admin.blogs.partials.comments.item', [
                     'comment' => $parentComment,
                     'level' => 0,
@@ -221,12 +224,12 @@ class BlogCommentController extends Controller
             \Log::error('Comment deletion failed', [
                 'user_id' => Auth::id(),
                 'comment_id' => $comment->id ?? null,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue'
+                'message' => 'Une erreur est survenue',
             ], 500);
         }
     }

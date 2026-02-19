@@ -3,19 +3,19 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Address;
-use App\Models\User;
 use App\Models\Housing;
-use Tests\TestCase;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Address Model Unit Tests
- * 
+ *
  * Tests the Address model including:
  * - Relationships (users, housings, addressables)
  * - Model attributes and factory
  * - Database operations
- * 
+ *
  * SAFE TO RUN: RefreshDatabase uses in-memory SQLite database (:memory:)
  * configured in phpunit.xml. This does NOT affect your local database.
  */

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FiscalIncomeRange extends Model
 {
-    use SoftDeletes, HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -40,6 +40,7 @@ class FiscalIncomeRange extends Model
             ->get()
             ->mapWithKeys(function ($item) {
                 $label = self::formatRange($item->min, $item->max);
+
                 return [$item->id => $label];
             })
             ->toArray();
@@ -47,15 +48,14 @@ class FiscalIncomeRange extends Model
 
     protected static function formatRange(?float $min, ?float $max): string
     {
-        if (!is_null($min) && !is_null($max)) {
+        if (! is_null($min) && ! is_null($max)) {
             return "{$min} < x < {$max}";
-        } elseif (!is_null($min)) {
+        } elseif (! is_null($min)) {
             return "{$min} <";
-        } elseif (!is_null($max)) {
+        } elseif (! is_null($max)) {
             return "{$max} >";
         } else {
             return 'Non défini';
         }
     }
-
 }

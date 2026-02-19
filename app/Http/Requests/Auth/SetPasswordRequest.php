@@ -16,11 +16,11 @@ class SetPasswordRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->route('user');
-        
+
         return [
             'password' => [
-                'required', 
-                'confirmed', 
+                'required',
+                'confirmed',
                 Rules\Password::defaults(),
                 function ($attribute, $value, $fail) use ($user) {
                     // Check if password is different from old password (if it exists)
@@ -41,4 +41,3 @@ class SetPasswordRequest extends FormRequest
         ];
     }
 }
-

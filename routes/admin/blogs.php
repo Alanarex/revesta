@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\BlogBookmarkController;
-use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BlogCommentController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BlogLikeController;
 use Illuminate\Support\Facades\Route;
 
@@ -96,5 +96,3 @@ Route::prefix('blogs')
             ->middleware('throttle:60,1')
             ->name('bookmarks.toggle');
     });
-
-

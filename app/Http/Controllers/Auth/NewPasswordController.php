@@ -6,15 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Services\PasswordService;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class NewPasswordController extends Controller
 {
-    public function __construct(protected PasswordService $passwordService)
-    {
-    }
+    public function __construct(protected PasswordService $passwordService) {}
+
     /**
      * Display the password reset view.
      */
@@ -38,10 +37,10 @@ class NewPasswordController extends Controller
             }
 
             return back()->withInput($request->only('email'))
-                        ->with('error', 'Erreur lors de la reinitialisation du mot de passe.');
+                ->with('error', 'Erreur lors de la reinitialisation du mot de passe.');
         } catch (\Exception $e) {
             return back()->withInput($request->only('email'))
-                        ->with('error', 'Erreur lors de la reinitialisation du mot de passe: ' . $e->getMessage());
+                ->with('error', 'Erreur lors de la reinitialisation du mot de passe: '.$e->getMessage());
         }
     }
 }

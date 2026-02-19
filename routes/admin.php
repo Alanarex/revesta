@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')
     ->middleware(['auth', 'verified', IsAdmin::class])
     ->group(function () {
-        foreach (glob(__DIR__ . '/admin/*.php') as $filename) {
+        foreach (glob(__DIR__.'/admin/*.php') as $filename) {
             require $filename;
         }
     });

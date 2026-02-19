@@ -14,27 +14,25 @@ use App\Policies\BlogPolicy;
 use App\Policies\NewsletterCampaignPolicy;
 use App\Policies\NewsletterPolicy;
 use App\Policies\UserPolicy;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\ServiceProvider;
-
-use App\Repositories\UserRepository;
 use App\Repositories\AddressRepository;
-use App\Repositories\BlogRepository;
+use App\Repositories\BlogBookmarkRepository;
 use App\Repositories\BlogCommentRepository;
 use App\Repositories\BlogLikeRepository;
-use App\Repositories\BlogBookmarkRepository;
+use App\Repositories\BlogRepository;
 use App\Repositories\NotificationRepository;
-
-use App\Services\AuthService;
-use App\Services\RegistrationService;
-use App\Services\PasswordService;
-use App\Services\VerificationService;
+use App\Repositories\UserRepository;
 use App\Services\AddressService;
+use App\Services\AuthService;
 use App\Services\BlogService;
 use App\Services\BookmarkService;
 use App\Services\CommentService;
 use App\Services\LikeService;
 use App\Services\NotificationService;
+use App\Services\PasswordService;
+use App\Services\RegistrationService;
+use App\Services\VerificationService;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
@@ -46,9 +44,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register explicit bindings for auth-related services and repositories
         $this->app->singleton(UserRepository::class, function ($app) {
-            return new UserRepository();
+            return new UserRepository;
         });
-
 
         $this->app->singleton(AuthService::class, function ($app) {
             return new AuthService($app->make(UserRepository::class));
@@ -59,28 +56,28 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(PasswordService::class, function ($app) {
-            return new PasswordService();
+            return new PasswordService;
         });
 
         $this->app->singleton(VerificationService::class, function ($app) {
-            return new VerificationService();
+            return new VerificationService;
         });
 
         // Other repositories
         $this->app->singleton(AddressRepository::class, function ($app) {
-            return new AddressRepository();
+            return new AddressRepository;
         });
 
         $this->app->singleton(BlogRepository::class, function ($app) {
-            return new BlogRepository();
+            return new BlogRepository;
         });
 
         $this->app->singleton(BlogCommentRepository::class, function ($app) {
-            return new BlogCommentRepository();
+            return new BlogCommentRepository;
         });
 
         $this->app->singleton(NotificationRepository::class, function ($app) {
-            return new NotificationRepository();
+            return new NotificationRepository;
         });
 
         // Other services

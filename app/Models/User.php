@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Mail\PasswordResetMail;
 use App\Mail\EmailVerificationMail;
+use App\Mail\PasswordResetMail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;

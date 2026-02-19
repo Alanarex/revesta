@@ -22,7 +22,7 @@ class BlogRepository
                 'comments',
                 'comments as direct_comments_count' => function ($q) {
                     $q->whereNull('parent_id');
-                }
+                },
             ])
             ->published()
             ->searchByTitle($search);
@@ -36,7 +36,7 @@ class BlogRepository
                 },
                 'likes as liked_by_auth' => function ($q) use ($authUserId) {
                     $q->where('user_id', $authUserId);
-                }
+                },
             ]);
         }
 
@@ -56,7 +56,7 @@ class BlogRepository
                 'comments',
                 'comments as direct_comments_count' => function ($q) {
                     $q->whereNull('parent_id');
-                }
+                },
             ]);
 
         // Apply status filter
@@ -67,13 +67,13 @@ class BlogRepository
         // Apply search filter
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('short_description', 'like', '%' . $search . '%')
-                  ->orWhere('content', 'like', '%' . $search . '%')
-                  ->orWhereHas('user', function ($q) use ($search) {
-                      $q->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%');
-                  });
+                $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('short_description', 'like', '%'.$search.'%')
+                    ->orWhere('content', 'like', '%'.$search.'%')
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('first_name', 'like', '%'.$search.'%')
+                            ->orWhere('last_name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -100,7 +100,7 @@ class BlogRepository
                 },
                 'likes as liked_by_auth' => function ($q) use ($authUserId) {
                     $q->where('user_id', $authUserId);
-                }
+                },
             ]);
         }
 
@@ -123,12 +123,12 @@ class BlogRepository
                 'comments',
                 'comments as direct_comments_count' => function ($q) {
                     $q->whereNull('parent_id');
-                }
+                },
             ])
             ->withCount([
                 'bookmarks as bookmarked_by_profile' => function ($q) use ($profileUserId) {
                     $q->where('user_id', $profileUserId);
-                }
+                },
             ])
             ->where(function ($q) use ($profileUserId, $includeBookmarked) {
                 $q->where('user_id', $profileUserId);
@@ -147,7 +147,7 @@ class BlogRepository
                 },
                 'likes as liked_by_auth' => function ($q) use ($authUserId) {
                     $q->where('user_id', $authUserId);
-                }
+                },
             ]);
         }
 
@@ -254,7 +254,7 @@ class BlogRepository
                 'comments',
                 'comments as direct_comments_count' => function ($q) {
                     $q->whereNull('parent_id');
-                }
+                },
             ])
             ->withCount([
                 'likes as liked_by_auth' => function ($qq) use ($authUserId) {
@@ -262,7 +262,7 @@ class BlogRepository
                 },
                 'bookmarks as bookmarked_by_auth' => function ($qq) use ($authUserId) {
                     $qq->where('user_id', $authUserId);
-                }
+                },
             ])
             ->find($id);
 
@@ -352,7 +352,7 @@ class BlogRepository
     {
         return $blog->update([
             'status' => 'published',
-            'published_at' => now()
+            'published_at' => now(),
         ]);
     }
 
@@ -363,7 +363,7 @@ class BlogRepository
     {
         return $blog->update([
             'status' => 'rejected',
-            'rejection_reason' => $reason
+            'rejection_reason' => $reason,
         ]);
     }
 }

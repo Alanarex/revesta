@@ -20,9 +20,9 @@ class UpdateProfileRequest extends FormRequest
     {
         $this->merge([
             'first_name' => is_string($this->first_name) ? trim($this->first_name) : $this->first_name,
-            'last_name'  => is_string($this->last_name) ? trim($this->last_name) : $this->last_name,
-            'email'      => is_string($this->email) ? strtolower(trim($this->email)) : $this->email,
-            'phone'      => is_string($this->phone) ? preg_replace('/\s+/', '', $this->phone) : $this->phone,
+            'last_name' => is_string($this->last_name) ? trim($this->last_name) : $this->last_name,
+            'email' => is_string($this->email) ? strtolower(trim($this->email)) : $this->email,
+            'phone' => is_string($this->phone) ? preg_replace('/\s+/', '', $this->phone) : $this->phone,
             'civil_status' => $this->civil_status === '' ? null : $this->civil_status,
             'family_status' => $this->family_status === '' ? null : $this->family_status,
         ]);

@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Blog;
-use App\Models\BlogLike;
 use App\Models\BlogComment;
+use App\Models\BlogLike;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +20,7 @@ class BlogLikeSeeder extends Seeder
 
         if ($publishedBlogs->isEmpty() || $users->isEmpty()) {
             $this->command->warn('No published blogs or users found.');
+
             return;
         }
 
@@ -60,6 +61,6 @@ class BlogLikeSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Created ' . $totalLikes . ' likes.');
+        $this->command->info('✅ Created '.$totalLikes.' likes.');
     }
 }

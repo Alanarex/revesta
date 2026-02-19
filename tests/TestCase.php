@@ -5,8 +5,8 @@ namespace Tests;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Passport\Client;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Laravel\Passport\Client;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -42,12 +42,11 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Create an admin user for testing.
-     * 
+     *
      * This is useful for tests that require admin authorization.
      * Creates the admin role if it doesn't exist.
-     * 
-     * @param array $attributes Optional attributes to override defaults
-     * @return User
+     *
+     * @param  array  $attributes  Optional attributes to override defaults
      */
     protected function createAdminUser(array $attributes = []): User
     {
@@ -63,11 +62,11 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Add CSRF token to request data.
-     * 
+     *
      * Laravel tests require CSRF tokens for POST/PUT/PATCH/DELETE requests.
      * This helper automatically includes the token in the data array.
-     * 
-     * @param array $data Request data
+     *
+     * @param  array  $data  Request data
      * @return array Data with CSRF token included
      */
     protected function withCsrfToken(array $data = []): array

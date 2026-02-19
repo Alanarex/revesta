@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class DispatchScheduledNewsletters extends Command
 {
     protected $signature = 'newsletter:dispatch-scheduled';
+
     protected $description = 'Dispatch scheduled newsletter campaigns whose scheduled_at is due.';
 
     public function __construct(protected NewsletterCampaignService $service)

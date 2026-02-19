@@ -55,7 +55,7 @@ class UserController extends Controller
         $isAdmin = auth()->check() && method_exists(auth()->user(), 'isAdmin') && auth()->user()->isAdmin();
 
         $data = collect($users->items())->map(
-            fn($user) => $this->userService->formatUserForList($user, $isAdmin)
+            fn ($user) => $this->userService->formatUserForList($user, $isAdmin)
         );
 
         return response()->json([
@@ -90,7 +90,7 @@ class UserController extends Controller
         try {
             $data = $request->validated();
             $user = $this->userService->createUser($data);
-            
+
             // Send verification email with password setup link
             $this->userService->sendEmailVerification($user);
 
@@ -144,11 +144,11 @@ class UserController extends Controller
 
         // Calculate permissions and routes
         $canEdit = auth()->check() && ($isViewingOwn || $isAdmin);
-        $updateRoute = $isAdmin && !$isViewingOwn ? route('admin.users.update', $user) : route('admin.users.update', $user);
-        $resetRoute = $isAdmin && !$isViewingOwn
+        $updateRoute = $isAdmin && ! $isViewingOwn ? route('admin.users.update', $user) : route('admin.users.update', $user);
+        $resetRoute = $isAdmin && ! $isViewingOwn
             ? route('admin.users.reset-password', $user)
             : route('admin.users.reset-password', $user);
-        $destroyRoute = $isAdmin && !$isViewingOwn ? route('admin.users.destroy', $user) : route('admin.users.destroy', $user);
+        $destroyRoute = $isAdmin && ! $isViewingOwn ? route('admin.users.destroy', $user) : route('admin.users.destroy', $user);
 
         // Load blogs with type-safe helper
         ['blogsList' => $blogsList] = $this->loadUserBlogs($loaded, $isViewingOwn);
@@ -215,6 +215,7 @@ class UserController extends Controller
         } catch (\Throwable) {
             $blogsList = collect();
         }
+
         return ['blogsList' => $blogsList];
     }
 
@@ -238,18 +239,18 @@ class UserController extends Controller
         try {
             // Unverify email and force refresh
             $user = $this->userService->updateUser($user, ['email_verified_at' => null]);
-            
+
             // Generate password reset token and send email
             $token = Password::createToken($user);
             $resetUrl = route('password.reset', ['token' => $token, 'email' => $user->email]);
-            
+
             Mail::queue(new PasswordResetMail(
                 userName: $user->first_name,
                 resetUrl: $resetUrl,
                 recipientEmail: $user->email,
             ));
 
-            return response()->json(['success' => true, 'message' => 'Un email de reinitialisation de mot de passe a été envoyé à ' . $user->email]);
+            return response()->json(['success' => true, 'message' => 'Un email de reinitialisation de mot de passe a été envoyé à '.$user->email]);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }

@@ -4,9 +4,9 @@ namespace Tests\Feature\Controllers\Users;
 
 use App\Models\Role;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Tests\TestCase;
 
 /**
  * User Controller Create & Store Routes Tests
@@ -18,8 +18,11 @@ class UserControllerCreateStoreTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $regularUser;
+
     private Role $adminRole;
+
     private Role $userRole;
 
     protected function setUp(): void

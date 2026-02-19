@@ -27,12 +27,13 @@ class BlogCommentFactory extends Factory
     private function generateRandomComment(): string
     {
         $types = [
-            'short' => fn() => $this->faker->sentence(rand(5, 15)),
-            'medium' => fn() => $this->faker->sentences(rand(2, 4), true),
-            'long' => fn() => $this->faker->paragraph(rand(3, 6)),
+            'short' => fn () => $this->faker->sentence(rand(5, 15)),
+            'medium' => fn () => $this->faker->sentences(rand(2, 4), true),
+            'long' => fn () => $this->faker->paragraph(rand(3, 6)),
         ];
 
         $type = $this->faker->randomElement(array_keys($types));
+
         return $types[$type]();
     }
 

@@ -3,8 +3,8 @@
 namespace App\Mail;
 
 use App\Mail\Concerns\ProvidesEmailLayoutData;
-use App\Models\NewsletterCampaign;
 use App\Models\Newsletter;
+use App\Models\NewsletterCampaign;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 
 class NewsletterEmail extends Mailable
 {
-    use Queueable, SerializesModels, ProvidesEmailLayoutData;
+    use ProvidesEmailLayoutData, Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
@@ -22,8 +22,7 @@ class NewsletterEmail extends Mailable
     public function __construct(
         public NewsletterCampaign $campaign,
         public Newsletter $subscriber,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -64,8 +63,6 @@ class NewsletterEmail extends Mailable
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array
      */
     public function attachments(): array
     {

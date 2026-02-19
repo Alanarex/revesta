@@ -27,9 +27,10 @@ class RegisteredUserController extends Controller
     {
         try {
             $registration->registerAndLogin($request->validated());
+
             return redirect(route('login'))->with('success', 'Inscription reussie! Veuillez verifier votre email et definir votre mot de passe pour vous connecter.');
         } catch (\Exception $e) {
-            return redirect(route('register'))->withInput()->with('error', 'Erreur lors de l\'inscription: ' . $e->getMessage());
+            return redirect(route('register'))->withInput()->with('error', 'Erreur lors de l\'inscription: '.$e->getMessage());
         }
     }
 }

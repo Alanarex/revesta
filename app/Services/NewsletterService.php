@@ -11,14 +11,11 @@ class NewsletterService
 {
     public function __construct(
         protected NewsletterRepository $newsletterRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Subscribe email to newsletter.
      *
-     * @param string $email
-     * @param string|null $ipAddress
      * @return array<string, bool|Newsletter>
      */
     public function subscribe(string $email, ?string $ipAddress = null): array
@@ -50,14 +47,13 @@ class NewsletterService
     /**
      * Verify subscriber by email.
      *
-     * @param string $email
      * @return array<string, bool|string>
      */
     public function verify(string $email): array
     {
         $result = $this->newsletterRepository->verify($email);
 
-        if (!$result) {
+        if (! $result) {
             return [
                 'success' => false,
                 'message' => 'Abonné non trouvé.',
@@ -73,14 +69,13 @@ class NewsletterService
     /**
      * Unsubscribe email from newsletter.
      *
-     * @param string $email
      * @return array<string, bool|string>
      */
     public function unsubscribe(string $email): array
     {
         $result = $this->newsletterRepository->unsubscribe($email);
 
-        if (!$result) {
+        if (! $result) {
             return [
                 'success' => false,
                 'message' => 'Abonné non trouvé.',
@@ -95,8 +90,6 @@ class NewsletterService
 
     /**
      * Get verified subscribers count.
-     *
-     * @return int
      */
     public function getVerifiedCount(): int
     {
@@ -138,11 +131,6 @@ class NewsletterService
 
     /**
      * Get paginated subscribers list.
-     *
-     * @param int $perPage
-     * @param string $sort
-     * @param bool $verified
-     * @return LengthAwarePaginator
      */
     public function getSubscribers(int $perPage = 50, string $sort = 'latest', bool $verified = true): LengthAwarePaginator
     {
@@ -162,9 +150,6 @@ class NewsletterService
 
     /**
      * Export subscribers to CSV format.
-     *
-     * @param bool $verified
-     * @return string
      */
     public function exportToCSV(bool $verified = true): string
     {
@@ -181,7 +166,7 @@ class NewsletterService
 
         foreach ($subscribers as $subscriber) {
             $csv .= sprintf(
-                '"%s","%s","%s"' . "\n",
+                '"%s","%s","%s"'."\n",
                 $subscriber->email,
                 $subscriber->subscribed_at?->format('Y-m-d H:i:s') ?? '',
                 $subscriber->verified_at?->format('Y-m-d H:i:s') ?? ''
@@ -193,14 +178,10 @@ class NewsletterService
 
     /**
      * Search subscribers by email.
-     *
-     * @param string $searchTerm
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
     public function searchSubscribers(string $searchTerm, int $perPage = 50): LengthAwarePaginator
     {
-        return Newsletter::where('email', 'like', '%' . $searchTerm . '%')
+        return Newsletter::where('email', 'like', '%'.$searchTerm.'%')
             ->whereNull('deleted_at')
             ->orderBy('subscribed_at', 'desc')
             ->paginate($perPage);
@@ -209,8 +190,7 @@ class NewsletterService
     /**
      * Bulk verify subscribers.
      *
-     * @param array<int> $subscriberIds
-     * @return int
+     * @param  array<int>  $subscriberIds
      */
     public function bulkVerify(array $subscriberIds): int
     {
@@ -222,8 +202,7 @@ class NewsletterService
     /**
      * Bulk unsubscribe (soft delete).
      *
-     * @param array<int> $subscriberIds
-     * @return int
+     * @param  array<int>  $subscriberIds
      */
     public function bulkUnsubscribe(array $subscriberIds): int
     {
@@ -234,8 +213,6 @@ class NewsletterService
 
     /**
      * Cleanup duplicate emails (keep oldest, delete newer duplicates).
-     *
-     * @return int
      */
     public function cleanupDuplicates(): int
     {
@@ -269,9 +246,6 @@ class NewsletterService
 
     /**
      * Get subscribers by IP address.
-     *
-     * @param string $ipAddress
-     * @return Collection
      */
     public function getSubscribersByIp(string $ipAddress): Collection
     {
@@ -283,10 +257,6 @@ class NewsletterService
 
     /**
      * Get recently subscribed (last N days).
-     *
-     * @param int $days
-     * @param int $limit
-     * @return Collection
      */
     public function getRecentlySubscribed(int $days = 7, int $limit = 100): Collection
     {
@@ -300,9 +270,6 @@ class NewsletterService
 
     /**
      * Check if email is subscribed.
-     *
-     * @param string $email
-     * @return bool
      */
     public function isSubscribed(string $email): bool
     {
@@ -313,8 +280,6 @@ class NewsletterService
 
     /**
      * Get unverified subscribers count.
-     *
-     * @return int
      */
     public function getUnverifiedCount(): int
     {
@@ -326,9 +291,6 @@ class NewsletterService
     /**
      * Send verification email to subscriber.
      * (Implementation depends on your email service)
-     *
-     * @param string $email
-     * @return bool
      */
     public function sendVerificationEmail(string $email): bool
     {
@@ -339,9 +301,6 @@ class NewsletterService
 
     /**
      * Restore soft-deleted subscriber.
-     *
-     * @param string $email
-     * @return bool
      */
     public function restore(string $email): bool
     {
@@ -354,9 +313,6 @@ class NewsletterService
 
     /**
      * Permanently delete subscriber.
-     *
-     * @param string $email
-     * @return bool
      */
     public function forceDelete(string $email): bool
     {

@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\BlogController;
-use App\Http\Controllers\BlogLikeController;
 use App\Http\Controllers\BlogBookmarkController;
 use App\Http\Controllers\BlogCommentController;
+use App\Http\Controllers\BlogLikeController;
 use Illuminate\Support\Facades\Route;
 
 /*

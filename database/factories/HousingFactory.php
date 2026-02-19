@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Address;
 use App\Models\FiscalIncomeRange;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class HousingFactory extends Factory
 {

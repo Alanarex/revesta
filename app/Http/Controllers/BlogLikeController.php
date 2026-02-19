@@ -17,14 +17,15 @@ class BlogLikeController extends Controller
      */
     public function __construct(
         protected LikeService $likeService
-    ) {
-    }
+    ) {}
 
     /**
      * Like or unlike a blog or comment
      *
      * @group Blogs
+     *
      * @authenticated
+     *
      * @urlParam model string required The model type (Blog or BlogComment). Example: Blog
      * @urlParam modelId integer required The ID of the model to like/unlike. Example: 123
      */
@@ -41,7 +42,7 @@ class BlogLikeController extends Controller
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Une erreur est survenue'
+                    'message' => 'Une erreur est survenue',
                 ], 400);
             }
 
@@ -50,7 +51,7 @@ class BlogLikeController extends Controller
             return response()->json([
                 'success' => true,
                 'is_filled' => $result['liked'],
-                'likes_count' => $result['count']
+                'likes_count' => $result['count'],
             ]);
         } catch (\Exception $e) {
             \Log::error('Like action failed', [
@@ -58,12 +59,12 @@ class BlogLikeController extends Controller
                 'blog_id' => $blog->id,
                 'model' => $model,
                 'modelId' => $modelId,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue'
+                'message' => 'Une erreur est survenue',
             ], 500);
         }
     }

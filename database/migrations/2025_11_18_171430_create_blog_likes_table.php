@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->morphs('likeable'); // blog_id or comment_id
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'likeable_id', 'likeable_type']);
         });
     }

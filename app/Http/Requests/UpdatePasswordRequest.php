@@ -20,13 +20,13 @@ class UpdatePasswordRequest extends FormRequest
     public function rules(): array
     {
         $user = auth()->user();
-        
+
         return [
             'current_password' => ['required', 'current_password'],
             'new_password' => [
-                'required', 
-                'string', 
-                'min:8', 
+                'required',
+                'string',
+                'min:8',
                 'confirmed',
                 function ($attribute, $value, $fail) use ($user) {
                     // Check if new password is different from current password
@@ -61,4 +61,3 @@ class UpdatePasswordRequest extends FormRequest
         ]);
     }
 }
-

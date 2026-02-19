@@ -10,8 +10,7 @@ class NewsletterCampaignService
 {
     public function __construct(
         protected NewsletterCampaignRepository $campaignRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * Get all campaigns.
@@ -48,8 +47,6 @@ class NewsletterCampaignService
     /**
      * Create a new draft campaign.
      *
-     * @param string $title
-     * @param string $content
      * @return array<string, bool|NewsletterCampaign>
      */
     public function createDraft(string $title, string $content): array
@@ -77,20 +74,17 @@ class NewsletterCampaignService
     /**
      * Update a campaign (only drafts can be updated).
      *
-     * @param int $id
-     * @param string $title
-     * @param string $content
      * @return array<string, bool|string>
      */
     public function updateDraft(int $id, string $title, string $content): array
     {
         $campaign = $this->campaignRepository->find($id);
 
-        if (!$campaign) {
+        if (! $campaign) {
             return ['success' => false, 'message' => 'Campagne non trouvée.'];
         }
 
-        if (!$campaign->isDraft()) {
+        if (! $campaign->isDraft()) {
             return ['success' => false, 'message' => 'Seuls les brouillons peuvent être mis à jour.'];
         }
 
@@ -108,9 +102,6 @@ class NewsletterCampaignService
 
     /**
      * Get campaign by ID.
-     *
-     * @param int $id
-     * @return NewsletterCampaign|null
      */
     public function getCampaign(int $id): ?NewsletterCampaign
     {
@@ -120,23 +111,23 @@ class NewsletterCampaignService
     /**
      * Delete a campaign (only drafts can be deleted).
      *
-     * @param int $id
      * @return array<string, bool|string>
      */
     public function deleteCampaign(int $id): array
     {
         $campaign = $this->campaignRepository->find($id);
 
-        if (!$campaign) {
+        if (! $campaign) {
             return ['success' => false, 'message' => 'Campagne non trouvée.'];
         }
 
-        if (!$campaign->isDraft()) {
+        if (! $campaign->isDraft()) {
             return ['success' => false, 'message' => 'Seuls les brouillons peuvent être supprimés.'];
         }
 
         try {
             $this->campaignRepository->delete($id);
+
             return ['success' => true, 'message' => 'Campagne supprimée avec succès.'];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => 'Erreur lors de la suppression de la campagne.'];
@@ -146,14 +137,13 @@ class NewsletterCampaignService
     /**
      * Send campaign now.
      *
-     * @param int $id
      * @return array<string, bool|string|int>
      */
     public function sendNow(int $id): array
     {
         $campaign = $this->campaignRepository->find($id);
 
-        if (!$campaign) {
+        if (! $campaign) {
             return ['success' => false, 'message' => 'Campagne non trouvée.'];
         }
 
@@ -174,26 +164,25 @@ class NewsletterCampaignService
      * Schedule campaign for later.
      * Allows scheduling both draft and already scheduled campaigns.
      *
-     * @param int $id
-     * @param \DateTime $scheduledAt
      * @return array<string, bool|string>
      */
     public function schedule(int $id, \DateTime $scheduledAt): array
     {
         $campaign = $this->campaignRepository->find($id);
 
-        if (!$campaign) {
+        if (! $campaign) {
             return ['success' => false, 'message' => 'Campagne non trouvée.'];
         }
 
         // Allow both draft and scheduled campaigns to be scheduled
-        if (!$campaign->isDraft() && !$campaign->isScheduled()) {
+        if (! $campaign->isDraft() && ! $campaign->isScheduled()) {
             return ['success' => false, 'message' => 'Seuls les brouillons ou les campagnes programmées peuvent être programmés.'];
         }
 
         try {
             $this->campaignRepository->markAsScheduled($id, $scheduledAt);
             $action = $campaign->isScheduled() ? 'mise à jour' : 'programmée';
+
             return ['success' => true, 'message' => "Campagne {$action} avec succès."];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => 'Erreur lors de la programmation de la campagne.'];
@@ -203,18 +192,17 @@ class NewsletterCampaignService
     /**
      * Cancel scheduled campaign and revert to draft.
      *
-     * @param int $id
      * @return array<string, bool|string>
      */
     public function cancelSchedule(int $id): array
     {
         $campaign = $this->campaignRepository->find($id);
 
-        if (!$campaign) {
+        if (! $campaign) {
             return ['success' => false, 'message' => 'Campagne non trouvée.'];
         }
 
-        if (!$campaign->isScheduled()) {
+        if (! $campaign->isScheduled()) {
             return ['success' => false, 'message' => 'Seules les campagnes programmées peuvent être annulées.'];
         }
 
@@ -223,17 +211,16 @@ class NewsletterCampaignService
                 'status' => NewsletterCampaign::DRAFT,
                 'scheduled_at' => null,
             ]);
+
             return ['success' => true, 'message' => 'Programmation annulée. La campagne a été rétablie en brouillon.'];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => 'Erreur lors de l\'annulation de la programmation.'];
         }
     }
+
     /**
      * Calculate subscribers count for a campaign.
      * Returns 0 if draft, otherwise returns count of verified newsletter subscribers.
-     *
-     * @param NewsletterCampaign $campaign
-     * @return int
      */
     public function getSubscribersCount(NewsletterCampaign $campaign): int
     {

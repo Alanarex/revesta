@@ -5,9 +5,9 @@ namespace Tests\Feature\Controllers\Users;
 use App\Mail\PasswordResetMail;
 use App\Models\Role;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Tests\TestCase;
 
 /**
  * User Controller Password Reset Route Tests
@@ -19,8 +19,11 @@ class UserControllerPasswordTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $regularUser;
+
     private Role $adminRole;
+
     private Role $userRole;
 
     protected function setUp(): void
@@ -56,7 +59,7 @@ class UserControllerPasswordTest extends TestCase
     public function test_reset_password_allows_admin()
     {
         Mail::fake();
-        
+
         $user = User::factory()->create(['role_id' => $this->userRole->id]);
         $this->assertNotNull($user->email_verified_at);
 
@@ -68,7 +71,7 @@ class UserControllerPasswordTest extends TestCase
 
         // Check email was queued
         Mail::assertQueued(PasswordResetMail::class);
-        
+
         // Check user email was unverified
         $user->refresh();
         $this->assertNull($user->email_verified_at);
@@ -80,7 +83,7 @@ class UserControllerPasswordTest extends TestCase
     public function test_reset_password_sends_reset_email()
     {
         Mail::fake();
-        
+
         $user = User::factory()->create(['role_id' => $this->userRole->id]);
 
         $this->actingAs($this->admin)
@@ -112,7 +115,7 @@ class UserControllerPasswordTest extends TestCase
     {
         $response = $this->actingAs($this->admin)
             ->postCsrf(route('admin.users.reset-password', $this->admin), []);
- 
+
         $response->assertStatus(403);
     }
 
@@ -135,7 +138,7 @@ class UserControllerPasswordTest extends TestCase
     public function test_reset_password_unverifies_email()
     {
         Mail::fake();
-        
+
         $user = User::factory()->create(['role_id' => $this->userRole->id]);
         $this->assertTrue($user->hasVerifiedEmail());
 

@@ -49,4 +49,3 @@ Route::middleware('guest')->group(function () {
         ->middleware('signed')
         ->name('password.set.store');
 });
-

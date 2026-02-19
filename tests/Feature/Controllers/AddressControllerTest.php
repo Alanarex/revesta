@@ -4,18 +4,18 @@ namespace Tests\Feature\Controllers;
 
 use App\Models\Address;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Address Controller Feature Tests
- * 
+ *
  * Tests the HTTP controller layer including:
  * - CRUD operations (create, read, update, delete)
  * - Form submission and validation
  * - Flash messages and redirects
  * - View rendering
- * 
+ *
  * SAFE TO RUN: RefreshDatabase uses in-memory SQLite database (:memory:)
  * configured in phpunit.xml. This does NOT affect your local database.
  */

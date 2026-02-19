@@ -18,7 +18,7 @@ Route::prefix('v1')
     ->name('api.v1.')
     ->group(function () {
 
-        foreach (glob(__DIR__ . '/api/v1/*.php') as $filename) {
+        foreach (glob(__DIR__.'/api/v1/*.php') as $filename) {
             require $filename;
         }
     });

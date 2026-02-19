@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ApproveBlogRequest;
 use App\Http\Requests\CreateBlogRequest;
 use App\Http\Requests\DeleteBlogRequest;
 use App\Http\Requests\EditBlogRequest;
@@ -11,7 +12,6 @@ use App\Http\Requests\SearchBlogsRequest;
 use App\Http\Requests\ShowBlogRequest;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
-use App\Http\Requests\ApproveBlogRequest;
 use App\Models\Blog;
 use App\Services\BlogService;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +20,8 @@ class BlogController extends Controller
 {
     public function __construct(
         protected BlogService $blogService
-    ) {
-    }
+    ) {}
+
     public function index(SearchBlogsRequest $request)
     {
         $search = $request->getSearchTerm();
@@ -71,10 +71,10 @@ class BlogController extends Controller
         $blog = $this->blogService->findBlog($blog->id, Auth::id());
 
         // Calculate permissions
-        $interactionsDisabled = !$blog->isPublished();
-        $canLike = Auth::check() && !$interactionsDisabled;
-        $canBookmark = Auth::check() && !$interactionsDisabled;
-        $canShare = !$interactionsDisabled;
+        $interactionsDisabled = ! $blog->isPublished();
+        $canLike = Auth::check() && ! $interactionsDisabled;
+        $canBookmark = Auth::check() && ! $interactionsDisabled;
+        $canShare = ! $interactionsDisabled;
         $canComment = Auth::check();
         $canEdit = Auth::check() && Auth::id() === $blog->user_id;
         $canDelete = Auth::check() && ((auth()->user()->isAdmin()) || Auth::id() === $blog->user_id);
@@ -131,7 +131,7 @@ class BlogController extends Controller
                 'message' => $request->validated()['status'] === 'pending'
                     ? 'Blog soumis pour approbation!'
                     : 'Brouillon sauvegardé!',
-                'redirect' => route('admin.blogs.show', $blog)
+                'redirect' => route('admin.blogs.show', $blog),
             ]);
         }
 
@@ -176,7 +176,7 @@ class BlogController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $message,
-                'redirect' => route('admin.blogs.show', $blog)
+                'redirect' => route('admin.blogs.show', $blog),
             ]);
         }
 
@@ -193,7 +193,7 @@ class BlogController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Blog soumis pour approbation!',
-                'redirect' => route('admin.blogs.show', $blog)
+                'redirect' => route('admin.blogs.show', $blog),
             ]);
         }
 
@@ -209,7 +209,7 @@ class BlogController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Blog supprimé avec succès!'
+            'message' => 'Blog supprimé avec succès!',
         ]);
     }
 
@@ -220,7 +220,7 @@ class BlogController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Blog approuvé et publié!'
+            'message' => 'Blog approuvé et publié!',
         ]);
     }
 
@@ -231,16 +231,12 @@ class BlogController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Blog refusé!'
+            'message' => 'Blog refusé!',
         ]);
     }
 
     /**
      * Prepare the status alert data for the blog show view
-     * 
-     * @param Blog $blog
-     * @param bool $canEdit
-     * @return array|null
      */
     private function prepareStatusAlert(Blog $blog, bool $canEdit): ?array
     {

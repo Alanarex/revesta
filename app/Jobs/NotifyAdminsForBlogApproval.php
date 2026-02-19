@@ -34,7 +34,7 @@ class NotifyAdminsForBlogApproval implements ShouldQueue
                 'message' => "{$this->author->name} has requested approval for the blog: '{$this->blog->title}'",
                 'type' => 'info',
                 'notifiable_type' => Blog::class,
-                'notifiable_id' => $this->blog->id
+                'notifiable_id' => $this->blog->id,
             ]);
         }
     }

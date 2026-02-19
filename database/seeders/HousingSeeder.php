@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Housing;
+use Illuminate\Database\Seeder;
 
 class HousingSeeder extends Seeder
 {
     public function run()
     {
         $this->command->info('Creating housing types...');
-        
+
         $count = 10;
         $housings = Housing::factory()->count($count)->create();
-        
+
         // Attach addresses via polymorphic relationship
         foreach ($housings as $housing) {
             if ($housing->address_id) {
@@ -24,7 +24,7 @@ class HousingSeeder extends Seeder
                 ]);
             }
         }
-        
-        $this->command->info('✅ Created ' . $count . ' housing types.');
+
+        $this->command->info('✅ Created '.$count.' housing types.');
     }
 }

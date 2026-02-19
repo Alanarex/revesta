@@ -26,7 +26,7 @@ class NewsletterCampaignFactory extends Factory
             'content' => json_encode([
                 'ops' => [
                     ['insert' => $this->faker->paragraphs(3, true)],
-                ]
+                ],
             ]),
             'status' => $status,
             'scheduled_at' => $scheduledAt,

@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Address;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 
 class AddressRepository
 {
@@ -22,18 +21,18 @@ class AddressRepository
             'city',
             'departement',
             'created_at',
-            'updated_at'
+            'updated_at',
         ]);
 
         // Apply search filter
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', '%' . $search . '%')
-                    ->orWhere('label', 'like', '%' . $search . '%')
-                    ->orWhere('street', 'like', '%' . $search . '%')
-                    ->orWhere('city', 'like', '%' . $search . '%')
-                    ->orWhere('postal_code', 'like', '%' . $search . '%')
-                    ->orWhere('departement', 'like', '%' . $search . '%');
+                $q->where('id', 'like', '%'.$search.'%')
+                    ->orWhere('label', 'like', '%'.$search.'%')
+                    ->orWhere('street', 'like', '%'.$search.'%')
+                    ->orWhere('city', 'like', '%'.$search.'%')
+                    ->orWhere('postal_code', 'like', '%'.$search.'%')
+                    ->orWhere('departement', 'like', '%'.$search.'%');
             });
         }
 
@@ -76,6 +75,7 @@ class AddressRepository
     public function update(Address $address, array $data): Address
     {
         $address->update($data);
+
         return $address->fresh();
     }
 

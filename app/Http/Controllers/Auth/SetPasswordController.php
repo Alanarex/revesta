@@ -8,14 +8,11 @@ use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class SetPasswordController extends Controller
 {
-    public function __construct(protected AuthService $authService)
-    {
-    }
+    public function __construct(protected AuthService $authService) {}
 
     /**
      * Show the set password form.
@@ -44,7 +41,7 @@ class SetPasswordController extends Controller
             // Redirect to login with success message
             return redirect(route('login'))->with('success', 'Votre mot de passe a ete defini avec succes! Veuillez vous connecter.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Erreur lors de la definition du mot de passe: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de la definition du mot de passe: '.$e->getMessage());
         }
     }
 }

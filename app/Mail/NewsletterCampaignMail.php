@@ -11,6 +11,7 @@ class NewsletterCampaignMail extends Mailable
     use Queueable, SerializesModels;
 
     public string $title;
+
     public string $content;
 
     public function __construct(string $title, string $content)

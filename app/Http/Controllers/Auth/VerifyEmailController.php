@@ -9,9 +9,8 @@ use Illuminate\Http\RedirectResponse;
 
 class VerifyEmailController extends Controller
 {
-    public function __construct(protected VerificationService $verificationService)
-    {
-    }
+    public function __construct(protected VerificationService $verificationService) {}
+
     /**
      * Mark the authenticated user's email address as verified.
      */

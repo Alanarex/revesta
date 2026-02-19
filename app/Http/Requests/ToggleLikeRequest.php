@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Auth\Access\AuthorizationException;
 use App\Models\Blog;
 use App\Models\BlogComment;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 
 class ToggleLikeRequest extends FormRequest
 {
@@ -29,26 +28,30 @@ class ToggleLikeRequest extends FormRequest
 
             if ($type === Blog::class) {
                 $model = Blog::find($id);
-                if (!$model) {
+                if (! $model) {
                     $validator->errors()->add('likeable_id', 'The specified blog does not exist.');
+
                     return;
                 }
 
-                if (!\Gate::allows('like', $model)) {
+                if (! \Gate::allows('like', $model)) {
                     $validator->errors()->add('likeable', 'This action is unauthorized.');
+
                     return;
                 }
             }
 
             if ($type === BlogComment::class) {
                 $model = BlogComment::find($id);
-                if (!$model) {
+                if (! $model) {
                     $validator->errors()->add('likeable_id', 'The specified comment does not exist.');
+
                     return;
                 }
 
-                if (!\Gate::allows('like', $model)) {
+                if (! \Gate::allows('like', $model)) {
                     $validator->errors()->add('likeable', 'This action is unauthorized.');
+
                     return;
                 }
             }

@@ -2,12 +2,11 @@
 
 namespace Tests\Unit\Services;
 
-use Tests\TestCase;
-use App\Services\AuthService;
 use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Tests\TestCase;
 
 class AuthServiceTest extends TestCase
 {

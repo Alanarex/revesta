@@ -19,6 +19,7 @@ class BlogBookmarkSeeder extends Seeder
 
         if ($publishedBlogs->isEmpty() || $users->isEmpty()) {
             $this->command->warn('No published blogs or users found.');
+
             return;
         }
 
@@ -39,6 +40,6 @@ class BlogBookmarkSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Created ' . $totalBookmarks . ' bookmarks.');
+        $this->command->info('✅ Created '.$totalBookmarks.' bookmarks.');
     }
 }

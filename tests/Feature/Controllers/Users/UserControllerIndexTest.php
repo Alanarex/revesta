@@ -4,8 +4,8 @@ namespace Tests\Feature\Controllers\Users;
 
 use App\Models\Role;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * User Controller Index & List Routes Tests
@@ -17,8 +17,11 @@ class UserControllerIndexTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $regularUser;
+
     private Role $adminRole;
+
     private Role $userRole;
 
     protected function setUp(): void
@@ -173,7 +176,7 @@ class UserControllerIndexTest extends TestCase
         User::factory()->create(['email' => 'jane@example.com', 'first_name' => 'Jane']);
 
         $response = $this->actingAs($this->admin)
-            ->get(route('admin.users.list') . '?search=jane');
+            ->get(route('admin.users.list').'?search=jane');
 
         $data = $response->json('data');
         $this->assertLessThanOrEqual(2, count($data));
@@ -187,7 +190,7 @@ class UserControllerIndexTest extends TestCase
         User::factory(15)->create();
 
         $response = $this->actingAs($this->admin)
-            ->get(route('admin.users.list') . '?per_page=10&page=1');
+            ->get(route('admin.users.list').'?per_page=10&page=1');
 
         $response->assertStatus(200);
         $json = $response->json();

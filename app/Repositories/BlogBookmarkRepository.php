@@ -27,7 +27,7 @@ class BlogBookmarkRepository
                 'user_id' => $user->id,
                 'blog_id' => $blog->id,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             $bookmarked = $inserted > 0;

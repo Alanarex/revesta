@@ -16,7 +16,7 @@ class ManageNewsletterCampaignRequest extends FormRequest
         // Get campaign from route parameter
         $campaign = $this->route('campaign');
 
-        if (!$campaign) {
+        if (! $campaign) {
             return Gate::allows('viewAny', NewsletterCampaign::class);
         }
 

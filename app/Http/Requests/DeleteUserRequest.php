@@ -10,7 +10,7 @@ class DeleteUserRequest extends FormRequest
     public function authorize(): bool
     {
         $target = $this->route('user');
-        
+
         return Gate::allows('delete', $target);
     }
 

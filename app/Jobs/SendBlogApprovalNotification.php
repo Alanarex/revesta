@@ -31,7 +31,7 @@ class SendBlogApprovalNotification implements ShouldQueue
             'message' => "Your blog '{$this->blog->title}' has been approved and published by {$this->admin->name}",
             'type' => 'success',
             'notifiable_type' => Blog::class,
-            'notifiable_id' => $this->blog->id
+            'notifiable_id' => $this->blog->id,
         ]);
     }
 }

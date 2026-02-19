@@ -8,10 +8,6 @@ class NewsletterRepository
 {
     /**
      * Subscribe email to newsletter.
-     *
-     * @param string $email
-     * @param string|null $ipAddress
-     * @return Newsletter
      */
     public function subscribe(string $email, ?string $ipAddress = null): Newsletter
     {
@@ -23,9 +19,6 @@ class NewsletterRepository
 
     /**
      * Check if email exists in newsletter.
-     *
-     * @param string $email
-     * @return bool
      */
     public function exists(string $email): bool
     {
@@ -36,9 +29,6 @@ class NewsletterRepository
 
     /**
      * Find newsletter by email.
-     *
-     * @param string $email
-     * @return Newsletter|null
      */
     public function findByEmail(string $email): ?Newsletter
     {
@@ -49,8 +39,6 @@ class NewsletterRepository
 
     /**
      * Get all verified subscribers count.
-     *
-     * @return int
      */
     public function getVerifiedCount(): int
     {
@@ -74,15 +62,12 @@ class NewsletterRepository
 
     /**
      * Verify subscriber by email.
-     *
-     * @param string $email
-     * @return bool
      */
     public function verify(string $email): bool
     {
         $newsletter = $this->findByEmail($email);
 
-        if (!$newsletter) {
+        if (! $newsletter) {
             return false;
         }
 
@@ -91,15 +76,12 @@ class NewsletterRepository
 
     /**
      * Unsubscribe email from newsletter.
-     *
-     * @param string $email
-     * @return bool
      */
     public function unsubscribe(string $email): bool
     {
         $newsletter = $this->findByEmail($email);
 
-        if (!$newsletter) {
+        if (! $newsletter) {
             return false;
         }
 
@@ -108,8 +90,6 @@ class NewsletterRepository
 
     /**
      * Get total count of all subscribers.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -119,11 +99,11 @@ class NewsletterRepository
     /**
      * Search subscribers with filtering and sorting.
      *
-     * @param string $search Search term for email
-     * @param string $sort Column to sort by
-     * @param string $direction Sort direction (asc/desc)
-     * @param string $status Filter by status (verified/unverified)
-     * @param int $perPage Results per page
+     * @param  string  $search  Search term for email
+     * @param  string  $sort  Column to sort by
+     * @param  string  $direction  Sort direction (asc/desc)
+     * @param  string  $status  Filter by status (verified/unverified)
+     * @param  int  $perPage  Results per page
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function search(string $search = '', string $sort = 'created_at', string $direction = 'desc', string $status = '', int $perPage = 15)
@@ -131,12 +111,12 @@ class NewsletterRepository
         $query = Newsletter::query();
 
         // Filter by search term
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where('email', 'like', "%{$search}%");
         }
 
         // Filter by status
-        if (!empty($status)) {
+        if (! empty($status)) {
             if ($status === 'verified') {
                 $query->whereNotNull('verified_at');
             } elseif ($status === 'unverified') {

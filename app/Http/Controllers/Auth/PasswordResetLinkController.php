@@ -11,9 +11,8 @@ use Illuminate\View\View;
 
 class PasswordResetLinkController extends Controller
 {
-    public function __construct(protected PasswordService $passwordService)
-    {
-    }
+    public function __construct(protected PasswordService $passwordService) {}
+
     /**
      * Display the password reset link request view.
      */
@@ -37,10 +36,10 @@ class PasswordResetLinkController extends Controller
             }
 
             return back()->withInput($request->only('email'))
-                        ->with('error', 'Email non trouve ou erreur lors de l\'envoi du lien.');
+                ->with('error', 'Email non trouve ou erreur lors de l\'envoi du lien.');
         } catch (\Exception $e) {
             return back()->withInput($request->only('email'))
-                        ->with('error', 'Erreur lors de l\'envoi du lien de reinitialisation: ' . $e->getMessage());
+                ->with('error', 'Erreur lors de l\'envoi du lien de reinitialisation: '.$e->getMessage());
         }
     }
 }

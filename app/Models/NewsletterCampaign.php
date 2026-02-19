@@ -27,7 +27,9 @@ class NewsletterCampaign extends Model
 
     // Status constants
     public const DRAFT = 'draft';
+
     public const SENT = 'sent';
+
     public const SCHEDULED = 'scheduled';
 
     /**

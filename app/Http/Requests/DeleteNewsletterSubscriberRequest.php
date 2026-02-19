@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Newsletter;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -15,7 +14,7 @@ class DeleteNewsletterSubscriberRequest extends FormRequest
     {
         $subscriber = $this->route('subscriber');
 
-        if (!$subscriber) {
+        if (! $subscriber) {
             return false;
         }
 

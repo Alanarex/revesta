@@ -15,11 +15,9 @@ use Illuminate\Support\Facades\URL;
 
 class EmailVerificationMail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels, ProvidesEmailLayoutData;
+    use ProvidesEmailLayoutData, Queueable, SerializesModels;
 
-    public function __construct(protected User $user)
-    {
-    }
+    public function __construct(protected User $user) {}
 
     public function envelope(): Envelope
     {
@@ -58,4 +56,3 @@ class EmailVerificationMail extends Mailable implements ShouldQueue
         return [];
     }
 }
-

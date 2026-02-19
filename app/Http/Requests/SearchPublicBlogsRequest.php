@@ -54,7 +54,7 @@ class SearchPublicBlogsRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Sanitize search input
-        if ($this->has('search') && !empty($this->search)) {
+        if ($this->has('search') && ! empty($this->search)) {
             $sanitized = strip_tags($this->search); // Remove HTML tags
             $sanitized = htmlspecialchars($sanitized, ENT_QUOTES, 'UTF-8'); // Escape special characters
             $sanitized = trim($sanitized); // Remove leading/trailing whitespace

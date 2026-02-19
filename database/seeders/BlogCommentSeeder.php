@@ -17,6 +17,7 @@ class BlogCommentSeeder extends Seeder
 
         if ($publishedBlogs->isEmpty()) {
             $this->command->warn('No published blogs found.');
+
             return;
         }
 
@@ -49,6 +50,6 @@ class BlogCommentSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Created ' . $totalComments . ' comments (including replies).');
+        $this->command->info('✅ Created '.$totalComments.' comments (including replies).');
     }
 }

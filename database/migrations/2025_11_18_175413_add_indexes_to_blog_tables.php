@@ -18,7 +18,7 @@ return new class extends Migration
             $table->index('published_at', 'blogs_published_at_index');
             $table->index(['status', 'published_at'], 'blogs_status_published_index');
         });
-        
+
         // Add fulltext index separately (requires InnoDB full-text support)
         DB::statement('ALTER TABLE blogs ADD FULLTEXT INDEX blogs_title_fulltext (title)');
 
@@ -57,7 +57,7 @@ return new class extends Migration
     {
         // Remove fulltext index first
         DB::statement('ALTER TABLE blogs DROP INDEX blogs_title_fulltext');
-        
+
         // Remove indexes from blogs table
         Schema::table('blogs', function (Blueprint $table) {
             $table->dropIndex('blogs_user_id_index');

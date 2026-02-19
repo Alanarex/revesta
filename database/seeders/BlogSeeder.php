@@ -17,6 +17,7 @@ class BlogSeeder extends Seeder
 
         if ($users->isEmpty()) {
             $this->command->warn('No users found! Please run UserSeeder first.');
+
             return;
         }
 
@@ -44,7 +45,7 @@ class BlogSeeder extends Seeder
             ->create();
 
         $allBlogs = $publishedBlogs->concat($pendingBlogs)->concat($draftBlogs)->concat($rejectedBlogs);
-        $this->command->info('✅ Created ' . $allBlogs->count() . ' blogs.');
+        $this->command->info('✅ Created '.$allBlogs->count().' blogs.');
 
         // Call related seeders for comments, likes, and bookmarks
         $this->call([
@@ -54,4 +55,3 @@ class BlogSeeder extends Seeder
         ]);
     }
 }
-

@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Api;
 
-use Tests\TestCase;
 use App\Models\User;
-use Laravel\Passport\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Client;
+use Tests\TestCase;
 
 class ApiAuthTest extends TestCase
 {
@@ -29,7 +29,6 @@ class ApiAuthTest extends TestCase
         ]);
     }
 
-
     public function user_can_login_and_receive_access_and_refresh_tokens(): void
     {
         $user = User::factory()->create([
@@ -51,7 +50,6 @@ class ApiAuthTest extends TestCase
             ]);
     }
 
-
     public function login_fails_with_invalid_credentials(): void
     {
         $user = User::factory()->create([
@@ -67,14 +65,12 @@ class ApiAuthTest extends TestCase
             ]);
     }
 
-
     public function login_fails_when_fields_are_missing(): void
     {
         $this->postJson('/api/v1/auth/login', [])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['email', 'password']);
     }
-
 
     public function authenticated_user_can_access_me_endpoint(): void
     {
@@ -91,13 +87,11 @@ class ApiAuthTest extends TestCase
             ->assertJsonPath('user.id', $user->id);
     }
 
-
     public function unauthenticated_user_cannot_access_me(): void
     {
         $this->getJson('/api/v1/auth/me')
             ->assertStatus(401);
     }
-
 
     public function user_can_logout_and_token_is_revoked(): void
     {
@@ -116,7 +110,6 @@ class ApiAuthTest extends TestCase
             'Authorization' => "Bearer {$token}",
         ])->assertStatus(401);
     }
-
 
     public function refresh_token_can_issue_new_access_token(): void
     {
@@ -139,7 +132,6 @@ class ApiAuthTest extends TestCase
                 'refresh_token',
             ]);
     }
-
 
     public function revoked_token_cannot_be_used_even_if_header_is_present(): void
     {

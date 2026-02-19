@@ -9,9 +9,8 @@ use Illuminate\Http\Request;
 
 class EmailVerificationNotificationController extends Controller
 {
-    public function __construct(protected VerificationService $verificationService)
-    {
-    }
+    public function __construct(protected VerificationService $verificationService) {}
+
     /**
      * Send a new email verification notification.
      */
@@ -23,9 +22,10 @@ class EmailVerificationNotificationController extends Controller
 
         try {
             $this->verificationService->sendVerification($request->user());
+
             return back()->with('success', 'Email de verification envoye avec succes!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Erreur lors de l\'envoi de l\'email de verification: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de l\'envoi de l\'email de verification: '.$e->getMessage());
         }
     }
 }

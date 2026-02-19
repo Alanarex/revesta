@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Address Model
- * 
+ *
  * @property int $id
  * @property string $label
  * @property string $street

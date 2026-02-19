@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Mail;
 
 class SendNewsletterCampaignJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $campaignId;
 
@@ -30,7 +30,7 @@ class SendNewsletterCampaignJob implements ShouldQueue
     public function handle(NewsletterCampaignRepository $repo)
     {
         $campaign = NewsletterCampaign::find($this->campaignId);
-        if (!$campaign) {
+        if (! $campaign) {
             return;
         }
 
@@ -39,7 +39,7 @@ class SendNewsletterCampaignJob implements ShouldQueue
         Newsletter::whereNotNull('verified_at')
             ->whereNull('deleted_at')
             ->select(['id', 'email'])
-            ->chunkById(500, function ($subscribers) use (&$sent, $campaign, $repo) {
+            ->chunkById(500, function ($subscribers) use (&$sent, $campaign) {
                 foreach ($subscribers as $subscriber) {
                     try {
                         Mail::to($subscriber->email)->queue(new NewsletterCampaignMail($campaign->title, $campaign->content));

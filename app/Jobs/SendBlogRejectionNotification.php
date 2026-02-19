@@ -37,7 +37,7 @@ class SendBlogRejectionNotification implements ShouldQueue
             'message' => $message,
             'type' => 'warning',
             'notifiable_type' => Blog::class,
-            'notifiable_id' => $this->blog->id
+            'notifiable_id' => $this->blog->id,
         ]);
     }
 }

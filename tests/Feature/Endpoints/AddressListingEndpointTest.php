@@ -4,22 +4,22 @@ namespace Tests\Feature\Endpoints;
 
 use App\Models\Address;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * Address Listing Endpoint Tests
- * 
+ *
  * Tests the internal AJAX endpoint for listing addresses including:
  * - Pagination
  * - Search functionality
  * - Sorting
  * - JSON response structure
  * - Combined search + sort operations
- * 
+ *
  * NOTE: This is an internal endpoint used by datatable.js, not a public REST API.
  * For external API endpoints, see tests/Feature/API/
- * 
+ *
  * SAFE TO RUN: RefreshDatabase uses in-memory SQLite database (:memory:)
  * configured in phpunit.xml. This does NOT affect your local database.
  */

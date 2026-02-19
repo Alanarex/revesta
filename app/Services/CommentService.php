@@ -26,7 +26,7 @@ class CommentService
         return [
             'comments' => $comments,
             'total' => $total,
-            'hasMore' => ($offset + $limit) < $total
+            'hasMore' => ($offset + $limit) < $total,
         ];
     }
 
@@ -47,7 +47,7 @@ class CommentService
         return [
             'replies' => $replies,
             'total' => $total,
-            'hasMore' => ($offset + $limit) < $total
+            'hasMore' => ($offset + $limit) < $total,
         ];
     }
 
@@ -60,7 +60,7 @@ class CommentService
             'blog_id' => $blog->id,
             'user_id' => $user->id,
             'parent_id' => $parentId,
-            'content' => $content
+            'content' => $content,
         ]);
 
         // Attach the author relation to avoid an immediate extra query when
@@ -69,7 +69,7 @@ class CommentService
 
         // Notify blog author (if not self-comment)
         if ($blog->user_id !== $user->id) {
-            $message = $parentId 
+            $message = $parentId
                 ? "{$user->name} replied to a comment on your blog '{$blog->title}'"
                 : "{$user->name} commented on your blog '{$blog->title}'";
 
@@ -79,7 +79,7 @@ class CommentService
                 'message' => $message,
                 'type' => 'info',
                 'notifiable_type' => BlogComment::class,
-                'notifiable_id' => $comment->id
+                'notifiable_id' => $comment->id,
             ]);
         }
 
@@ -93,7 +93,7 @@ class CommentService
                     'message' => "{$user->name} replied to your comment on '{$blog->title}'",
                     'type' => 'info',
                     'notifiable_type' => BlogComment::class,
-                    'notifiable_id' => $comment->id
+                    'notifiable_id' => $comment->id,
                 ]);
             }
         }

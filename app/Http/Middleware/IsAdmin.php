@@ -12,7 +12,7 @@ class IsAdmin
     {
         $user = $request->user();
 
-        if (!$user || $user->role?->name !== 'admin') {
+        if (! $user || $user->role?->name !== 'admin') {
             abort(403, 'Accès refusé.');
         }
 

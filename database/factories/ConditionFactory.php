@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Aid;
 use App\Models\FiscalIncomeRange;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ConditionFactory extends Factory
 {

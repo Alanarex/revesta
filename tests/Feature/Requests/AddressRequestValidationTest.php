@@ -2,25 +2,24 @@
 
 namespace Tests\Feature\Requests;
 
-use App\Http\Requests\CreateAddressRequest;
-use App\Http\Requests\UpdateAddressRequest;
 use App\Http\Requests\StoreAddressRequest;
+use App\Http\Requests\UpdateAddressRequest;
 use App\Models\Address;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 /**
  * Address Request Validation Tests
- * 
+ *
  * Tests form request validation including:
  * - Required field validation (street, postal_code, city)
  * - Field length constraints (255, 50, 10, etc.)
  * - Coordinate range validation (lat: -90 to 90, lng: -180 to 180)
  * - Type validation (string, numeric)
  * - Optional field handling
- * 
+ *
  * SAFE TO RUN: RefreshDatabase uses in-memory SQLite database (:memory:)
  * configured in phpunit.xml. This does NOT affect your local database.
  */

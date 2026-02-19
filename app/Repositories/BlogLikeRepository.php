@@ -45,7 +45,7 @@ class BlogLikeRepository
 
         return [
             'liked' => $liked,
-            'count' => $count
+            'count' => $count,
         ];
     }
 

@@ -22,8 +22,9 @@ class BlogBookmarkController extends Controller
     /**
      * Toggle bookmark for a blog
      *
-        * @group Blogs
-        * @authenticated
+     * @group Blogs
+     *
+     * @authenticated
      */
     public function toggle(ToggleBookmarkRequest $request, Blog $blog): JsonResponse
     {
@@ -34,18 +35,18 @@ class BlogBookmarkController extends Controller
                 'success' => true,
                 'is_filled' => $result['bookmarked'],
                 'bookmarked' => $result['bookmarked'],
-                'message' => $result['bookmarked'] ? 'Signet ajouté!' : 'Signet retiré!'
+                'message' => $result['bookmarked'] ? 'Signet ajouté!' : 'Signet retiré!',
             ]);
         } catch (\Exception $e) {
             \Log::error('Bookmark toggle failed', [
                 'user_id' => Auth::id(),
                 'blog_id' => $blog->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Une erreur est survenue'
+                'message' => 'Une erreur est survenue',
             ], 500);
         }
     }

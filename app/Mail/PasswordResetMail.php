@@ -13,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 
 class PasswordResetMail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels, ProvidesEmailLayoutData;
+    use ProvidesEmailLayoutData, Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
@@ -23,8 +23,7 @@ class PasswordResetMail extends Mailable implements ShouldQueue
         public string $resetUrl,
         public string $recipientEmail,
         public int $expirationMinutes = 15,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -37,7 +36,7 @@ class PasswordResetMail extends Mailable implements ShouldQueue
                 config('mail.from.name')
             ),
             to: [new Address($this->recipientEmail)],
-            subject: __('Réinitialisation de votre mot de passe - ') . config('app.name'),
+            subject: __('Réinitialisation de votre mot de passe - ').config('app.name'),
         );
     }
 

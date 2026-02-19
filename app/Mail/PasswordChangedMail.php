@@ -14,14 +14,12 @@ use Illuminate\Queue\SerializesModels;
 
 class PasswordChangedMail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels, ProvidesEmailLayoutData;
+    use ProvidesEmailLayoutData, Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user)
-    {
-    }
+    public function __construct(public User $user) {}
 
     /**
      * Get the message envelope.
@@ -34,7 +32,7 @@ class PasswordChangedMail extends Mailable implements ShouldQueue
                 config('mail.from.name')
             ),
             to: [new Address($this->user->email)],
-            subject: __('Confirmations de changement de mot de passe - ') . config('app.name'),
+            subject: __('Confirmations de changement de mot de passe - ').config('app.name'),
         );
     }
 

@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class RegistrationService
 {
-    public function __construct(protected UserRepository $userRepository)
-    {
-    }
+    public function __construct(protected UserRepository $userRepository) {}
 
     public function registerAndLogin(array $data): User
     {

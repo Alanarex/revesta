@@ -4,9 +4,9 @@ namespace Tests\Feature\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Tests\TestCase;
 
 /**
  * User Controller Feature Tests
@@ -28,8 +28,11 @@ class UserControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $regularUser;
+
     private Role $adminRole;
+
     private Role $userRole;
 
     protected function setUp(): void
@@ -182,7 +185,7 @@ class UserControllerTest extends TestCase
         User::factory()->create(['email' => 'jane@example.com', 'first_name' => 'Jane']);
 
         $response = $this->actingAs($this->admin)
-            ->get(route('admin.users.list') . '?search=jane');
+            ->get(route('admin.users.list').'?search=jane');
 
         $data = $response->json('data');
         $this->assertLessThanOrEqual(2, count($data));
@@ -196,7 +199,7 @@ class UserControllerTest extends TestCase
         User::factory(15)->create();
 
         $response = $this->actingAs($this->admin)
-            ->get(route('admin.users.list') . '?per_page=10&page=1');
+            ->get(route('admin.users.list').'?per_page=10&page=1');
 
         $response->assertStatus(200);
         $json = $response->json();

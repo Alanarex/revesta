@@ -14,7 +14,7 @@ class NewsletterCampaignRepositoryTest extends TestCase
     public function test_mark_as_scheduled_and_sent()
     {
         $campaign = NewsletterCampaign::factory()->draft()->create();
-        $repo = new NewsletterCampaignRepository();
+        $repo = new NewsletterCampaignRepository;
 
         $this->assertTrue($repo->markAsScheduled($campaign->id, new \DateTime('+1 hour')));
         $campaign->refresh();

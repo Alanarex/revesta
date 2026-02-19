@@ -16,8 +16,7 @@ class BlogService
     public function __construct(
         protected BlogRepository $blogRepository,
         protected NotificationRepository $notificationRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Get published blogs with search.
@@ -52,14 +51,14 @@ class BlogService
     }
 
     /**
-    * Get user's blogs.
+     * Get user's blogs.
      */
     public function getUserBlogs(int $userId): array
     {
         // Backwards-compatible: simple passthrough to repository. New callers may pass filter params.
         return [
             'published' => $this->blogRepository->getUserPublishedBlogs($userId),
-            'drafts' => $this->blogRepository->getUserDraftBlogs($userId)
+            'drafts' => $this->blogRepository->getUserDraftBlogs($userId),
         ];
     }
 
@@ -70,7 +69,7 @@ class BlogService
     {
         return [
             'published' => $this->blogRepository->getUserPublishedBlogsWithFilter($userId, $civilStatus, $includeBookmarked),
-            'drafts' => $this->blogRepository->getUserDraftBlogs($userId)
+            'drafts' => $this->blogRepository->getUserDraftBlogs($userId),
         ];
     }
 
@@ -93,7 +92,7 @@ class BlogService
             'short_description' => $data['short_description'],
             'content' => $data['content'],
             'status' => $data['status'],
-            'published_at' => $data['status'] === 'published' ? now() : null
+            'published_at' => $data['status'] === 'published' ? now() : null,
         ];
 
         $blog = $this->blogRepository->create($blogData);
@@ -137,7 +136,7 @@ class BlogService
     public function publishBlog(Blog $blog): bool
     {
         // Only allow publishing if it's a draft
-        if (!$blog->isDraft()) {
+        if (! $blog->isDraft()) {
             return false;
         }
 

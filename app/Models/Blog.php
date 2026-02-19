@@ -26,8 +26,11 @@ class Blog extends Model
 
     // Status constants
     public const DRAFT = 'draft';
+
     public const PENDING = 'pending';
+
     public const PUBLISHED = 'published';
+
     public const REJECTED = 'rejected';
 
     /**
@@ -130,11 +133,12 @@ class Blog extends Model
     {
         if ($search) {
             return $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('short_description', 'like', '%' . $search . '%')
-                  ->orWhere('content', 'like', '%' . $search . '%');
+                $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('short_description', 'like', '%'.$search.'%')
+                    ->orWhere('content', 'like', '%'.$search.'%');
             });
         }
+
         return $query;
     }
 }

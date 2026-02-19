@@ -30,19 +30,18 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-
         // User is created but not authenticated (needs email verification first)
         $this->assertDatabaseHas('users', [
             'first_name' => 'Test',
             'last_name' => 'User',
             'email' => 'test@example.com',
         ]);
-        
+
         // Verify verification email was queued
         Mail::assertQueued(EmailVerificationMail::class, function ($mail) {
             return $mail->hasTo('test@example.com');
         });
-        
+
         // Redirects to login page with success message
         $response
             ->assertRedirect(route('login'))
