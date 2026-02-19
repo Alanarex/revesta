@@ -34,12 +34,12 @@ This document explains how the newsletter scheduling and sending system works in
 
 ## Cron configuration (server)
 
-This project registers the `newsletter:dispatch-scheduled` Artisan command. You can run that command directly from cron (no Console Kernel schedule required).
+ This project registers the `newsletter:dispatch-scheduled` Artisan command. It is now scheduled inside the application (see `routes/console.php`) so the recommended approach is to use Laravel's scheduler and add the single cron entry below. Running the dispatch command directly from cron still works if you prefer that model.
 
 Recommended crontab line (deploy user):
 
 ```
-* * * * * cd /var/www/revesta && /usr/bin/php /var/www/revesta/artisan newsletter:dispatch-scheduled >> /var/log/revesta/newsletter-cron.log 2>&1
+* * * * * cd /var/www/revesta && /usr/bin/php /var/www/revesta/artisan schedule:run >> /var/log/revesta/scheduler-cron.log 2>&1
 ```
 
 Notes:
@@ -118,7 +118,7 @@ Append the cron line to the deploy user's crontab (safe append):
 
 ```bash
 # as the deploy user (or the user you use for deployments)
-(crontab -l 2>/dev/null; echo "* * * * * cd /var/www/revesta && /usr/bin/php /var/www/revesta/artisan newsletter:dispatch-scheduled >> /var/log/revesta/newsletter-cron.log 2>&1") | crontab -
+(crontab -l 2>/dev/null; echo "* * * * * cd /var/www/revesta && /usr/bin/php /var/www/revesta/artisan schedule:run >> /var/log/revesta/scheduler-cron.log 2>&1") | crontab -
 ```
 
 Or edit interactively:
@@ -126,7 +126,7 @@ Or edit interactively:
 ```bash
 crontab -e
 # then paste the line below and save:
-* * * * * cd /var/www/revesta && /usr/bin/php /var/www/revesta/artisan newsletter:dispatch-scheduled >> /var/log/revesta/newsletter-cron.log 2>&1
+* * * * * cd /var/www/revesta && /usr/bin/php /var/www/revesta/artisan schedule:run >> /var/log/revesta/scheduler-cron.log 2>&1
 ```
 
 Verify the crontab entry:
@@ -150,44 +150,86 @@ If you prefer to avoid overlapping dispatch runs, use `flock`:
 (crontab -l 2>/dev/null; echo "* * * * * flock -n /var/lock/revesta-newsletter.lock /usr/bin/php /var/www/revesta/artisan newsletter:dispatch-scheduled >> /var/log/revesta/newsletter-cron.log 2>&1") | crontab -
 ```
 
-## Supervisor (install & example)
+## Supervisor (install & recommended config)
 
-If you use Supervisor to manage queue workers, place the example config `deploy/supervisor-revesta.conf` into `/etc/supervisor/conf.d/revesta-worker.conf` and use Supervisor to manage the worker process. Below are exact copy/paste commands for Debian/Ubuntu systems.
+If you use Supervisor to manage queue workers, install and enable Supervisor, copy the example program from the repo, create logs, and start the worker. Below is a concise, copy/paste sequence (Debian/Ubuntu):
+
+Recommended Supervisor program (already in the repo at `deploy/supervisor-revesta.conf`):
+
+```ini
+[program:revesta-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=/usr/bin/php /var/www/revesta/artisan queue:work --sleep=3 --tries=3 --memory=512 --queue=default,emails
+user=www-data
+numprocs=1
+autostart=true
+autorestart=true
+startsecs=5
+redirect_stderr=true
+stdout_logfile=/var/log/revesta/worker.log
+stderr_logfile=/var/log/revesta/worker.err.log
+```
+
+Install, copy config, create logs and start Supervisor:
 
 ```bash
-# 1) Install Supervisor (if missing)
+# Install Supervisor (if missing)
 sudo apt update
 sudo apt install -y supervisor
 
-# 2) Copy the repo example into Supervisor (or create the file manually)
+# Copy the example config into Supervisor
 sudo cp /var/www/revesta/deploy/supervisor-revesta.conf /etc/supervisor/conf.d/revesta-worker.conf
 
-# 3) Create log files and set permissions
+# Create log files and set permissions (run once)
 sudo mkdir -p /var/log/revesta
 sudo touch /var/log/revesta/worker.log /var/log/revesta/worker.err.log
 sudo chown -R www-data:www-data /var/log/revesta
 sudo chmod 750 /var/log/revesta
 
-# 4) Reload Supervisor and start the worker
+# Enable + start Supervisor service and load the program
+sudo systemctl enable --now supervisor
 sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl start revesta-worker:*
 
-# 5) Check status and follow logs
+# Check status and follow logs
 sudo supervisorctl status
 tail -f /var/log/revesta/worker.log /var/log/revesta/worker.err.log
+```
 
-# 6) After deploy: restart workers so they pick up new code
+Restart workers after deploy so they pick up new code:
+
+```bash
+# gracefully restart Laravel queue workers
 php /var/www/revesta/artisan queue:restart
-# or via supervisor
+# or via Supervisor
 sudo supervisorctl restart revesta-worker:*
+```
 
-# 7) Troubleshooting
+Troubleshooting quick checks:
+
+```bash
 ps aux | grep 'artisan queue:work' | grep -v grep
 php /var/www/revesta/artisan queue:failed
 ```
 
-Replace `www-data` with your deploy user if needed. If you prefer `systemd`, ask and I'll add an example unit file.
+Replace `www-data` with your deploy user if needed.
+
+Optional: run the scheduler under Supervisor instead of cron
+
+If you prefer not to add a cron entry for `schedule:run`, you can run the scheduler as a long-running process with Supervisor. Example program:
+
+```ini
+[program:revesta-scheduler]
+command=/usr/bin/php /var/www/revesta/artisan schedule:work
+user=www-data
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/revesta/scheduler.log
+stderr_logfile=/var/log/revesta/scheduler.err.log
+```
+
+If you use `withoutOverlapping()` in your schedule definitions, ensure your cache driver supports locks (redis, memcached, or database) so the scheduler's locking works correctly.
 
 ## Manual testing & verification steps
 

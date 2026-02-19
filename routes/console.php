@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Console\ClosureCommand;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     /** @var ClosureCommand $this */
@@ -22,3 +23,13 @@ Artisan::command('newsletter:dispatch-scheduled', function () {
         }
     }
 })->describe('Dispatch scheduled newsletter campaigns');
+
+// Schedule the dispatch command via Laravel's scheduler.
+// When using the scheduler, add a single cron entry on the server to run
+// `php artisan schedule:run` every minute. See docs/newsletters/README.md
+// for server cron examples.
+Schedule::command('newsletter:dispatch-scheduled')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->runInBackground();
+
