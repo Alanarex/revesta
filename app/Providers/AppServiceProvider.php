@@ -20,6 +20,8 @@ use App\Repositories\BlogCommentRepository;
 use App\Repositories\BlogLikeRepository;
 use App\Repositories\BlogRepository;
 use App\Repositories\NotificationRepository;
+use App\Repositories\AdRepository;
+use App\Repositories\SimulationRepository;
 use App\Repositories\UserRepository;
 use App\Services\AddressService;
 use App\Services\AuthService;
@@ -30,6 +32,7 @@ use App\Services\LikeService;
 use App\Services\NotificationService;
 use App\Services\PasswordService;
 use App\Services\RegistrationService;
+use App\Services\SimulationService;
 use App\Services\VerificationService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -103,6 +106,22 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(NotificationService::class, function ($app) {
             return new NotificationService($app->make(NotificationRepository::class));
+        });
+
+        $this->app->singleton(AdRepository::class, function ($app) {
+            return new AdRepository;
+        });
+
+        $this->app->singleton(SimulationRepository::class, function ($app) {
+            return new SimulationRepository;
+        });
+
+        $this->app->singleton(SimulationService::class, function ($app) {
+            return new SimulationService(
+                $app->make(UserRepository::class),
+                $app->make(AdRepository::class),
+                $app->make(SimulationRepository::class),
+            );
         });
     }
 

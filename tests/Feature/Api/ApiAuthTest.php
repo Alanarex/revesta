@@ -39,7 +39,6 @@ class ApiAuthTest extends TestCase
             'email' => $user->email,
             'password' => 'password',
         ]);
-        dd($response->json());
 
         $response->assertOk()
             ->assertJsonStructure([
