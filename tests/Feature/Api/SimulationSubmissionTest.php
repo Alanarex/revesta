@@ -202,4 +202,73 @@ class SimulationSubmissionTest extends TestCase
             })
             ->atLeast()->once();
     }
+
+    public function test_it_defaults_missing_aid_amount_to_zero_and_keeps_other_payload_data(): void
+    {
+        Mail::fake();
+        Storage::fake('local');
+
+        $payload = [
+            'annonce' => [
+                'site' => 'leboncoin',
+                'titre' => 'Maison avec aides sans montant',
+                'url_annonce' => 'https://example.com/annonce/no-amount',
+                'type_logement' => 'maison',
+                'dpe' => 'E',
+            ],
+            'utilisateur' => [
+                'email' => 'zero-amount@example.com',
+                'prenom' => 'Jeanne',
+                'nom' => 'Martin',
+                'statut' => 'proprietaire',
+                'dpe_actuel' => 'F',
+                'dpe_vise' => 'C',
+                'periode_construction' => '1949-1974',
+            ],
+            'simulation' => [
+                'parcours_aide' => 'maprimerenov',
+                'travaux' => [
+                    ['type' => 'ventilation'],
+                ],
+                'aides_details' => [
+                    ['nom' => 'Éco-prêt à taux zéro (éco PTZ)'],
+                ],
+            ],
+        ];
+
+        $response = $this->postJson('/api/v1/simulations', $payload);
+
+        $response->assertCreated()
+            ->assertJsonPath('success', true);
+
+        $simulation = Simulation::query()->findOrFail($response->json('simulation_id'));
+        $aid = Aid::query()->where('name', 'Éco-prêt à taux zéro (éco PTZ)')->first();
+
+        $this->assertNotNull($aid);
+
+        $this->assertDatabaseHas('aid_simulation', [
+            'simulation_id' => $simulation->id,
+            'aid_id' => $aid->id,
+            'amount' => 0,
+            'raw_name' => 'Éco-prêt à taux zéro (éco PTZ)',
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'zero-amount@example.com',
+            'user_status_id' => 'proprietaire_occupant',
+            'dpe_actuel_id' => 'F',
+            'dpe_vise_id' => 'C',
+            'construction_period_id' => 'plus_15_ans',
+        ]);
+
+        $this->assertDatabaseHas('ads', [
+            'url' => 'https://example.com/annonce/no-amount',
+            'housing_type_id' => 'maison',
+            'dpe_class_id' => 'E',
+        ]);
+
+        $this->assertDatabaseHas('renovation_works', [
+            'code' => 'ventilation',
+        ]);
+    }
 }
