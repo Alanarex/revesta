@@ -27,9 +27,21 @@ class Aid extends Model
 
     public static function findOrCreateByName(string $name, array $attributes = []): self
     {
-        return static::query()->firstOrCreate(
-            ['name' => $name],
-            $attributes
+        $aid = static::query()->firstOrNew(['name' => $name]);
+
+        $updatableAttributes = array_filter(
+            $attributes,
+            static fn (mixed $value): bool => $value !== null && $value !== ''
         );
+
+        if ($updatableAttributes !== []) {
+            $aid->fill($updatableAttributes);
+        }
+
+        if (! $aid->exists || $aid->isDirty()) {
+            $aid->save();
+        }
+
+        return $aid;
     }
 }

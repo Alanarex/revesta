@@ -62,20 +62,26 @@ class SimulationRepository
                 continue;
             }
 
+            $incomingType = trim((string) Arr::get($aide, 'type', ''));
+            $normalizedType = $this->normalizeAidType($incomingType);
+            $incomingDetail = Arr::get($aide, 'detail', Arr::get($aide, 'description'));
+
             $aid = Aid::findOrCreateByName($name, [
                 'provider'    => 'Extension REVESTA',
-                'description' => Arr::get($aide, 'description', 'Aide synchronisée depuis la simulation publique.'),
-                'type'        => Arr::get($aide, 'type', 'subvention'),
+                'description' => $incomingDetail ?: 'Aide synchronisée depuis la simulation publique.',
+                'type'        => $normalizedType,
             ]);
 
             $simulation->aids()->syncWithoutDetaching([
                 $aid->id => [
-                    'amount'   => $this->normalizeAidAmount(Arr::get($aide, 'montant')),
+                    'amount'   => $this->normalizeAidAmount(Arr::get($aide, 'valeur', Arr::get($aide, 'montant'))),
                     'raw_name' => $name,
                     'details'  => [
                         'url'         => Arr::get($aide, 'url'),
-                        'type'        => Arr::get($aide, 'type'),
-                        'description' => Arr::get($aide, 'description'),
+                        'type'        => $incomingType !== '' ? $incomingType : $normalizedType,
+                        'detail'      => Arr::get($aide, 'detail', Arr::get($aide, 'description')),
+                        'description' => Arr::get($aide, 'detail', Arr::get($aide, 'description')),
+                        'valeur'      => Arr::get($aide, 'valeur', Arr::get($aide, 'montant')),
                     ],
                 ],
             ]);
@@ -100,6 +106,22 @@ class SimulationRepository
         }
 
         return is_numeric($value) ? (float) $value : 0.0;
+    }
+
+    private function normalizeAidType(string $value): string
+    {
+        $normalized = mb_strtolower(trim($value));
+        $ascii = str_replace(' ', '', Str::ascii($normalized));
+
+        if ($ascii === '') {
+            return 'subvention';
+        }
+
+        if (str_contains($ascii, 'pret') || str_contains($ascii, 'loan')) {
+            return 'pret';
+        }
+
+        return $normalized;
     }
 }
 

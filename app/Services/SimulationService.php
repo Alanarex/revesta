@@ -55,6 +55,12 @@ class SimulationService
             $originalPayload !== [] ? $originalPayload : $validatedPayload,
         );
 
+        if (app()->environment('local')) {
+            $result['mail_render'] = (new SimulationReportMail($result['simulation']))->render();
+
+            return $result;
+        }
+
         $this->queueSimulationMailSafely($result['simulation'], $result['user']);
 
         if ($result['user_created']) {

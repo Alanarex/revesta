@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreSimulationRequest;
 use App\Services\SimulationService;
-use Illuminate\Http\JsonResponse;
 
 class SimulationController extends Controller
 {
@@ -83,19 +82,26 @@ class SimulationController extends Controller
         *   "message": "Too Many Attempts."
         * }
      */
-    public function store(StoreSimulationRequest $request): JsonResponse
+    public function store(StoreSimulationRequest $request)
     {
         $result = $this->simulationService->submit(
             $request->validated(),
             $request->originalPayload(),
         );
 
-        return response()->json([
+        if (app()->environment('local') && isset($result['mail_render'])) {
+            return response($result['mail_render'], 200)
+                ->header('Content-Type', 'text/html; charset=UTF-8');
+        }
+
+        $response = [
             'success' => true,
             'message' => 'Simulation enregistrée avec succès.',
             'simulation_id' => $result['simulation']->id,
             'user_id' => $result['user']->id,
             'user_created' => $result['user_created'],
-        ], 201);
+        ];
+
+        return response()->json($response, 201);
     }
 }

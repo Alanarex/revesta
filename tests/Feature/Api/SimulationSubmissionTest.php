@@ -271,4 +271,59 @@ class SimulationSubmissionTest extends TestCase
             'code' => 'ventilation',
         ]);
     }
+
+    public function test_it_accepts_new_aides_structure_with_detail_type_valeur(): void
+    {
+        Mail::fake();
+        Storage::fake('local');
+
+        $payload = [
+            'annonce' => [
+                'url' => 'https://example.com/annonce/new-aides-structure',
+            ],
+            'utilisateur' => [
+                'email' => 'new-aides-structure@example.com',
+            ],
+            'simulation' => [
+                'parcours_aide' => 'maprimerenov',
+                'aides_details' => [
+                    [
+                        'nom' => "MaPrimeRénov' parcours accompagné",
+                        'detail' => 'Subvention directe • 18 000 €',
+                        'type' => 'subvention',
+                        'valeur' => 18000,
+                    ],
+                ],
+            ],
+        ];
+
+        $response = $this->postJson('/api/v1/simulations', $payload);
+
+        $response->assertCreated()
+            ->assertJsonPath('success', true);
+
+        $simulation = Simulation::query()->findOrFail($response->json('simulation_id'));
+        $aid = Aid::query()->where('name', "MaPrimeRénov' parcours accompagné")->first();
+
+        $this->assertNotNull($aid);
+
+        $this->assertDatabaseHas('aid_simulation', [
+            'simulation_id' => $simulation->id,
+            'aid_id' => $aid->id,
+            'amount' => 18000,
+            'raw_name' => "MaPrimeRénov' parcours accompagné",
+        ]);
+
+        $this->assertEquals(
+            [
+                [
+                    'nom' => "MaPrimeRénov' parcours accompagné",
+                    'detail' => 'Subvention directe • 18 000 €',
+                    'type' => 'subvention',
+                    'valeur' => 18000,
+                ],
+            ],
+            $simulation->aides_details
+        );
+    }
 }

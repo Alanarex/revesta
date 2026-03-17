@@ -72,6 +72,40 @@ class StoreSimulationRequest extends FormRequest
             $simulation['travaux'] = $normalizedWorks;
         }
 
+        if (isset($simulation['aides_details']) && is_array($simulation['aides_details'])) {
+            $normalizedAides = [];
+
+            foreach ($simulation['aides_details'] as $aide) {
+                if (! is_array($aide)) {
+                    continue;
+                }
+
+                $nom = isset($aide['nom']) ? trim((string) $aide['nom']) : '';
+                $detail = isset($aide['detail'])
+                    ? trim((string) $aide['detail'])
+                    : trim((string) ($aide['description'] ?? ''));
+                $type = isset($aide['type']) ? trim((string) $aide['type']) : '';
+
+                $valeurRaw = $aide['valeur'] ?? ($aide['montant'] ?? null);
+                $valeur = is_numeric($valeurRaw) ? (float) $valeurRaw : null;
+
+                $normalizedAid = [
+                    'nom' => $nom,
+                    'detail' => $detail !== '' ? $detail : null,
+                    'type' => $type !== '' ? $type : null,
+                    'valeur' => $valeur,
+                ];
+
+                if (isset($aide['url']) && is_string($aide['url']) && trim($aide['url']) !== '') {
+                    $normalizedAid['url'] = trim($aide['url']);
+                }
+
+                $normalizedAides[] = $normalizedAid;
+            }
+
+            $simulation['aides_details'] = $normalizedAides;
+        }
+
         $this->merge([
             'annonce' => $annonce,
             'utilisateur' => $utilisateur,
@@ -209,6 +243,8 @@ class StoreSimulationRequest extends FormRequest
             'simulation.pourcentage_bien' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'simulation.aides_details' => ['nullable', 'array', 'max:50'],
             'simulation.aides_details.*.nom' => ['required_with:simulation.aides_details', 'string', 'max:255'],
+            'simulation.aides_details.*.detail' => ['nullable', 'string', 'max:1000'],
+            'simulation.aides_details.*.valeur' => ['nullable', 'numeric', 'min:0'],
             'simulation.aides_details.*.montant' => ['nullable', 'numeric', 'min:0'],
             'simulation.aides_details.*.type' => ['nullable', 'string', 'max:100'],
             'simulation.aides_details.*.description' => ['nullable', 'string', 'max:1000'],
