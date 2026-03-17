@@ -15,5 +15,14 @@ class AidSimulation extends Pivot
         'simulation_id',
         'aid_id',
         'amount',
+        'raw_name',
+        'details',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'details' => 'array',
+        ];
+    }
 }

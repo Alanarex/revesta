@@ -24,4 +24,12 @@ class Aid extends Model
             ->withPivot('amount')
             ->withTimestamps();
     }
+
+    public static function findOrCreateByName(string $name, array $attributes = []): self
+    {
+        return static::query()->firstOrCreate(
+            ['name' => $name],
+            $attributes
+        );
+    }
 }
