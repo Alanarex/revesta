@@ -116,11 +116,11 @@
         ['label' => 'LinkedIn', 'url' => 'https://www.linkedin.com/'],
     ];
 
-    $cardsBaseStyle = 'display:flex;flex-direction:column;background-color:#fff;border:1px solid #E3E3E1;border-radius:20px;padding:20px;margin:0 16px 16px 16px;';
+    $cardsBaseStyle = 'background-color:#fff;border:1px solid #E3E3E1;border-radius:20px;padding:20px;margin:0 16px 16px 16px;';
     $h2Style = 'color:#0b1c13;font-size:22px;font-weight:800;padding-bottom:6px;margin:0 0 10px 0;border-bottom:2px solid #0b1c13;';
-    $rowStyle = 'display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #f9f9f9;padding:10px 0;';
-    $labelStyle = 'color:#666;font-size:14px;font-weight:500;';
-    $valueStyle = 'color:#222;font-size:14px;font-weight:600;text-align:right;';
+    $rowStyle = 'display:table;width:100%;border-bottom:1px solid #f9f9f9;padding:10px 0;';
+    $labelStyle = 'display:table-cell;color:#666;font-size:14px;font-weight:500;vertical-align:top;padding-right:10px;';
+    $valueStyle = 'display:table-cell;color:#222;font-size:14px;font-weight:600;text-align:right;vertical-align:top;';
 @endphp
 
 @extends('layouts.email', ['title' => 'Compte-rendu simulation - ' . $appName])
@@ -128,16 +128,20 @@
 @section('content')
     <div style="max-width:650px;margin:0 auto;background:#fffcf1;padding:14px 0;font-family:Montserrat,-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto','Oxygen','Ubuntu','Cantarell','Fira Sans','Droid Sans','Helvetica Neue',sans-serif;color:#222;">
 
-        <section style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;background:#0b1c13;color:#fff;padding:16px 24px;margin:0 16px 16px 16px;border-radius:48px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-                <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#a4c520;"></span>
-                <span style="font-size:20px;font-weight:800;letter-spacing:0.4px;">REVESTA</span>
-            </div>
-            <div style="display:flex;gap:10px;">
-                @foreach ($socialLinks as $social)
-                    <a href="{{ $social['url'] }}" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,0.25);border-radius:16px;padding:5px 10px;">{{ $social['label'] }}</a>
-                @endforeach
-            </div>
+        <section style="background:#0b1c13;color:#fff;padding:16px 24px;margin:0 16px 16px 16px;border-radius:48px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;">
+                <tr>
+                    <td align="left" style="vertical-align:middle;">
+                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#a4c520;vertical-align:middle;"></span>
+                        <span style="font-size:20px;font-weight:800;letter-spacing:0.4px;vertical-align:middle;margin-left:8px;display:inline-block;">REVESTA</span>
+                    </td>
+                    <td align="right" style="vertical-align:middle;white-space:nowrap;">
+                        @foreach ($socialLinks as $social)
+                            <a href="{{ $social['url'] }}" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,0.25);border-radius:16px;padding:5px 10px;display:inline-block;margin-left:6px;">{{ $social['label'] }}</a>
+                        @endforeach
+                    </td>
+                </tr>
+            </table>
         </section>
 
         <section style="display:flex;flex-direction:column;align-items:center;gap:4px;margin:0 16px 16px 16px;">
@@ -146,8 +150,10 @@
             <p style="font-size:14px;font-weight:500;text-align:center;line-height:1.4;margin:0;">Voici le compte-rendu détaillé des aides disponibles pour votre projet.</p>
         </section>
 
-        <section style="display:flex;flex-direction:row;margin:0 16px 16px 16px;background:#fff;border:1px solid #E3E3E1;border-radius:24px;overflow:hidden;">
-            <div style="width:50%;position:relative;background:#f9f9f9;min-height:260px;">
+        <section style="margin:0 16px 16px 16px;background:#fff;border:1px solid #E3E3E1;border-radius:24px;overflow:hidden;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+                <tr>
+                    <td width="50%" style="width:50%;position:relative;background:#f9f9f9;vertical-align:top;">
                 @if (!empty($adImage))
                     <img src="{{ $adImage }}" alt="Image du bien" style="display:block;object-fit:cover;width:100%;height:100%;min-height:260px;">
                 @else
@@ -159,9 +165,9 @@
                         <a href="{{ data_get($annonce, 'url', $ad->url) }}" target="_blank" rel="noopener" style="font-size:13px;color:#a4c520;text-decoration:underline;">Voir l'annonce</a>
                     @endif
                 </div>
-            </div>
+                    </td>
 
-            <div style="width:50%;padding:20px;background:#fff;">
+                    <td width="50%" style="width:50%;padding:20px;background:#fff;vertical-align:top;">
                 <h2 style="{{ $h2Style }}font-size:21px;">🏠 Le bien immobilier</h2>
                 <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">📍 Commune</span><span style="{{ $valueStyle }}">{{ data_get($annonce, 'code_postal', $ad->code_postal ?? 'N/A') }} - {{ data_get($annonce, 'ville', $ad->ville ?? 'N/A') }}</span></div>
                 <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">🏢 Type</span><span style="{{ $valueStyle }}">{{ ucfirst((string) data_get($annonce, 'type_logement', $ad->housing_type_id ?? 'N/A')) }}</span></div>
@@ -169,7 +175,9 @@
                 <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">📐 Surface</span><span style="{{ $valueStyle }}">{{ data_get($annonce, 'surface', $ad->surface ?? 'N/A') }} m²</span></div>
                 <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">🔥 DPE actuel</span><span style="{{ $valueStyle }}">{{ $dpeCurrent }}</span></div>
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;"><span style="{{ $labelStyle }}">⏳ Date extraction</span><span style="{{ $valueStyle }}">{{ $formatDate(data_get($annonce, 'date_extraction')) }}</span></div>
-            </div>
+                    </td>
+                </tr>
+            </table>
         </section>
 
         <section style="{{ $cardsBaseStyle }}">
@@ -181,8 +189,10 @@
             <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;"><span style="{{ $labelStyle }}">📅 Période de construction du logement</span><span style="{{ $valueStyle }}">{{ ucfirst((string) data_get($utilisateur, 'periode_construction', 'N/A')) }}</span></div>
         </section>
 
-        <section style="display:flex;flex-direction:row;gap:16px;margin:0 16px 16px 16px;">
-            <div style="width:50%;display:flex;flex-direction:column;gap:16px;">
+        <section style="margin:0 16px 16px 16px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:separate;border-spacing:16px 0;table-layout:fixed;">
+                <tr>
+                    <td width="50%" style="width:50%;vertical-align:top;">
                 <div style="{{ $cardsBaseStyle }}margin:0;">
                     <h2 style="{{ $h2Style }}">💰 Plan financier</h2>
                     <h3 style="font-size:16px;text-align:left;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:10px;margin:0 0 10px 0;">Coûts de votre projet</h3>
@@ -195,9 +205,9 @@
                     <h3 style="font-size:16px;text-align:center;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:10px;margin:0 0 10px 0;">Répartition de ces coûts</h3>
                     <img src="{{ $costChartUrl }}" alt="Répartition des coûts" style="display:block;width:100%;border:1px solid #E3E3E1;border-radius:12px;">
                 </div>
-            </div>
+                    </td>
 
-            <div style="width:50%;display:flex;flex-direction:column;gap:16px;">
+                    <td width="50%" style="width:50%;vertical-align:top;">
                 <div style="{{ $cardsBaseStyle }}margin:0;">
                     <h3 style="font-size:16px;text-align:center;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:10px;margin:0 0 10px 0;">Coût <u>net</u> de mon projet après aides</h3>
                     <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">🎉 Subventions déduites</span><span style="{{ $valueStyle }}color:#a4c520;">- {{ $formatMoney($totalAids) }}</span></div>
@@ -215,7 +225,9 @@
                     <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">📈 Couverture des travaux</span><span style="{{ $valueStyle }}">{{ number_format($workCoverage, 1, ',', ' ') }}%</span></div>
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;"><span style="{{ $labelStyle }}">✅ Aides éligibles</span><span style="{{ $valueStyle }}">{{ count($aidesDetails) }}</span></div>
                 </div>
-            </div>
+                    </td>
+                </tr>
+            </table>
         </section>
 
         <section style="{{ $cardsBaseStyle }}">
