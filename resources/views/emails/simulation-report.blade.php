@@ -163,13 +163,46 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
+        @php
+            $emailCssPath = base_path('resources/css/emails.css');
+            $emailCssContent = is_readable($emailCssPath) ? (string) file_get_contents($emailCssPath) : '';
+            $emailCssChunks = [];
+            $maxStyleChunkSize = 6000;
+
+            if ($emailCssContent !== '') {
+                $currentCssChunk = '';
+                $cssLines = preg_split('/\R/', $emailCssContent) ?: [];
+
+                foreach ($cssLines as $cssLine) {
+                    $lineWithBreak = $cssLine . "\n";
+
+                    if (strlen($currentCssChunk . $lineWithBreak) > $maxStyleChunkSize && $currentCssChunk !== '') {
+                        $emailCssChunks[] = $currentCssChunk;
+                        $currentCssChunk = $lineWithBreak;
+                        continue;
+                    }
+
+                    $currentCssChunk .= $lineWithBreak;
+                }
+
+                if ($currentCssChunk !== '') {
+                    $emailCssChunks[] = $currentCssChunk;
+                }
+            }
+        @endphp
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="{{ rtrim($appUrl, '/') }}/images/icon-128.png" type="image/png">
         <title>REVESTA - Compte-rendu de votre projet immobilier</title>
-        <style>
-            {!! file_get_contents(base_path('resources/css/emails.css')) !!}
-        </style>
+        @forelse ($emailCssChunks as $emailCssChunk)
+            <style>
+                {!! $emailCssChunk !!}
+            </style>
+        @empty
+            <style>
+                body { margin: 0; padding: 0; font-family: Arial, sans-serif; color: #222; }
+            </style>
+        @endforelse
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     </head>
     <body>
