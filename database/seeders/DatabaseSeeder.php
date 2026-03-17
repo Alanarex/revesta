@@ -20,14 +20,19 @@ class DatabaseSeeder extends Seeder
                 AidSeeder::class,
                 HousingSeeder::class,
                 AdSeeder::class,
+                AdImageSeeder::class,
                 ConditionSeeder::class,
                 UserSeeder::class,
                 AdminUserSeeder::class,
                 BlogSeeder::class,
                 SimulationSeeder::class,
+                RenovationWorkSeeder::class,
+                RenovationWorkSimulationSeeder::class,
                 AidSimulationSeeder::class,
+                NotificationSeeder::class,
                 NewsletterSeeder::class,
                 NewsletterCampaignSeeder::class,
+                NewsletterCampaignLogSeeder::class,
             ]);
         }
     }
