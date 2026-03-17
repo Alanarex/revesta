@@ -70,7 +70,7 @@ class SimulationRepository
 
             $simulation->aids()->syncWithoutDetaching([
                 $aid->id => [
-                    'amount'   => Arr::get($aide, 'montant'),
+                    'amount'   => $this->normalizeAidAmount(Arr::get($aide, 'montant')),
                     'raw_name' => $name,
                     'details'  => [
                         'url'         => Arr::get($aide, 'url'),
@@ -91,6 +91,15 @@ class SimulationRepository
 
         $aliases = (array) config('aid.parcours_aide_aliases', []);
         return $aliases[$input] ?? null;
+    }
+
+    private function normalizeAidAmount(mixed $value): float
+    {
+        if ($value === null || $value === '') {
+            return 0.0;
+        }
+
+        return is_numeric($value) ? (float) $value : 0.0;
     }
 }
 
