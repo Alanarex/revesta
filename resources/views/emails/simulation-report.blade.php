@@ -110,6 +110,12 @@
     $costChartUrl = 'https://quickchart.io/chart?width=620&height=320&c=' . rawurlencode(json_encode($costChartConfig, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     $impactChartUrl = 'https://quickchart.io/chart?width=620&height=320&c=' . rawurlencode(json_encode($impactChartConfig, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
+    $socialLinks = [
+        ['label' => 'Facebook', 'url' => 'https://www.facebook.com/'],
+        ['label' => 'Instagram', 'url' => 'https://www.instagram.com/'],
+        ['label' => 'LinkedIn', 'url' => 'https://www.linkedin.com/'],
+    ];
+
     $cardsBaseStyle = 'display:flex;flex-direction:column;background-color:#fff;border:1px solid #E3E3E1;border-radius:20px;padding:20px;margin:0 16px 16px 16px;';
     $h2Style = 'color:#0b1c13;font-size:22px;font-weight:800;padding-bottom:6px;margin:0 0 10px 0;border-bottom:2px solid #0b1c13;';
     $rowStyle = 'display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #f9f9f9;padding:10px 0;';
@@ -121,6 +127,18 @@
 
 @section('content')
     <div style="max-width:650px;margin:0 auto;background:#fffcf1;padding:14px 0;font-family:Montserrat,-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto','Oxygen','Ubuntu','Cantarell','Fira Sans','Droid Sans','Helvetica Neue',sans-serif;color:#222;">
+
+        <section style="display:flex;flex-direction:row;align-items:center;justify-content:space-between;background:#0b1c13;color:#fff;padding:16px 24px;margin:0 16px 16px 16px;border-radius:48px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#a4c520;"></span>
+                <span style="font-size:20px;font-weight:800;letter-spacing:0.4px;">REVESTA</span>
+            </div>
+            <div style="display:flex;gap:10px;">
+                @foreach ($socialLinks as $social)
+                    <a href="{{ $social['url'] }}" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,0.25);border-radius:16px;padding:5px 10px;">{{ $social['label'] }}</a>
+                @endforeach
+            </div>
+        </section>
 
         <section style="display:flex;flex-direction:column;align-items:center;gap:4px;margin:0 16px 16px 16px;">
             <p style="font-size:15px;font-weight:600;text-align:center;margin:0;">Hello {{ data_get($utilisateur, 'prenom', $user->first_name ?? 'Utilisateur') }} ! 👋</p>
@@ -167,24 +185,10 @@
             <div style="width:50%;display:flex;flex-direction:column;gap:16px;">
                 <div style="{{ $cardsBaseStyle }}margin:0;">
                     <h2 style="{{ $h2Style }}">💰 Plan financier</h2>
-                    <div style="display:flex;flex-direction:column;border:1px solid #E3E3E1;border-radius:16px;overflow:hidden;">
-                        <h3 style="font-size:16px;text-align:center;background:#f9f9f9;border-bottom:1px solid #E3E3E1;padding:10px;margin:0;">Coûts de votre projet</h3>
-                        <div style="padding:10px;">
-                            <div style="background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;margin-bottom:8px;text-align:center;">
-                                <div style="font-size:13px;color:#666;">🏠 Prix d'acquisition de votre bien</div>
-                                <div style="font-size:24px;font-weight:800;color:#222;">{{ $formatMoney($acquisitionPrice) }}</div>
-                            </div>
-                            <div style="background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;margin-bottom:8px;text-align:center;">
-                                <div style="font-size:13px;color:#666;">🔨 Votre budget travaux réno'</div>
-                                <div style="font-size:24px;font-weight:800;color:#222;">{{ $formatMoney($workBudget) }}</div>
-                            </div>
-                            <div style="background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                                <div style="font-size:13px;color:#666;">📊 Coût total de votre projet</div>
-                                <div style="font-size:24px;font-weight:800;color:#222;">{{ $formatMoney($totalProjectCost) }}</div>
-                                <div style="font-size:12px;color:#666;">(acquisition + travaux)</div>
-                            </div>
-                        </div>
-                    </div>
+                    <h3 style="font-size:16px;text-align:left;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:10px;margin:0 0 10px 0;">Coûts de votre projet</h3>
+                    <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">🏠 Prix d'acquisition de votre bien</span><span style="{{ $valueStyle }}">{{ $formatMoney($acquisitionPrice) }}</span></div>
+                    <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">🔨 Votre budget travaux réno'</span><span style="{{ $valueStyle }}">{{ $formatMoney($workBudget) }}</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;"><span style="{{ $labelStyle }}">📊 Coût total de votre projet</span><span style="{{ $valueStyle }}">{{ $formatMoney($totalProjectCost) }}</span></div>
                 </div>
 
                 <div style="{{ $cardsBaseStyle }}margin:0;">
@@ -196,16 +200,8 @@
             <div style="width:50%;display:flex;flex-direction:column;gap:16px;">
                 <div style="{{ $cardsBaseStyle }}margin:0;">
                     <h3 style="font-size:16px;text-align:center;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:10px;margin:0 0 10px 0;">Coût <u>net</u> de mon projet après aides</h3>
-                    <div style="display:flex;gap:8px;">
-                        <div style="width:50%;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                            <div style="font-size:13px;color:#666;">🎉 Subventions déduites</div>
-                            <div style="font-size:24px;font-weight:800;color:#a4c520;">- {{ $formatMoney($totalAids) }}</div>
-                        </div>
-                        <div style="width:50%;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                            <div style="font-size:13px;color:#666;">✨ Coût après déduction</div>
-                            <div style="font-size:24px;font-weight:800;color:#222;"><u>{{ $formatMoney($finalCost) }}</u></div>
-                        </div>
-                    </div>
+                    <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">🎉 Subventions déduites</span><span style="{{ $valueStyle }}color:#a4c520;">- {{ $formatMoney($totalAids) }}</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;"><span style="{{ $labelStyle }}">✨ Coût après déduction</span><span style="{{ $valueStyle }}"><u>{{ $formatMoney($finalCost) }}</u></span></div>
                 </div>
 
                 <div style="{{ $cardsBaseStyle }}margin:0;">
@@ -215,20 +211,9 @@
 
                 <div style="{{ $cardsBaseStyle }}margin:0;">
                     <h3 style="font-size:16px;text-align:center;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:10px;margin:0 0 10px 0;">Vos aides financières</h3>
-                    <div style="display:flex;gap:8px;">
-                        <div style="width:33.33%;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                            <div style="font-size:12px;color:#666;">💳 Reste à charge travaux</div>
-                            <div style="font-size:20px;font-weight:800;color:#222;">{{ $formatMoney($remainingWorkCost) }}</div>
-                        </div>
-                        <div style="width:33.33%;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                            <div style="font-size:12px;color:#666;">📈 Couverture des travaux</div>
-                            <div style="font-size:20px;font-weight:800;color:#222;">{{ number_format($workCoverage, 1, ',', ' ') }}%</div>
-                        </div>
-                        <div style="width:33.33%;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                            <div style="font-size:12px;color:#666;">✅ Aides éligibles</div>
-                            <div style="font-size:20px;font-weight:800;color:#222;">{{ count($aidesDetails) }}</div>
-                        </div>
-                    </div>
+                    <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">💳 Reste à charge travaux</span><span style="{{ $valueStyle }}">{{ $formatMoney($remainingWorkCost) }}</span></div>
+                    <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">📈 Couverture des travaux</span><span style="{{ $valueStyle }}">{{ number_format($workCoverage, 1, ',', ' ') }}%</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;"><span style="{{ $labelStyle }}">✅ Aides éligibles</span><span style="{{ $valueStyle }}">{{ count($aidesDetails) }}</span></div>
                 </div>
             </div>
         </section>
@@ -292,15 +277,9 @@
 
             <div style="display:flex;flex-direction:column;border:1px solid #E3E3E1;border-radius:14px;margin-top:10px;overflow:hidden;">
                 <h3 style="width:100%;text-align:center;background:#f9f9f9;border-bottom:1px solid #E3E3E1;padding:10px;margin:0;font-size:16px;">Impacts positifs de votre rénovation</h3>
-                <div style="display:flex;gap:8px;padding:10px;">
-                    <div style="width:50%;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                        <div style="font-size:13px;color:#666;">💳 Économies sur vos factures d'énergie</div>
-                        <div style="font-size:22px;font-weight:800;color:#222;">{{ $estimatedEnergySavings ? '~ ' . number_format($estimatedEnergySavings, 0, ',', ' ') . ' € / an' : 'N/A' }}</div>
-                    </div>
-                    <div style="width:50%;background:#f9f9f9;border:1px solid #E3E3E1;border-radius:12px;padding:12px;text-align:center;">
-                        <div style="font-size:13px;color:#666;">🍃 Réduction de vos émissions de CO₂</div>
-                        <div style="font-size:22px;font-weight:800;color:#222;">{{ $estimatedCO2Savings ? '~ ' . number_format($estimatedCO2Savings, 0, ',', ' ') . ' kg / an' : 'N/A' }}</div>
-                    </div>
+                <div style="padding:10px;">
+                    <div style="{{ $rowStyle }}"><span style="{{ $labelStyle }}">💳 Économies sur vos factures d'énergie</span><span style="{{ $valueStyle }}">{{ $estimatedEnergySavings ? '~ ' . number_format($estimatedEnergySavings, 0, ',', ' ') . ' € / an' : 'N/A' }}</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;"><span style="{{ $labelStyle }}">🍃 Réduction de vos émissions de CO₂</span><span style="{{ $valueStyle }}">{{ $estimatedCO2Savings ? '~ ' . number_format($estimatedCO2Savings, 0, ',', ' ') . ' kg / an' : 'N/A' }}</span></div>
                 </div>
             </div>
         </section>
