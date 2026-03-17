@@ -7,11 +7,63 @@ use App\Models\Aid;
 use App\Models\RenovationWork;
 use App\Models\Simulation;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class SimulationRepository
 {
+    public function paginateForManagement(
+        User $viewer,
+        bool $isAdmin,
+        int $perPage = 12,
+        ?string $firstName = null,
+        ?string $lastName = null,
+    ): LengthAwarePaginator {
+        $query = Simulation::query()
+            ->with([
+                'user:id,first_name,last_name,email',
+                'ad:id,titre,ville,prix',
+                'ad.images' => fn ($relation) => $relation->orderBy('order')->orderBy('id'),
+                'works:id,label',
+                'aids:id,name',
+            ])
+            ->orderByDesc('created_at');
+
+        if (! $isAdmin) {
+            $query->where('user_id', $viewer->id);
+        }
+
+        if ($isAdmin && $firstName) {
+            $query->whereHas('user', fn ($userQuery) => $userQuery->where('first_name', 'like', '%'.$firstName.'%'));
+        }
+
+        if ($isAdmin && $lastName) {
+            $query->whereHas('user', fn ($userQuery) => $userQuery->where('last_name', 'like', '%'.$lastName.'%'));
+        }
+
+        return $query->paginate($perPage)->withQueryString();
+    }
+
+    public function findForManagement(User $viewer, bool $isAdmin, int $simulationId): ?Simulation
+    {
+        $query = Simulation::query()
+            ->with([
+                'user:id,first_name,last_name,email',
+                'ad:id,titre,ville,prix,localisation,code_postal,surface,pieces,url',
+                'ad.images' => fn ($relation) => $relation->orderBy('order')->orderBy('id'),
+                'works:id,label',
+                'aids:id,name',
+            ])
+            ->whereKey($simulationId);
+
+        if (! $isAdmin) {
+            $query->where('user_id', $viewer->id);
+        }
+
+        return $query->first();
+    }
+
     public function createSimulation(User $user, Ad $ad, array $payload): Simulation
     {
         return Simulation::query()->create([
@@ -70,12 +122,13 @@ class SimulationRepository
 
             $simulation->aids()->syncWithoutDetaching([
                 $aid->id => [
-                    'amount'   => $this->normalizeAidAmount(Arr::get($aide, 'montant')),
+                    'amount'   => $this->normalizeAidAmount(Arr::get($aide, 'montant', Arr::get($aide, 'valeur'))),
                     'raw_name' => $name,
                     'details'  => [
                         'url'         => Arr::get($aide, 'url'),
                         'type'        => Arr::get($aide, 'type'),
-                        'description' => Arr::get($aide, 'description'),
+                        'description' => Arr::get($aide, 'description', Arr::get($aide, 'detail')),
+                        'detail'      => Arr::get($aide, 'detail', Arr::get($aide, 'description')),
                     ],
                 ],
             ]);
