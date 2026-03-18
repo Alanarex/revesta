@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Repositories\SimulationRepository;
 use App\Repositories\AdRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -55,13 +56,11 @@ class SimulationService
             $originalPayload !== [] ? $originalPayload : $validatedPayload,
         );
 
-        if (app()->environment('local')) {
-            $result['mail_render'] = (new SimulationReportMail($result['simulation']))->render();
-
-            return $result;
-        }
-
-        $this->queueSimulationMailSafely($result['simulation'], $result['user']);
+        $this->queueSimulationMailSafely(
+            $result['simulation'],
+            $result['user'],
+            $originalPayload !== [] ? $originalPayload : $validatedPayload,
+        );
 
         if ($result['user_created']) {
             $this->sendVerificationMailSafely($result['user']);
@@ -70,10 +69,31 @@ class SimulationService
         return $result;
     }
 
-    private function queueSimulationMailSafely(Simulation $simulation, User $user): void
+    public function getManagementSimulations(
+        User $viewer,
+        bool $isAdmin,
+        int $perPage = 12,
+        ?string $firstName = null,
+        ?string $lastName = null,
+    ): LengthAwarePaginator {
+        return $this->simulationRepository->paginateForManagement(
+            viewer: $viewer,
+            isAdmin: $isAdmin,
+            perPage: $perPage,
+            firstName: $firstName,
+            lastName: $lastName,
+        );
+    }
+
+    public function findVisibleSimulation(User $viewer, bool $isAdmin, int $simulationId): ?Simulation
+    {
+        return $this->simulationRepository->findForManagement($viewer, $isAdmin, $simulationId);
+    }
+
+    private function queueSimulationMailSafely(Simulation $simulation, User $user, array $payload): void
     {
         try {
-            Mail::to($user->email)->queue(new SimulationReportMail($simulation));
+            Mail::to($user->email)->queue(new SimulationReportMail($simulation, $payload));
         } catch (Throwable $exception) {
             Log::warning('Failed to queue simulation report mail.', [
                 'simulation_id' => $simulation->id,

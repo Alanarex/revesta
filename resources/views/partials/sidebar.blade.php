@@ -29,6 +29,13 @@
             'enabled' => Gate::allows('manage', App\Models\User::class),
         ],
         [
+            'title' => 'Simulations',
+            'route' => route('simulations.index'),
+            'icon' => 'fa-chart-column',
+            'active' => request()->routeIs('simulations.*'),
+            'enabled' => auth()->check(),
+        ],
+        [
             'title' => 'API Docs',
             'route' => route(name: 'scribe'),
             'icon' => 'fa-file-code',

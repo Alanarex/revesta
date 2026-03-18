@@ -7,12 +7,14 @@ use App\Models\Blog;
 use App\Models\BlogComment;
 use App\Models\Newsletter;
 use App\Models\NewsletterCampaign;
+use App\Models\Simulation;
 use App\Models\User;
 use App\Policies\AddressPolicy;
 use App\Policies\BlogCommentPolicy;
 use App\Policies\BlogPolicy;
 use App\Policies\NewsletterCampaignPolicy;
 use App\Policies\NewsletterPolicy;
+use App\Policies\SimulationPolicy;
 use App\Policies\UserPolicy;
 use App\Repositories\AddressRepository;
 use App\Repositories\BlogBookmarkRepository;
@@ -138,5 +140,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Address::class, AddressPolicy::class);
         Gate::policy(NewsletterCampaign::class, NewsletterCampaignPolicy::class);
         Gate::policy(Newsletter::class, NewsletterPolicy::class);
+        Gate::policy(Simulation::class, SimulationPolicy::class);
     }
 }

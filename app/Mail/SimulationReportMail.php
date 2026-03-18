@@ -16,7 +16,7 @@ class SimulationReportMail extends Mailable implements ShouldQueue
 {
     use ProvidesEmailLayoutData, Queueable, SerializesModels;
 
-    public function __construct(public Simulation $simulation) {}
+    public function __construct(public Simulation $simulation, public array $apiPayload = []) {}
 
     public function envelope(): Envelope
     {
@@ -37,7 +37,10 @@ class SimulationReportMail extends Mailable implements ShouldQueue
             view: 'emails.simulation-report',
             with: array_merge(
                 $this->emailLayoutData(),
-                ['simulation' => $simulation]
+                [
+                    'simulation' => $simulation,
+                    'apiPayload' => $this->apiPayload,
+                ]
             )
         );
     }
