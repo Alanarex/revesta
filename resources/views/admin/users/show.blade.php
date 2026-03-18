@@ -156,23 +156,30 @@
                                     style="transition: transform 0.3s ease;">
                                     @foreach ($simulations as $sim)
                                         <div class="simulation-card flex-shrink-0" style="width: 200px;">
-                                            <x-layout.card class="h-100 shadow-sm"
-                                                body-class="d-flex flex-column justify-content-between p-3"
-                                                style="aspect-ratio: 1/1;">
-                                                <div>
-                                                    <div class="fw-bold mb-2" style="font-size: 0.9rem;">
-                                                        {{ Str::limit($sim->title ?? 'Simulation', 40) }}
+                                            @php
+                                                $simTitle = $sim->ad?->titre ?: 'Simulation #' . $sim->id;
+                                                $simLocation = $sim->ad?->ville ?: $sim->ad?->localisation ?: 'Localisation non renseignée';
+                                            @endphp
+                                            <a href="{{ route('simulations.show', $sim) }}" class="text-decoration-none">
+                                                <x-layout.card class="h-100 shadow-sm"
+                                                    body-class="d-flex flex-column justify-content-between p-3"
+                                                    style="aspect-ratio: 1/1;">
+                                                    <div>
+                                                        <div class="fw-bold mb-2 text-dark" style="font-size: 0.9rem;">
+                                                            {{ Str::limit($simTitle, 40) }}
+                                                        </div>
+                                                        <div class="small text-muted" style="font-size: 0.75rem;">
+                                                            {{ Str::limit($simLocation, 60) }}
+                                                        </div>
                                                     </div>
-                                                    <div class="small text-muted" style="font-size: 0.75rem;">
-                                                        {{ Str::limit($sim->summary ?? '', 60) }}</div>
-                                                </div>
-                                                <div class="mt-auto">
-                                                    <div class="small text-muted" style="font-size: 0.7rem;">
-                                                        <i class="far fa-calendar"></i>
-                                                        {{ $sim->created_at?->format('d/m/Y') }}
+                                                    <div class="mt-auto">
+                                                        <div class="small text-muted" style="font-size: 0.7rem;">
+                                                            <i class="far fa-calendar"></i>
+                                                            {{ $sim->created_at?->format('d/m/Y') }}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </x-layout.card>
+                                                </x-layout.card>
+                                            </a>
                                         </div>
                                     @endforeach
                                 </div>
