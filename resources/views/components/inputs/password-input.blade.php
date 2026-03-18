@@ -26,14 +26,14 @@
             {{ $confirmTarget ? "data-confirm-target=\"$confirmTarget\"" : '' }}
             {{ $attributes->merge(['class' => 'form-control']) }}>
 
-        @if ($muted)
-            <small class="text-muted">{{ $muted }}</small>
-        @endif
-
         @error($name)
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
+
+    @if ($muted)
+        <small class="text-muted d-block mt-1">{{ $muted }}</small>
+    @endif
 </div>
 
 @pushOnce('styles')
