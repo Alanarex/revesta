@@ -23,7 +23,7 @@
                 </x-forms.alert>
             @endif
 
-            <form method="POST" action="{{ route('password.set.store', $user) }}">
+            <form method="POST" action="{{ route('password.set.store', ['user' => $user, 'expires' => request('expires'), 'signature' => request('signature')]) }}">
                 @csrf
 
                 <x-inputs.password-input 
