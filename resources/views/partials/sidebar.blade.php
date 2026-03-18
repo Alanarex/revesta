@@ -43,6 +43,13 @@
             'enabled' => auth()->check() && auth()->user()?->isAdmin(),
         ],
         [
+            'title' => 'phpMyAdmin',
+            'route' => route('admin.system.phpmyadmin'),
+            'icon' => 'fa-database',
+            'active' => request()->routeIs('admin.system.phpmyadmin'),
+            'enabled' => auth()->check() && auth()->user()?->isAdmin() && filled(config('services.phpmyadmin.url')),
+        ],
+        [
             'title' => 'Newsletters',
             'route' => route('admin.newsletters.index'),
             'icon' => 'fa-newspaper',

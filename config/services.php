@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'phpmyadmin' => [
+        'url' => env('PHPMYADMIN_URL'),
+        'allowed_ips' => array_filter(array_map('trim', explode(',', (string) env('PHPMYADMIN_ALLOWED_IPS', '')))),
+    ],
+
 ];

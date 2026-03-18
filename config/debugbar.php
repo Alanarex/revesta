@@ -14,7 +14,9 @@ return [
      |
      */
 
-    'enabled' => env('DEBUGBAR_ENABLED', null),
+    'enabled' => env('APP_ENV') === 'production'
+        ? false
+        : env('DEBUGBAR_ENABLED', null),
     'hide_empty_tabs' => true, // Hide tabs until they have content
     'except' => [
         'telescope*',
