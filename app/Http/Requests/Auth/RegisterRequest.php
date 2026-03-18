@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules;
 
 class RegisterRequest extends FormRequest
 {
@@ -18,7 +17,6 @@ class RegisterRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:App\\Models\\User'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
     }
 
@@ -35,9 +33,6 @@ class RegisterRequest extends FormRequest
             'email.email' => 'L\'email doit etre une adresse valide.',
             'email.max' => 'L\'email ne doit pas depasser 255 caracteres.',
             'email.unique' => 'Cet email est deja utilise.',
-            'password.required' => 'Le mot de passe est obligatoire.',
-            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
-            'password.min' => 'Le mot de passe doit contenir au moins 8 caracteres.',
         ];
     }
 }
