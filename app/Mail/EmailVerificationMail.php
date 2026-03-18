@@ -33,11 +33,14 @@ class EmailVerificationMail extends Mailable implements ShouldQueue
 
     public function content(): Content
     {
-        $verificationUrl = URL::temporarySignedRoute(
+        $relativeSignedPath = URL::temporarySignedRoute(
             'password.set',
             now()->addHours(24),
-            ['user' => $this->user->id]
+            ['user' => $this->user->id],
+            false,
         );
+
+        $verificationUrl = rtrim((string) config('app.url'), '/') . $relativeSignedPath;
 
         return new Content(
             view: 'emails.verify-email',

@@ -42,10 +42,10 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 
     Route::get('set-password/{user}', [SetPasswordController::class, 'show'])
-        ->middleware('signed')
+        ->middleware('signed:relative')
         ->name('password.set');
 
     Route::post('set-password/{user}', [SetPasswordController::class, 'store'])
-        ->middleware('signed')
+        ->middleware('signed:relative')
         ->name('password.set.store');
 });
