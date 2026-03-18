@@ -7,7 +7,6 @@
     $simulationPayload = (array) data_get($apiPayload ?? [], 'simulation', []);
 
     $adImage = data_get($annonce, 'images.0', $ad?->images?->first()?->url);
-    $logoUrl = asset('images/Revesta_LogoTextuel-Blanc.svg');
 
     $formatMoney = static function ($value): string {
         if ($value === null || $value === '' || !is_numeric($value)) {
@@ -105,61 +104,9 @@
     ];
 @endphp
 
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="{{ rtrim($appUrl, '/') }}/images/icon-128.png" type="image/png">
-        <title>REVESTA - Compte-rendu de votre projet immobilier</title>
-        <style>
-            {!! file_get_contents(base_path('resources/css/emails.css')) !!}
-        </style>
-        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    </head>
-    <body>
-        <header>
-            <a href="https://www.revesta.fr" target="_blank" rel="noopener">
-                <img src="{{ $logoSrc }}" alt="REVESTA Logo" class="logo">
-            </a>
-            <div class="social-links">
-                <a href="https://www.facebook.com/revesta.fr" target="_blank" rel="noopener" title="Facebook">
-                    <i class='bx bxl-facebook-circle'></i>
-                </a>
-                <a href="https://www.instagram.com/revesta.fr" target="_blank" rel="noopener" title="Instagram">
-                    <i class='bx bxl-instagram-alt'></i>
-                </a>
-                <a href="https://www.linkedin.com/company/re-vesta/" target="_blank" rel="noopener" title="LinkedIn">
-                    <i class='bx bxl-linkedin-square'></i>
-                </a>
-            </div>
-        </header>
+@extends('layouts.email', ['title' => 'REVESTA - Compte-rendu de votre projet immobilier'])
 
 @section('content')
-<div style="max-width:650px;margin:0 auto;background:#fffcf1;padding:14px 0;font-family:Montserrat,-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto','Oxygen','Ubuntu','Cantarell','Fira Sans','Droid Sans','Helvetica Neue',sans-serif;color:#222;">
-
-    <section style="background:#0b1c13;color:#fff;padding:16px 24px;margin:0 16px 16px 16px;border-radius:48px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
-            <tr>
-                <td align="left" valign="middle">
-                    <a href="https://www.revesta.fr" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block;">
-                        <img src="{{ $logoUrl }}" alt="REVESTA Logo" style="height:24px;display:block;border:0;">
-                    </a>
-                </td>
-                <td align="right" valign="middle" style="white-space:nowrap;">
-                    <a href="https://www.facebook.com/revesta.fr" target="_blank" rel="noopener" title="Facebook" style="text-decoration:none;display:inline-block;margin-left:8px;">
-                        <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook--v1.png" alt="Facebook" style="width:18px;height:18px;display:block;border:0;">
-                    </a>
-                    <a href="https://www.instagram.com/revesta.fr" target="_blank" rel="noopener" title="Instagram" style="text-decoration:none;display:inline-block;margin-left:8px;">
-                        <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new--v1.png" alt="Instagram" style="width:18px;height:18px;display:block;border:0;">
-                    </a>
-                    <a href="https://www.linkedin.com/company/re-vesta/" target="_blank" rel="noopener" title="LinkedIn" style="text-decoration:none;display:inline-block;margin-left:8px;">
-                        <img src="https://img.icons8.com/ios-filled/50/ffffff/linkedin.png" alt="LinkedIn" style="width:18px;height:18px;display:block;border:0;">
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </section>
 
     <section style="margin:0 16px 16px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
@@ -358,9 +305,8 @@
             </ul>
         </div>
     </section>
-</div>
 
-<hr style="border:none;border-top:1px solid #E3E3E1;margin:0;">
+<hr style="border:none;border-top:1px solid #E3E3E1;margin:16px 16px 0 16px;">
 
 @include('emails.partials.footer', [
     'appName' => $appName,
