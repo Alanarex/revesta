@@ -230,7 +230,10 @@ class UserRepository
      */
     public function getUserSimulations(User $user): Collection
     {
-        return $user->simulations()->orderByDesc('created_at')->get();
+        return $user->simulations()
+            ->with(['ad:id,titre,ville,localisation'])
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     /**
@@ -288,6 +291,7 @@ class UserRepository
     {
         return $user->simulations()
             ->where('created_at', '>=', $since)
+            ->with(['ad:id,titre'])
             ->latest()
             ->get();
     }

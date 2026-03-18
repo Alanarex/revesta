@@ -238,9 +238,11 @@ class UserService
 
         $recentSimulations = $this->userRepository->getRecentSimulations($user, $oneWeekAgo);
         foreach ($recentSimulations as $simulation) {
+            $simulationLabel = $simulation->ad?->titre ?: ('Simulation #'.$simulation->id);
+
             $recentActivity->push([
                 'type' => 'simulation',
-                'label' => 'Simulation : '.($simulation->title ?? 'Simulation'),
+                'label' => 'Simulation : '.$simulationLabel,
                 'url' => '#',
                 'created_at' => $simulation->created_at,
             ]);
