@@ -2,13 +2,14 @@
 
 namespace App\Mail;
 
+use App\Mail\Concerns\ProvidesEmailLayoutData;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class NewsletterCampaignMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use ProvidesEmailLayoutData, Queueable, SerializesModels;
 
     public string $title;
 
@@ -24,6 +25,12 @@ class NewsletterCampaignMail extends Mailable
     {
         return $this->subject($this->title)
             ->view('emails.newsletter-campaign')
-            ->with(['title' => $this->title, 'content' => $this->content]);
+            ->with(array_merge(
+                $this->emailLayoutData(),
+                [
+                    'title' => $this->title,
+                    'content' => $this->content,
+                ]
+            ));
     }
 }
