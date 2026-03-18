@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class RegistrationService
 {
@@ -17,7 +17,7 @@ class RegistrationService
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => Str::random(40),
             'role_id' => $data['role_id'] ?? null, // Add role if provided
         ]);
 

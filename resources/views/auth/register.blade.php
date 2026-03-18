@@ -40,21 +40,9 @@
                     required
                 />
 
-                <x-inputs.password-input 
-                    name="password" 
-                    label="Mot de passe"
-                    placeholder="Au moins 8 caracteres"
-                    icon="fa-lock"
-                    required
-                />
-
-                <x-inputs.password-input 
-                    name="password_confirmation" 
-                    label="Confirmer le mot de passe"
-                    placeholder="Confirmez votre mot de passe"
-                    icon="fa-lock"
-                    required
-                />
+                <p class="small text-muted mb-4">
+                    Après inscription, vous recevrez un email pour définir votre mot de passe.
+                </p>
 
                 <!-- Footer Actions -->
                 <div class="d-flex justify-content-between align-items-center">
