@@ -150,7 +150,7 @@ class StoreSimulationRequest extends FormRequest
             'annonce.etage' => ['nullable', 'string', 'max:100'],
             'annonce.type_travaux' => ['nullable', 'string', 'max:255'],
             'annonce.date_extraction' => ['nullable', 'date'],
-            'annonce.images' => ['nullable', 'array', 'max:20'],
+            'annonce.images' => ['nullable', 'array', 'max:100'],
             'annonce.images.*' => ['required', 'url:http,https', 'max:2048'],
 
             'utilisateur' => ['required', 'array'],
