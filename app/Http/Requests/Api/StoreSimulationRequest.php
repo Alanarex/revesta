@@ -9,6 +9,10 @@ class StoreSimulationRequest extends FormRequest
 {
     private array $originalPayload = [];
 
+    private const TRUTHY_VALUES = ['1', 'true', 'yes', 'oui', 'on'];
+
+    private const FALSY_VALUES = ['0', 'false', 'no', 'non', 'off'];
+
     public function authorize(): bool
     {
         return true;
@@ -48,8 +52,24 @@ class StoreSimulationRequest extends FormRequest
             $annonce['images'] = $normalizedImages;
         }
 
+        foreach (['dpe', 'etage'] as $field) {
+            if (array_key_exists($field, $annonce) && $annonce[$field] !== null) {
+                $annonce[$field] = trim((string) $annonce[$field]);
+            }
+        }
+
         if (isset($utilisateur['email']) && is_string($utilisateur['email'])) {
             $utilisateur['email'] = mb_strtolower(trim($utilisateur['email']));
+        }
+
+        if (array_key_exists('residence_principale', $utilisateur)) {
+            $utilisateur['residence_principale'] = $this->normalizeBoolean($utilisateur['residence_principale']);
+        }
+
+        foreach (['dpe_actuel', 'dpe_vise'] as $field) {
+            if (array_key_exists($field, $utilisateur) && $utilisateur[$field] !== null) {
+                $utilisateur[$field] = trim((string) $utilisateur[$field]);
+            }
         }
 
         if (isset($simulation['travaux']) && is_array($simulation['travaux'])) {
@@ -111,6 +131,41 @@ class StoreSimulationRequest extends FormRequest
             'utilisateur' => $utilisateur,
             'simulation' => $simulation,
         ]);
+    }
+
+    private function normalizeBoolean(mixed $value): mixed
+    {
+        if (is_bool($value) || $value === null) {
+            return $value;
+        }
+
+        if (is_int($value) || is_float($value)) {
+            if ((int) $value === 1) {
+                return true;
+            }
+
+            if ((int) $value === 0) {
+                return false;
+            }
+
+            return $value;
+        }
+
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        $normalized = mb_strtolower(trim($value));
+
+        if (in_array($normalized, self::TRUTHY_VALUES, true)) {
+            return true;
+        }
+
+        if (in_array($normalized, self::FALSY_VALUES, true)) {
+            return false;
+        }
+
+        return $value;
     }
 
     public function originalPayload(): array

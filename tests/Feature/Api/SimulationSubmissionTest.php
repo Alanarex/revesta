@@ -326,4 +326,45 @@ class SimulationSubmissionTest extends TestCase
             $simulation->aides_details
         );
     }
+
+    public function test_it_normalizes_extension_scalar_types_before_validation(): void
+    {
+        Mail::fake();
+        Storage::fake('local');
+
+        $payload = [
+            'annonce' => [
+                'url' => 'https://example.com/annonce/type-normalization',
+                'dpe' => 4,
+                'etage' => 3,
+            ],
+            'utilisateur' => [
+                'email' => 'normalized-types@example.com',
+                'residence_principale' => 'oui',
+                'dpe_actuel' => 6,
+                'dpe_vise' => 2,
+            ],
+            'simulation' => [
+                'condition_depenses' => true,
+            ],
+        ];
+
+        $response = $this->postJson('/api/v1/simulations', $payload);
+
+        $response->assertCreated()
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'normalized-types@example.com',
+            'residence_principale' => true,
+            'dpe_actuel_id' => 'F',
+            'dpe_vise_id' => 'B',
+        ]);
+
+        $this->assertDatabaseHas('ads', [
+            'url' => 'https://example.com/annonce/type-normalization',
+            'dpe_class_id' => 'D',
+            'etage' => '3',
+        ]);
+    }
 }
