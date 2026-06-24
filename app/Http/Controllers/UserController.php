@@ -43,18 +43,11 @@ class UserController extends Controller
         $perPage = (int) $request->get('per_page', 50);
 
         $users = $this->userService->getAllUsers($perPage, $search, $sort, $direction);
+        $isAdmin = auth()->check() && auth()->user()->isAdmin();
 
-        $data = collect($users->items())->map(function ($user) {
-            return [
-                'id' => $user->id,
-                'full_name' => $user->full_name ?? '-',
-                'email' => $user->email ?? '-',
-                'phone' => $user->phone ?? '-',
-                'role' => $user->role?->name ?? '-',
-                'city' => $user->city ?? ($user->address?->city ?? ''),
-                'postal_code' => $user->postal_code ?? ($user->address?->postal_code ?? ''),
-            ];
-        });
+        $data = collect($users->items())->map(
+            fn (User $user) => $this->userService->formatUserForList($user, $isAdmin)
+        );
 
         return response()->json([
             'data' => $data,
@@ -117,13 +110,21 @@ class UserController extends Controller
         }
     }
 
-    public function destroy(DeleteUserRequest $request, User $user): RedirectResponse
+    public function destroy(DeleteUserRequest $request, User $user): JsonResponse|RedirectResponse
     {
         try {
             $this->userService->deleteUser($user);
 
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Utilisateur supprimé avec succès!']);
+            }
+
             return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé avec succès!');
         } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Erreur lors de la suppression: '.$e->getMessage()], 500);
+            }
+
             return redirect()->route('admin.users.index')->with('error', 'Erreur lors de la suppression: '.$e->getMessage());
         }
     }
