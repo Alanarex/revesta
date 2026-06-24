@@ -22,7 +22,7 @@ class BlogRepository
                 'comments',
                 'comments as direct_comments_count' => function ($q) {
                     $q->whereNull('parent_id');
-                },
+                }
             ])
             ->published()
             ->searchByTitle($search);
@@ -36,7 +36,7 @@ class BlogRepository
                 },
                 'likes as liked_by_auth' => function ($q) use ($authUserId) {
                     $q->where('user_id', $authUserId);
-                },
+                }
             ]);
         }
 
@@ -56,7 +56,7 @@ class BlogRepository
                 'comments',
                 'comments as direct_comments_count' => function ($q) {
                     $q->whereNull('parent_id');
-                },
+                }
             ]);
 
         // Apply status filter
@@ -67,13 +67,13 @@ class BlogRepository
         // Apply search filter
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%'.$search.'%')
-                    ->orWhere('short_description', 'like', '%'.$search.'%')
-                    ->orWhere('content', 'like', '%'.$search.'%')
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('first_name', 'like', '%'.$search.'%')
-                            ->orWhere('last_name', 'like', '%'.$search.'%');
-                    });
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('short_description', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%')
+                  ->orWhereHas('user', function ($q) use ($search) {
+                      $q->where('first_name', 'like', '%' . $search . '%')
+                        ->orWhere('last_name', 'like', '%' . $search . '%');
+                  });
             });
         }
 
@@ -100,74 +100,12 @@ class BlogRepository
                 },
                 'likes as liked_by_auth' => function ($q) use ($authUserId) {
                     $q->where('user_id', $authUserId);
-                },
+                }
             ]);
         }
 
         return $query->orderBy('created_at', 'desc')
             ->paginate($perPage);
-    }
-
-    /**
-     * Get a user's blogs with precomputed tags for filters.
-     * Tags always include the blog status, and include "bookmarked" when
-     * the profile user has bookmarked the blog.
-     */
-    public function getUserBlogsWithTags(int $profileUserId, ?int $authUserId = null, bool $includeBookmarked = true): Collection
-    {
-        $query = Blog::select(['id', 'title', 'short_description', 'user_id', 'status', 'created_at', 'updated_at'])
-            ->with(['user:id,first_name,last_name,email'])
-            ->withCount([
-                'likes',
-                'bookmarks',
-                'comments',
-                'comments as direct_comments_count' => function ($q) {
-                    $q->whereNull('parent_id');
-                },
-            ])
-            ->withCount([
-                'bookmarks as bookmarked_by_profile' => function ($q) use ($profileUserId) {
-                    $q->where('user_id', $profileUserId);
-                },
-            ])
-            ->where(function ($q) use ($profileUserId, $includeBookmarked) {
-                $q->where('user_id', $profileUserId);
-
-                if ($includeBookmarked) {
-                    $q->orWhereIn('id', function ($sub) use ($profileUserId) {
-                        $sub->select('blog_id')->from('blog_bookmarks')->where('user_id', $profileUserId);
-                    });
-                }
-            });
-
-        if ($authUserId) {
-            $query->withCount([
-                'bookmarks as bookmarked_by_auth' => function ($q) use ($authUserId) {
-                    $q->where('user_id', $authUserId);
-                },
-                'likes as liked_by_auth' => function ($q) use ($authUserId) {
-                    $q->where('user_id', $authUserId);
-                },
-            ]);
-        }
-
-        $blogs = $query->orderBy('created_at', 'desc')->get()->unique('id')->values();
-
-        return $blogs->map(function (Blog $blog) use ($profileUserId) {
-            $tags = [];
-
-            if ((int) $blog->user_id === (int) $profileUserId) {
-                $tags[] = $blog->status ?? 'draft';
-            }
-
-            if (($blog->bookmarked_by_profile ?? 0) > 0) {
-                $tags[] = 'bookmarked';
-            }
-
-            $blog->setAttribute('tags', implode(' ', $tags));
-
-            return $blog;
-        });
     }
 
     /**
@@ -180,7 +118,6 @@ class BlogRepository
             ->distinct()
             ->get()
             ->pluck('user')
-            ->filter() // Remove null values (soft-deleted users)
             ->sortBy('first_name');
     }
 
@@ -254,7 +191,7 @@ class BlogRepository
                 'comments',
                 'comments as direct_comments_count' => function ($q) {
                     $q->whereNull('parent_id');
-                },
+                }
             ])
             ->withCount([
                 'likes as liked_by_auth' => function ($qq) use ($authUserId) {
@@ -262,7 +199,7 @@ class BlogRepository
                 },
                 'bookmarks as bookmarked_by_auth' => function ($qq) use ($authUserId) {
                     $qq->where('user_id', $authUserId);
-                },
+                }
             ])
             ->find($id);
 
@@ -352,7 +289,7 @@ class BlogRepository
     {
         return $blog->update([
             'status' => 'published',
-            'published_at' => now(),
+            'published_at' => now()
         ]);
     }
 
@@ -363,7 +300,7 @@ class BlogRepository
     {
         return $blog->update([
             'status' => 'rejected',
-            'rejection_reason' => $reason,
+            'rejection_reason' => $reason
         ]);
     }
 }
