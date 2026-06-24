@@ -20,7 +20,7 @@ class UserRepository
     public function upsertFromPayload(array $payload): array
     {
         $email = mb_strtolower(trim((string) Arr::get($payload, 'email')));
-        $existing = User::query()->where('email', $email)->first();
+        $existing = User::withTrashed()->where('email', $email)->first();
         $isNew = $existing === null;
 
         $attributes = [
@@ -55,7 +55,18 @@ class UserRepository
             $attributes['password'] = Str::random(40);
         }
 
-        $user = User::query()->updateOrCreate(['email' => $email], array_filter($attributes, fn($value) => $value !== null));
+        if ($existing !== null) {
+            if ($existing->trashed()) {
+                $existing->restore();
+            }
+
+            $existing->fill(array_filter($attributes, fn($value) => $value !== null));
+            $existing->save();
+
+            return ['user' => $existing, 'created' => false];
+        }
+
+        $user = User::query()->create(array_filter($attributes, fn($value) => $value !== null));
 
         return ['user' => $user, 'created' => $isNew];
     }

@@ -6,6 +6,7 @@ use App\Mail\SimulationReportMail;
 use App\Models\Aid;
 use App\Models\RenovationWork;
 use App\Models\Simulation;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -125,6 +126,50 @@ class SimulationSubmissionTest extends TestCase
         ]);
 
         Mail::assertQueued(SimulationReportMail::class);
+    }
+
+    public function test_it_restores_soft_deleted_user_when_submitting_existing_email(): void
+    {
+        Mail::fake();
+        Storage::fake('local');
+
+        $user = User::factory()->create([
+            'email' => 'deleted-user@example.com',
+            'first_name' => 'Old',
+            'last_name' => 'Name',
+        ]);
+        $userId = $user->id;
+        $user->delete();
+
+        $payload = [
+            'annonce' => [
+                'url' => 'https://example.com/annonce/restored-user',
+            ],
+            'utilisateur' => [
+                'email' => 'deleted-user@example.com',
+                'prenom' => 'Alaa',
+                'nom' => 'Khalil',
+            ],
+            'simulation' => [
+                'montant_total_aides' => 34000,
+                'pourcentage_bien' => 0,
+            ],
+        ];
+
+        $response = $this->postJson('/api/v1/simulations', $payload);
+
+        $response->assertCreated()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('user_created', false)
+            ->assertJsonPath('user_id', $userId);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $userId,
+            'email' => 'deleted-user@example.com',
+            'first_name' => 'Alaa',
+            'last_name' => 'Khalil',
+            'deleted_at' => null,
+        ]);
     }
 
     public function test_it_rejects_unknown_parcours_aide(): void
